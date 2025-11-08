@@ -35,7 +35,7 @@ function autoAdvance() {
 function startAutoPlay() {
     // Clear any existing timer to prevent bugs
     // === THIS LINE IS NOW FIXED ===
-    clearTimeout(autoSlideTimer); 
+    clearTimeout(autoSlideTimer);  
     
     // Set a new timer that calls autoAdvance after 3 seconds (3000ms)
     // You can change 3000 to 2000 if you want 2 seconds.
