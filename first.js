@@ -8,7 +8,7 @@ var modal;
 var modalTitle;
 var modalContent;
 
-// --- INITIALIZE THE SLIDESHOW AND MODAL ---
+// INITIALIZE THE SLIDESHOW AND MODAL
 // Wait for the HTML document to be fully loaded before starting
 document.addEventListener('DOMContentLoaded', function() {
     

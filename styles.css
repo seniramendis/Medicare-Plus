@@ -709,7 +709,73 @@ main.page-container {
     font-size: 13px;
     margin: 0;
 }
+/* === NEW DOCTOR LIST STYLES === */
+.doctor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Space between doctor cards */
+}
 
+.doctor-card {
+    display: flex;
+    flex-wrap: wrap; /* Allows card to wrap on small screens */
+    gap: 25px;
+    padding: 25px;
+    background-color: #fdfdfd;
+    border: 1px solid #e9e9e9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    align-items: flex-start; /* Aligns image and text to the top */
+}
+.doctor-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 15px rgba(30, 58, 138, 0.1); /* Uses your blue for the shadow */
+}
+
+.doctor-card img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover;
+    border: 3px solid #1e3a8a; /* Your site's blue */
+}
+
+.doctor-info {
+    flex: 1; /* Makes the info section take all remaining space */
+    min-width: 250px; /* Helps with wrapping */
+}
+
+.doctor-card h4 {
+    font-size: 1.6em;
+    color: #1e3a8a; /* Your site's blue */
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.doctor-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+.doctor-card a.button {
+    display: inline-block;
+    background-color: #57c95a; /* Green to match nav */
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1em;
+    border-radius: 30px; /* Pill shape */
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+.doctor-card a.button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
 /* --- Responsive Media Query --- */
 @media screen and (max-width: 600px) {
@@ -798,6 +864,13 @@ main.page-container {
   .footer-tags {
       justify-content: center; /* Center the tags */
   }
+  /* --- Add this INSIDE your (max-width: 600px) media query --- */
+  .doctor-card {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+  }
+
 }
 
 /* === NEW STYLES FOR SPECIALIST PAGE === */
