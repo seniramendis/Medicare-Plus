@@ -8,12 +8,23 @@ var modal;
 var modalTitle;
 var modalContent;
 
+// === NEW ===
+// Global variable for the SECOND slideshow (services)
+let serviceSlideIndex = 1;
+
 // INITIALIZE THE SLIDESHOW AND MODAL
 // Wait for the HTML document to be fully loaded before starting
 document.addEventListener('DOMContentLoaded', function() {
     
     // This code will now wait to run until the page is ready
     showSlides(slideIndex);
+
+    // === NEW ===
+    // Initialize the NEW service slideshow
+    // We must check if the elements exist before trying to show them
+    if (document.getElementsByClassName("service-slide").length > 0) {
+        showServiceSlides(serviceSlideIndex);
+    }
 
     // === NEW ===
     // Now that the page is loaded, we can safely find and assign
@@ -131,4 +142,56 @@ window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
+}
+
+
+// ==========================================
+// === NEW SERVICE SLIDESHOW JAVASCRIPT ===
+// ==========================================
+
+// --- MANUAL CONTROLS for Service Slideshow ---
+
+// Next/previous buttons
+function plusServiceSlides(n) {
+    showServiceSlides(serviceSlideIndex += n);
+}
+
+// Dot controls
+function currentServiceSlide(n) {
+    showServiceSlides(serviceSlideIndex = n);
+}
+
+// --- THE MAIN SERVICE SLIDESHOW FUNCTION ---
+// This is separate from the main showSlides()
+function showServiceSlides(n) {
+    let i;
+    let slides = document.getElementsByClassName("service-slide");
+    let dots = document.getElementsByClassName("service-dot");
+
+    // This check prevents errors if the elements haven't loaded
+    if (slides.length === 0 || dots.length === 0) {
+        return; 
+    }
+
+    // 1. Handle wrap-around
+    if (n > slides.length) {
+        serviceSlideIndex = 1;
+    }
+    if (n < 1) {
+        serviceSlideIndex = slides.length;
+    }
+
+    // 2. Hide all slides
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+
+    // 3. Deactivate all dots
+    for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+    }
+
+    // 4. Show the correct slide and activate its dot
+    slides[serviceSlideIndex - 1].style.display = "block";
+    dots[serviceSlideIndex - 1].className += " active";
 }

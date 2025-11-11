@@ -53,7 +53,6 @@ header p {
   text-align: center;
   opacity: 0.9;
   margin-left: -150px;
-  margin-top: -12px;
 }
 
 header h1:hover,
@@ -259,7 +258,7 @@ header p:hover {
 }
 .active,
 .dot:hover {
-  background-color: #717171;
+  background-color: #7171f1;
   opacity: 1;
   transform: scale(1.1);
 }
@@ -270,7 +269,6 @@ header p:hover {
   font-size: 24px;
   color: rgb(255, 255, 255);
   background: linear-gradient(90deg, #1e3a8a, #2563eb, #1e3a8a);
-  
   
 }
 
@@ -323,8 +321,10 @@ header p:hover {
     opacity: 1;
   }
 }
-/* === NEW STYLES FOR THE CONTENT BODY === */
-main.page-container {
+
+/* === STYLES FOR THE CONTENT BODY (NOW APPLIES TO HOME) === */
+main.page-container,
+.page-container-home {
     /* This creates the "card" effect */
     font-family: Arial, Helvetica, sans-serif;
     width: 85%;
@@ -388,17 +388,18 @@ main.page-container {
  * This rule now applies to the .button class in both
  * .service-detail AND .service-listing
 */
-/* === UPDATED BUTTON RULE === */
 .service-detail a.button,
 .service-listing a.button,
-.doctor-list a.button {
+.doctor-list a.button,
+.view-all-services-container a.button,
+.blog-list a.button { /* --- ADDED .blog-list a.button --- */
     display: inline-block;
     background-color: #57c95a; /* Green to match nav */
     color: #fff;
-    padding: 12px 25px;
+    padding: 8px 20px; /* --- REDUCED PADDING --- */
     text-decoration: none;
     font-weight: bold;
-    font-size: 1.1em;
+    font-size: 1em; /* --- REDUCED FONT SIZE --- */
     border-radius: 30px; /* Pill shape */
     margin-top: 20px;
     transition: all 0.3s ease;
@@ -407,10 +408,11 @@ main.page-container {
 /* * === MODIFIED RULE ===
  * This hover rule now also applies to both pages
 */
-/* === UPDATED BUTTON HOVER RULE === */
 .service-detail a.button:hover,
 .service-listing a.button:hover,
-.doctor-list a.button:hover {
+.doctor-list a.button:hover,
+.view-all-services-container a.button:hover,
+.blog-list a.button:hover { /* --- ADDED .blog-list a.button:hover --- */
     background-color: #45a049; /* Darker green on hover */
     transform: translateY(-3px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -572,27 +574,26 @@ main.page-container {
 /* === END OF NEW MODAL STYLES === */
 
 
-/* === NEW DOCTOR LIST STYLES === */
+/* === UPDATED DOCTOR LIST STYLES (3x3 Grid Layout) === */
 .doctor-list {
-    display: flex;
-    flex-direction: column;
+    display: grid; /* Changed from flex */
+    grid-template-columns: repeat(3, 1fr); /* Added this for 3 columns */
     gap: 25px; /* Space between doctor cards */
 }
 
 .doctor-card {
     display: flex;
-    flex-wrap: wrap; /* Allows card to wrap on small screens */
-    gap: 25px;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    gap: 15px; /* Space between image and info */
     padding: 25px;
     background-color: #fdfdfd;
     border: 1px solid #e9e9e9;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    align-items: flex-start; /* Aligns image and text to the top */
-    transition: all 0.3s ease; /* --- ADDED TRANSITION --- */
+    transition: all 0.3s ease;
 }
 
-/* === NEW HOVER EFFECT FOR DOCTOR CARD === */
 .doctor-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 15px rgba(30, 58, 138, 0.1);
@@ -607,8 +608,11 @@ main.page-container {
 }
 
 .doctor-info {
-    flex: 1; /* Makes the info section take all remaining space */
-    min-width: 250px; /* Helps with wrapping */
+    text-align: center; /* Center all the text and the button */
+    display: flex; /* Added */
+    flex-direction: column; /* Added */
+    flex-grow: 1; /* Added to fill space */
+    width: 100%; /* Ensure it takes full width */
 }
 
 .doctor-card h4 {
@@ -623,9 +627,51 @@ main.page-container {
     font-weight: bold;
     color: #555;
     margin-top: 0;
+    margin-bottom: 5px; /* Reduced margin */
+    /* flex-grow: 1; --- This was REMOVED --- */
+}
+
+/* === NEW STYLES FOR RATING & DESCRIPTION === */
+.doctor-specialty {
+    font-size: 1em;
+    font-weight: 500;
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.doctor-rating {
     margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.doctor-rating .fa-star,
+.doctor-rating .fa-star-half-stroke,
+.doctor-rating .fa-regular { /* Added .fa-regular for empty stars */
+    color: #f0ad4e; /* Warm orange, matches orthopedics icon */
+}
+
+.doctor-rating span {
+    color: #777;
+    margin-left: 8px;
+}
+
+.doctor-description {
+    font-size: 0.95em;
+    color: #666;
+    line-height: 1.5;
+    flex-grow: 1; /* --- This is the NEW SPACER --- */
+    margin-bottom: 15px; /* Space above button */
+    margin-top: 0;
 }
 /* === END OF NEW DOCTOR LIST STYLES === */
+
+/* === RULE TO PUSH DOCTOR BUTTON TO BOTTOM === */
+/* This rule is more specific and overrides the default margin-top: 20px */
+.doctor-info a.button {
+    margin-top: auto; /* This pushes the button to the bottom of the card */
+}
+/* === END OF UPDATED DOCTOR LIST STYLES === */
 
 
 /* --- NEW PROFESSIONAL FOOTER STYLES --- */
@@ -728,7 +774,7 @@ main.page-container {
 
 /* --- CSS FIX FOR CLICKABLE FOOTER LINKS --- */
 .footer-contact a {
-    color: #ccc; /* Matches the other text */
+    color: #ccc; /* Matches the text */
     text-decoration: none; /* Removes the underline */
     transition: all 0.3s ease;
     display: flex; /* Aligns icon and text */
@@ -771,6 +817,237 @@ main.page-container {
     font-size: 13px;
     margin: 0;
 }
+
+/* === NEW HOMEPAGE SECTION STYLES === */
+.page-container-home h1 {
+    font-size: 2.2em;
+    color: #1e3a8a; /* Matches your header blue */
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    /* Uses your nav green for an accent */
+    border-bottom: 3px solid #57c95a; 
+}
+
+.view-all-services-container {
+    text-align: center; /* Centers the button */
+    margin-top: 20px; /* Adds space between the grid and the button */
+}
+
+/* === NEW STYLES FOR SPECIALIST PAGE === */
+
+/* Styles for the main listing container */
+.service-listing h2 {
+    font-size: 2.2em;
+    color: #1e3a8a; /* Matches your header blue */
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    /* Uses your nav green for an accent */
+    border-bottom: 3px solid #57c95a; 
+}
+
+/* Styles the intro paragraph */
+.service-listing > p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 30px; /* Adds space before the cards */
+}
+
+/* This creates the responsive grid for your cards */
+.service-grid,
+.service-grid-home {
+    display: grid;
+    /* === THIS IS THE FIX === */
+    /* This NOW forces 3 columns and lets them share the space */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px; /* This is the space between your cards */
+}
+
+/* === NEW RULE FOR SINGLE-ITEM SLIDE === */
+.service-grid-home.service-grid-single {
+    grid-template-columns: 1fr; /* Only one column */
+    max-width: 290px; /* Approx width of one card + padding */
+    margin: 0 auto; /* Center the grid */
+}
+
+
+/* This styles each individual card */
+.service-card {
+    background-color: #fdfdfd; /* A very light grey, almost white */
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9e9e9;
+    text-align: center;
+    display: flex; /* Allows vertical arrangement */
+    flex-direction: column; /* Stacks content vertically */
+    transition: all 0.3s ease;
+}
+
+/* Adds a nice "lift" effect when hovering over a card */
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(30, 58, 138, 0.1); /* Uses your blue for the shadow */
+}
+
+/* === NEW HOVER EFFECT FOR ICON === */
+.service-card:hover .service-icon-container i {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+
+/* This styles the colorful circle behind the icon */
+.service-icon-container {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%; /* Makes it a perfect circle */
+    margin: 0 auto 20px auto; /* Centers the circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* This styles the icon itself */
+.service-icon-container i {
+    font-size: 30px; /* Makes the icon larger */
+    color: #ffffff; /* Makes the icon white */
+    transition: transform 0.3s ease; /* --- ADDED TRANSITION --- */
+}
+
+/* --- Specific Colors for Each Icon --- */
+.icon-cardiology .service-icon-container {
+    background-color: #d9534f; /* A strong red for heart */
+}
+.icon-pediatrics .service-icon-container {
+    background-color: #5bc0de; /* A friendly light blue */
+}
+.icon-orthopedics .service-icon-container {
+    background-color: #f0ad4e; /* A warm orange */
+}
+.icon-dermatology .service-icon-container {
+    background-color: #5cb85c; /* A calm green */
+}
+
+/* === NEW STYLES ADDED HERE === */
+.icon-general .service-icon-container {
+    background-color: #4267B2; /* A professional blue */
+}
+.icon-diagnostic .service-icon-container {
+    background-color: #7E57C2; /* A deep purple */
+}
+.icon-emergency .service-icon-container {
+    background-color: #E63946; /* A bright emergency red */
+}
+/* === END OF NEW STYLES === */
+
+
+/* --- End of Icon Colors --- */
+
+
+/* This styles the card's title (e.g., "Cardiology") */
+.service-card h4 {
+    font-size: 1.4em;
+    color: #1e3a8a; /* Your site's main blue */
+    margin: 0 0 10px 0;
+}
+
+/* This styles the card's description text */
+.service-card p {
+    font-size: 0.95em;
+    color: #666;
+    line-height: 1.5;
+    flex-grow: 1; /* This ensures the text fills the space */
+}
+
+/* This styles the "Learn More ->" link */
+.service-card .card-link {
+    display: inline-block;
+    /* This pushes the link to the bottom of the card,
+       making all cards look aligned */
+    margin-top: auto; 
+    padding-top: 15px; /* Adds space above the link */
+    text-decoration: none;
+    color: #2563eb; /* Your site's lighter blue */
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.service-card .card-link:hover {
+    color: #1e3a8a; /* Darkens the link on hover */
+}
+
+
+/* === NEW SERVICE SLIDESHOW STYLES === */
+.service-carousel-container {
+    position: relative;
+    padding: 0 30px; /* Add padding so buttons don't overlap content */
+}
+
+.service-slide {
+    display: none; /* Hide all slides */
+}
+
+/* Style the new buttons */
+.service-prev,
+.service-next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.3);
+    user-select: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.service-next {
+    right: -15px; /* Position slightly outside the white card */
+}
+
+.service-prev {
+    left: -15px; /* Position slightly outside the white card */
+}
+
+.service-prev:hover,
+.service-next:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Style the new dots */
+.service-dots-container {
+    text-align: center;
+    padding-top: 15px; /* Space between grid and dots */
+}
+
+.service-dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 4px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: all 0.4s ease;
+    opacity: 0.5;
+}
+
+.service-dot.active,
+.service-dot:hover {
+    background-color: #717171;
+    opacity: 1;
+    transform: scale(1.1);
+}
+/* === END OF NEW SERVICE SLIDESHOW STYLES === */
 
 
 /* --- Responsive Media Query --- */
@@ -838,6 +1115,30 @@ main.page-container {
       text-align: center;
   }
   
+  /* --- Responsive Service Slideshow Buttons --- */
+  .service-carousel-container {
+      padding: 0; /* Remove side padding */
+  }
+  .service-prev {
+      left: 5px; /* Move buttons inside */
+  }
+  .service-next {
+      right: 5px; /* Move buttons inside */
+  }
+  
+  /* --- Responsive Service Grid --- */
+  .service-grid,
+  .service-grid-home,
+  .doctor-list,
+  .blog-list { /* --- MODIFIED: Added .blog-list BACK --- */
+      grid-template-columns: 1fr; /* Stack to 1 column */
+  }
+  
+  /* --- Responsive Single Grid --- */
+  .service-grid-home.service-grid-single {
+      max-width: none; /* Let it fill the 1fr */
+  }
+  
 
   /* --- NEW Responsive Footer Rules --- */
   .footer-container {
@@ -875,160 +1176,147 @@ main.page-container {
   }
 }
 
-/* === NEW STYLES FOR SPECIALIST PAGE === */
+/* === NEW DECORATED DOCTOR FILTER BAR === */
 
-/* Styles for the main listing container */
-.service-listing h2 {
-    font-size: 2.2em;
-    color: #1e3a8a; /* Matches your header blue */
-    margin-top: 0;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    /* Uses your nav green for an accent */
-    border-bottom: 3px solid #57c95a; 
+/* This styles the container that holds the two filters */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap; /* Allows filters to stack on small screens */
+    gap: 20px; /* Adds space between the filters */
+    margin-bottom: 30px; /* Adds space above the doctor list */
+    padding: 20px;
+    background-color: #f8f9fa; /* A very light grey background */
+    border-radius: 8px; /* Soft rounded corners for the container */
+    border: 1px solid #e0e0e0;
 }
 
-/* Styles the intro paragraph */
-.service-listing > p {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 30px; /* Adds space before the cards */
-}
+/* * This is a shared style for BOTH the text input and the select dropdown.
+ * This is the key to making them look uniform!
+*/
+.filter-bar input[type="text"],
+.filter-bar select {
+    /* Sizing & Spacing */
+    flex: 1; /* Makes both fields grow to fill the space */
+    min-width: 250px; /* Prevents them from getting too small */
+    height: 48px; /* A taller, more modern height */
+    padding: 0 20px; /* Comfortable text padding */
 
-/* This creates the responsive grid for your cards */
-.service-grid {
-    display: grid;
-    /* This creates responsive columns:
-       - Tries to fit columns of at least 250px
-       - Will automatically wrap to 2 or 1 column on smaller screens
-    */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px; /* This is the space between your cards */
-}
+    /* Font & Appearance */
+    font-size: 16px;
+    color: #333;
+    background-color: #ffffff; /* A clean white background */
 
-/* This styles each individual card */
-.service-card {
-    background-color: #fdfdfd; /* A very light grey, almost white */
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e9e9e9;
-    text-align: center;
-    display: flex; /* Allows vertical arrangement */
-    flex-direction: column; /* Stacks content vertically */
+    /* Border & Shape */
+    border: 1px solid #ccc;
+    /* This border-radius gives them the modern "pill" shape */
+    border-radius: 24px; 
+    
+    /* Smooth transitions for hover and focus effects */
     transition: all 0.3s ease;
 }
 
-/* Adds a nice "lift" effect when hovering over a card */
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(30, 58, 138, 0.1); /* Uses your blue for the shadow */
+/* --- Specific style for the "Dropbox" (select) --- */
+.filter-bar select {
+    /* This removes the default browser arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* Add padding on the right so text doesn't overlap our new arrow */
+    padding-right: 45px;
+
+    /* This adds our new, custom arrow using an SVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23555'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 20px 20px;
 }
 
-/* This styles the colorful circle behind the icon */
-.service-icon-container {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%; /* Makes it a perfect circle */
-    margin: 0 auto 20px auto; /* Centers the circle */
+/* --- HOVER EFFECT (for both) --- */
+.filter-bar input[type="text"]:hover,
+.filter-bar select:hover {
+    border-color: #888; /* A slightly darker border on hover */
+}
+
+/* --- FOCUS EFFECT (for both) --- */
+/* This is the "glow" effect when you click inside the box */
+.filter-bar input[type="text"]:focus,
+.filter-bar select:focus {
+    outline: none; /* Removes the default blue ring */
+    border-color: #2563eb; /* Use your site's brand blue */
+    /* This adds a soft, modern glow */
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2); 
+}
+
+/* === NEW BLOG PAGE STYLES === */
+
+.blog-list {
+    display: grid; /* --- MODIFIED: Back to 3-column grid --- */
+    grid-template-columns: repeat(3, 1fr); /* --- MODIFIED: Back to 3-column grid --- */
+    gap: 25px; /* Matches doctor grid */
+}
+
+.blog-card {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column; /* Stacks image on top of content */
+    background-color: #fdfdfd;
+    border: 1px solid #e9e9e9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    overflow: hidden; /* Ensures image corners are rounded */
 }
 
-/* This styles the icon itself */
-.service-icon-container i {
-    font-size: 30px; /* Makes the icon larger */
-    color: #ffffff; /* Makes the icon white */
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(30, 58, 138, 0.1);
 }
 
-/* --- Specific Colors for Each Icon --- */
-.icon-cardiology .service-icon-container {
-    background-color: #d9534f; /* A strong red for heart */
-}
-.icon-pediatrics .service-icon-container {
-    background-color: #5bc0de; /* A friendly light blue */
-}
-.icon-orthopedics .service-icon-container {
-    background-color: #f0ad4e; /* A warm orange */
-}
-.icon-dermatology .service-icon-container {
-    background-color: #5cb85c; /* A calm green */
+.blog-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* Prevents image from stretching */
 }
 
-/* === NEW STYLES ADDED HERE === */
-.icon-general .service-icon-container {
-    background-color: #4267B2; /* A professional blue */
-}
-.icon-diagnostic .service-icon-container {
-    background-color: #7E57C2; /* A deep purple */
-}
-.icon-emergency .service-icon-container {
-    background-color: #E63946; /* A bright emergency red */
-}
-/* === END OF NEW STYLES === */
+/* --- Video Embed Styles (Removed) --- */
 
 
-/* --- End of Icon Colors --- */
-
-
-/* This styles the card's title (e.g., "Cardiology") */
-.service-card h4 {
-    font-size: 1.4em;
-    color: #1e3a8a; /* Your site's main blue */
-    margin: 0 0 10px 0;
+.blog-content {
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+    flex-grow: 1; /* This makes all cards the same height */
 }
 
-/* This styles the card's description text */
-.service-card p {
+.blog-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.blog-meta span {
+    color: #1e3a8a; /* Your brand blue */
+    font-weight: bold;
+}
+
+.blog-content h4 {
+    font-size: 1.4em; /* Slightly smaller than doctor name */
+    color: #1e3a8a;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.blog-content p {
     font-size: 0.95em;
     color: #666;
     line-height: 1.5;
-    flex-grow: 1; /* This ensures the text fills the space */
+    flex-grow: 1; /* Pushes button to the bottom */
+    margin-bottom: 20px;
+    margin-top: 0;
 }
 
-/* This styles the "Learn More ->" link */
-.service-card .card-link {
-    display: inline-block;
-    /* This pushes the link to the bottom of the card,
-       making all cards look aligned */
-    margin-top: auto; 
-    padding-top: 15px; /* Adds space above the link */
-    text-decoration: none;
-    color: #2563eb; /* Your site's lighter blue */
-    font-weight: bold;
-    transition: color 0.2s ease;
-}
-
-.service-card .card-link:hover {
-    color: #1e3a8a; /* Darkens the link on hover */
-}
-.service-grid-home {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    
-}
-.page-container-home {
-    font-family: Arial, Helvetica, sans-serif;
-    width: 100%;
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 30px 40px;
-    background-color: none;
-    border-radius: 4px;
-    background-color: Linear-gradient(to right, #ffffff, #f4f7f6);
-    box-shadow: 0 5px 15px rgba(12, 12, 12, 0.08);
-    
-}
-.service-card-home h1 {
-    background-color: #fdfdfd;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e9e9e9;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
+.blog-content a.button {
+    margin-top: auto; /* Aligns button to bottom */
+    align-self: flex-start; /* Aligns button to the left */
 }

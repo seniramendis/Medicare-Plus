@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find a Doctor - Medicare Plus</title>
+    <link rel="icon" href="images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
+    <script src="first.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <header>
+        <a href="index.html"><img class="logo" src="images/Logo4.png" alt="Logo" height="100" width="100"></a>
+        <div class="brand-container">
+            <h1 class="brandName"> MEDICARE PLUS</h1>
+            <p>YOUR PARTNER FOR A LIFETIME OF HEALTH</p>
+        </div>
+        <div class="search-bar">
+            <form>
+                <div class="search-bar-box flex">
+                    <i class="fa-solid fa-magnifying-glass fa-1x"></i>
+                    <input type="search" class="search-control" placeholder="Search here">
+                </div>
+            </form>
+        </div>
+    </header>
+
+    <div class="pagination">
+        <div class="pagination-center">
+            <a href="index.html"><i class="fa-solid fa-house"></i> HOME</a>
+            <a href="services.html"><i class="fa-solid fa-heart"></i> SERVICES</a>
+            <a href="find-a-doctor.html" class="active"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
+            <a href="blog.html"><i class="fa-solid fa-blog"></i> HEALTH BLOG & TIPS</a>
+            <a href="location.html"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
+            <a href="index.html#AboutUs"><i class="fa-solid fa-address-card"></i> &nbsp;ABOUT US</a>
+            <a href="fourth.html"><i class="fa-solid fa-phone"></i> CONTACT</a>
+        </div>
+        <a href="login.html" class="login-button"><i class="fa-solid fa-user"></i> LOGIN / SIGNUP</a>
+    </div>
+
+    <main class="page-container">
+        <div class="service-detail">
+            <h2>Find a Doctor</h2>
+            <p>Search for our specialists by name or filter by department to find the right doctor for your needs. Our
+                world-class team is here to provide you with expert care.</p>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" id="doctorName" placeholder="Search by Doctor's Name...">
+            <select id="doctorSpecialty">
+                <option value="all">All Specialties</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Dermatology">Dermatology</option>
+                <option value="Endocrinology">Endocrinology (New)</option>
+                <option value="ENT">ENT (New)</option>
+                <option value="General Practitioner">General Practitioner</option>
+                <option value="Gynaecology">Gynaecology (New)</option>
+                <option value="Neurology">Neurology (New)</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="Pediatrics">Pediatrics</option>
+            </select>
+        </div>
+
+        <div class="doctor-list" id="allDoctorsList">
+
+            <div class="doctor-card" data-name="Dr. Gotabhaya Ranasinghe" data-specialty="Cardiology">
+                <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe">
+                <div class="doctor-info">
+                    <h4>Dr. Gotabhaya Ranasinghe</h4>
+                    <p class="doctor-title">Senior Consultant Cardiologist</p>
+                    <p class="doctor-specialty">Cardiology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (120)</span>
+                    </div>
+                    <p class="doctor-description">
+                        With over 20 years of experience, Dr. Ranasinghe is a leading expert in interventional
+                        cardiology.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Anoma Jayasinghe" data-specialty="Cardiology">
+                <img src="images/Dr. Anoma Jayasinghe.jpeg" alt="Dr. Anoma Jayasinghe">
+                <div class="doctor-info">
+                    <h4>Dr. Anoma Jayasinghe</h4>
+                    <p class="doctor-title">Pediatric Cardiologist</p>
+                    <p class="doctor-specialty">Cardiology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>5.0 (98)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Specializing in congenital heart defects in children, Dr. Jayasinghe is renowned for her
+                        compassionate care.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Riaz Moujood" data-specialty="Cardiology">
+                <img src="images/Dr. Riaz Moujood.jpg" alt="Dr. Riaz Moujood">
+                <div class="doctor-info">
+                    <h4>Dr. Riaz Moujood</h4>
+                    <p class="doctor-title">Head of Cardiac Electrophysiology</p>
+                    <p class="doctor-specialty">Cardiology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>4.0 (76)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Dr. Moujood is an expert in heart rhythm disorders and advanced pacemaker implantations.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Nilesh Fernandopulle" data-specialty="Cardiology">
+                <img src="images/Dr. Nilesh Fernandopulle.jpg" alt="Dr. Nilesh Fernandopulle">
+                <div class="doctor-info">
+                    <h4>Dr. Nilesh Fernandopulle</h4>
+                    <p class="doctor-title">Preventive Cardiologist</p>
+                    <p class="doctor-specialty">Cardiology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (102)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Focused on preventative care and managing chronic heart conditions through lifestyle and
+                        medicine.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Nayana Perera" data-specialty="Dermatology">
+                <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera">
+                <div class="doctor-info">
+                    <h4>Dr. Nayana Perera</h4>
+                    <p class="doctor-title">Head of Cosmetic Dermatology</p>
+                    <p class="doctor-specialty">Dermatology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>5.0 (210)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Leading specialist in advanced cosmetic procedures, laser treatments, and aesthetic dermatology.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Chalukya Gunasekera" data-specialty="Dermatology">
+                <img src="images/dr-chalukya-200.webp" alt="Dr. Chalukya Gunasekera">
+                <div class="doctor-info">
+                    <h4>Dr. Chalukya Gunasekera</h4>
+                    <p class="doctor-title">Pediatric Dermatologist</p>
+                    <p class="doctor-specialty">Dermatology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (88)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Expert in treating skin conditions in infants and children, including eczema and birthmarks.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. K. Sathgurunathan" data-specialty="Dermatology">
+                <img src="images/Dr. K. Sathgurunathan.jpg" alt="Dr. K. Sathgurunathan">
+                <div class="doctor-info">
+                    <h4>Dr. K. Sathgurunathan</h4>
+                    <p class="doctor-title">Dermatologic Surgeon</p>
+                    <p class="doctor-specialty">Dermatology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (112)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Specializes in surgical dermatology, including skin cancer removal and scar revision.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Elena Fernando" data-specialty="General Practitioner">
+                <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando">
+                <div class="doctor-info">
+                    <h4>Dr. Elena Fernando</h4>
+                    <p class="doctor-title">Senior General Practitioner</p>
+                    <p class="doctor-specialty">General Practitioner</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>4.0 (150)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Experienced GP providing comprehensive primary care for patients of all ages.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Kevin Perera" data-specialty="General Practitioner">
+                <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera">
+                <div class="doctor-info">
+                    <h4>Dr. Kevin Perera</h4>
+                    <p class="doctor-title">General Practitioner</p>
+                    <p class="doctor-specialty">General Practitioner</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (95)</span>
+                    </div>
+                    <p class="doctor-description">
+                        A dedicated GP with a focus on holistic health, preventive medicine, and patient education.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Maria Silva" data-specialty="General Practitioner">
+                <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva">
+                <div class="doctor-info">
+                    <h4>Dr. Maria Silva</h4>
+                    <p class="doctor-title">General Practitioner & Family Medicine</p>
+                    <p class="doctor-specialty">General Practitioner</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (101)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Provides continuous and comprehensive healthcare for individuals and families.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Lisa Chen" data-specialty="Pediatrics">
+                <img src="images/doctor_chen.png" alt="Dr. Lisa Chen">
+                <div class="doctor-info">
+                    <h4>Dr. Lisa Chen</h4>
+                    <p class="doctor-title">Consultant Pediatrician</p>
+                    <p class="doctor-specialty">Pediatrics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>5.0 (180)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Known for her gentle approach and expertise in pediatric development and general child health.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Raj Gupta" data-specialty="Pediatrics">
+                <img src="images/doctor_gupta.png" alt="Dr. Raj Gupta">
+                <div class="doctor-info">
+                    <h4>Dr. Raj Gupta</h4>
+                    <p class="doctor-title">Pediatric Neurologist</p>
+                    <p class="doctor-specialty">Pediatrics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (72)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Specializes in neurological disorders in children, including epilepsy and developmental delays.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Amanda Taylor" data-specialty="Pediatrics">
+                <img src="images/doctor_taylor.png" alt="Dr. Amanda Taylor">
+                <div class="doctor-info">
+                    <h4>Dr. Amanda Taylor</h4>
+                    <p class="doctor-title">Head of Neonatology</p>
+                    <p class="doctor-specialty">Pediatrics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (91)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Dedicated to the care of newborn infants, especially those born premature or with complications.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Robert James" data-specialty="Orthopedics">
+                <img src="images/doctor_james.png" alt="Dr. Robert James">
+                <div class="doctor-info">
+                    <h4>Dr. Robert James</h4>
+                    <p class="doctor-title">Head of Joint Replacement</p>
+                    <p class="doctor-specialty">Orthopedics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (130)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Expert in minimally invasive hip and knee replacement surgery, helping patients regain mobility.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Priya Patel" data-specialty="Orthopedics">
+                <img src="images/doctor_patel.png" alt="Dr. Priya Patel">
+                <div class="doctor-info">
+                    <h4>Dr. Priya Patel</h4>
+                    <p class="doctor-title">Sports Medicine Specialist</p>
+                    <p class="doctor-specialty">Orthopedics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>5.0 (105)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Specializes in the treatment and rehabilitation of sports-related injuries for athletes of all
+                        levels.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Ben Walker" data-specialty="Orthopedics">
+                <img src="images/doctor_walker.png" alt="Dr. Ben Walker">
+                <div class="doctor-info">
+                    <h4>Dr. Ben Walker</h4>
+                    <p class="doctor-title">Pediatric Orthopedic Surgeon</p>
+                    <p class="doctor-specialty">Orthopedics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>4.0 (65)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Expert in treating musculoskeletal conditions in children, such as scoliosis and limb
+                        deformities.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Aravinda Dissanayake" data-specialty="Neurology">
+                <img src="images/dr_aravinda.png" alt="Dr. Aravinda Dissanayake">
+                <div class="doctor-info">
+                    <h4>Dr. Aravinda Dissanayake</h4>
+                    <p class="doctor-title">Consultant Neurologist</p>
+                    <p class="doctor-specialty">Neurology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (82)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Specializes in stroke, epilepsy, and movement disorders with a focus on advanced treatments.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Samanthi De Silva" data-specialty="Gynaecology">
+                <img src="images/dr_samanthi.png" alt="Dr. Samanthi De Silva">
+                <div class="doctor-info">
+                    <h4>Dr. Samanthi De Silva</h4>
+                    <p class="doctor-title">Consultant Gynaecologist</Vp>
+                    <p class="doctor-specialty">Gynaecology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>5.0 (140)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Providing comprehensive care in obstetrics and gynaecology, with a focus on women's wellness.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Roshan Peiris" data-specialty="ENT">
+                <img src="images/dr_roshan.png" alt="Dr. Roshan Peiris">
+                <div class="doctor-info">
+                    <h4>Dr. Roshan Peiris</h4>
+                    <p class="doctor-title">Consultant ENT Surgeon</p>
+                    <p class="doctor-specialty">ENT</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>4.0 (77)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Expert in managing conditions of the ear, nose, and throat, including sinus surgery.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+            <div class="doctor-card" data-name="Dr. Inoka Weerasinghe" data-specialty="Endocrinology">
+                <img src="images/dr_inoka.png" alt="Dr. Inoka Weerasinghe">
+                <div class="doctor-info">
+                    <h4>Dr. Inoka Weerasinghe</h4>
+                    <p class="doctor-title">Consultant Endocrinologist</p>
+                    <p class="doctor-specialty">Endocrinology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (89)</span>
+                    </div>
+                    <p class="doctor-description">
+                        Specializes in diabetes management, thyroid disorders, and other hormonal imbalances.
+                    </p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="noResultsMessage" style="display: none;">
+            <h3>No doctors found matching your criteria.</h3>
+        </div>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-column about-us">
+                <img src="images/Logo4.png" alt="Medicare Plus Logo" class="footer-logo">
+                <p>Welcome to MediCare Plus, a leading private healthcare provider dedicated to delivering a
+                    comprehensive range of medical services.</p>
+                <p class="footer-address">
+                    Medicare Plus<br>
+                    No. 84 St.Rita's Road,<br>
+                    Mount Lavinia,<br>
+                    Sri Lanka
+                </p>
+            </div>
+            <div class="footer-column quick-links">
+                <h3>QUICK LINKS</h3>
+                <ul class="footer-links">
+                    <li><a href="services.html">Our Services</a></li>
+                    <li><a href="find-a-doctor.html">Find a Doctor</a></li>
+                    <li><a href="blog.html">Health Blog & Tips</a></li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><a href="index.html#AboutUs">About Us</a></li>
+                    <li><a href="fourth.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column make-appointment">
+                <h3>MAKE AN APPOINTMENT</h3>
+                <p>To schedule an appointment, please contact our office directly during business hours or use our
+                    convenient online booking portal.</p>
+                <ul class="footer-contact">
+                    <li><i class="fa-solid fa-clock"></i> 8:00 AM - 11:00 AM</li>
+                    <li><i class="fa-solid fa-clock"></i> 2:00 PM - 05:00 PM</li>
+                    <li><i class="fa-solid fa-clock"></i> 8:00 PM - 11:00 PM</li>
+                    <li>
+                        <a href="mailto:support@medicareplus.com">
+                            <i class="fa-solid fa-envelope"></i> support@medicareplus.com
+                        </a>
+                    </li>
+                    <li><a href="tel:+94112499590">
+                            <i class="fa-solid fa-phone"></i> +94 11 2 499 590
+                        </a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-socials">
+                <a href="https://x.com/" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                <a href="https://facebook.com/" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+            <p>&copy; 2025 Medicare Plus. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
