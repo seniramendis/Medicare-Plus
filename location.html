@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Changed the title -->
+    <title>Our Locations - Medicare Plus</title>
+    <link rel="icon" href="images/Favicon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
+    <script src="first.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <header>
+        <a href="index.html"><img class="logo" src="images/Logo4.png" alt="Logo" height="100" width="100"></a>
+        <div class="brand-container">
+            <h1 class="brandName"> MEDICARE PLUS</h1>
+            <p>YOUR PARTNER FOR A LIFETIME OF HEALTH</p>
+        </div>
+        <div class="search-bar">
+            <form>
+                <div class="search-bar-box flex">
+                    <i class="fa-solid fa-magnifying-glass fa-1x"></i>
+                    <input type="search" class="search-control" placeholder="Search here">
+                </div>
+            </form>
+        </div>
+    </header>
+
+    <div class="pagination">
+        <div class="pagination-center">
+            <a href="index.html"><i class="fa-solid fa-house"></i> HOME</a>
+            <a href="services.html"><i class="fa-solid fa-heart"></i> SERVICES</a>
+            <a href="find-a-doctor.html"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
+            <a href="blog.html"><i class="fa-solid fa-blog"></i> HEALTH BLOG & TIPS</a>
+            <!-- This link is now active -->
+            <a href="location.html" class="active"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
+            <a href="index.html#AboutUs"><i class="fa-solid fa-address-card"></i> ABOUT US</a>
+            <a href="fourth.html"><i class="fa-solid fa-phone"></i> CONTACT</a>
+        </div>
+        <a href="login.html" class="login-button"><i class="fa-solid fa-user"></i> LOGIN / SIGNUP</a>
+    </div>
+
+    <!-- ======== NEW LOCATION PAGE CONTENT ======== -->
+    <main class="page-container">
+        <div class="service-detail">
+            <h2>Our Locations</h2>
+            <p>Find our main hospital and clinics. We are conveniently located to serve you better. Below are our
+                addresses, contact details, and operating hours.</p>
+        </div>
+
+        <!-- Section for Main Branch -->
+        <div class="location-branch">
+            <h3>Main Hospital: Mount Lavinia</h3>
+            <p>Our primary 24/7 facility offering comprehensive inpatient, outpatient, and emergency care.</p>
+
+            <div class="contact-layout">
+
+                <!-- Left Column: Details -->
+                <div class="contact-details-container">
+                    <ul class="contact-details-list">
+                        <li>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <div>
+                                <strong>Address:</strong><br>
+                                No. 84 St.Rita's Road,<br>
+                                Mount Lavinia, Sri Lanka
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <strong>Phone:</strong><br>
+                                <a href="tel:+94112499590">+94 11 2 499 590</a> (Main)
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-kit-medical"></i>
+                            <div>
+                                <strong>Emergency:</strong><br>
+                                <a href="tel:111">111</a> (24/7 Hotline)
+                            </div>
+                        </li>
+                    </ul>
+                    <h4 class="location-hours-title">Operating Hours</h4>
+                    <ul class="contact-details-list">
+                        <li>
+                            <i class="fa-solid fa-truck-medical"></i>
+                            <div><strong>Emergency:</strong> 24 Hours, 7 Days</div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-user-doctor"></i>
+                            <div><strong>OPD:</strong> 8:00 AM - 10:00 PM Daily</div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock"></i>
+                            <div><strong>Visiting Hours:</strong> 5:00 PM - 7:00 PM Daily</div>
+                        </li>
+                    </ul>
+
+                    <!-- NEW "GET DIRECTIONS" BUTTON -->
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=No.+84+St.Rita's+Road,+Mount+Lavinia,+Sri+Lanka"
+                        target="_blank" class="button direction-button">
+                        <i class="fa-solid fa-diamond-turn-right"></i> Get Directions
+                    </a>
+
+                </div>
+
+                <!-- Right Column: Map -->
+                <!-- We re-use 'contact-form-container' to get the 2-column layout -->
+                <div class="contact-form-container">
+                    <div class="map-wrapper">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.503460818231!2d79.86475731523474!3d6.830200921406517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae25a66b7264429%3A0x6854b0c79f36f616!2sSt.Rita's%20Rd%2C%20Mount%20Lavinia!5e0!3m2!1sen!2slk!4v1678886521345!5m2!1sen!2slk"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin-top: 40px; margin-bottom: 30px; border: 1px solid #f0f0f0;">
+
+        <!-- Section for Second Branch -->
+        <div class="location-branch">
+            <h3>City Clinic: Colombo 07</h3>
+            <p>Our outpatient clinic for specialist consultations and diagnostic services.</p>
+
+            <div class="contact-layout">
+
+                <!-- Left Column: Details -->
+                <div class="contact-details-container">
+                    <ul class="contact-details-list">
+                        <li>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <div>
+                                <strong>Address:</strong><br>
+                                No. 123, Ward Place,<br>
+                                Colombo 07, Sri Lanka
+                            </div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <strong>Phone:</strong><br>
+                                <a href="tel:+94112555666">+94 11 2 555 666</a> (Appointments)
+                            </div>
+                        </li>
+                    </ul>
+                    <h4 class="location-hours-title">Clinic Hours</h4>
+                    <ul class="contact-details-list">
+                        <li>
+                            <i class="fa-solid fa-clock"></i>
+                            <div><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM</div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock"></i>
+                            <div><strong>Saturday:</strong> 9:00 AM - 1:00 PM</div>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-door-closed"></i>
+                            <div><strong>Sunday:</strong> Closed</div>
+                        </li>
+                    </ul>
+
+                    <!-- NEW "GET DIRECTIONS" BUTTON -->
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=No.+123,+Ward+Place,+Colombo+07,+Sri+Lanka"
+                        target="_blank" class="button direction-button">
+                        <i class="fa-solid fa-diamond-turn-right"></i> Get Directions
+                    </a>
+
+                </div>
+
+                <!-- Right Column: Map -->
+                <div class="contact-form-container">
+                    <div class="map-wrapper">
+                        <!-- 
+                            FIXED MAP: This is a working placeholder map for Viharamahadevi Park. 
+                            Please replace this 'src' with the real one for your clinic.
+                        -->
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.999863456073!2d79.86016131523516!3d6.902213920612185!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2596305b33139%3A0x1c313c96b020689b!2sViharamahadevi%20Park!5e0!3m2!1sen!2slk!4v1678886521346!5m2!1sen!2slk"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- ======== END OF NEW CONTENT ======== -->
+
+
+    <!-- This is the hidden modal for the contact page, it can stay -->
+    <div id="feedbackModal" class="custom-alert-modal">
+        <div class="custom-alert-content">
+            <span class="custom-alert-close">x</span>
+            <h2><i class="fa-solid fa-circle-check"></i> Thank You!</h2>
+            <p>Your message has been sent successfully. We'll get back to you soon.</p>
+        </div>
+    </div>
+
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-column about-us">
+                <img src="images/Logo4.png" alt="Medicare Plus Logo" class="footer-logo">
+                <p>Welcome to MediCare Plus, a leading private healthcare provider dedicated to delivering a
+                    comprehensive range of medical services.</p>
+                <p class="footer-address">
+                    Medicare Plus<br>
+                    No. 84 St.Rita's Road,<br>
+                    Mount Lavinia,<br>
+                    Sri Lanka
+                </p>
+            </div>
+            <div class="footer-column quick-links">
+                <h3>QUICK LINKS</h3>
+                <ul class="footer-links">
+                    <li><a href="services.html">Our Services</a></li>
+                    <li><a href="find-a-doctor.html">Find a Doctor</a></li>
+                    <li><a href="blog.html">Health Blog & Tips</a></li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><a href="index.html#AboutUs">About Us</a></li>
+                    <li><a href="fourth.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column make-appointment">
+                <h3>MAKE AN APPOINTMENT</h3>
+                <p>To schedule an appointment, please contact our office directly during business hours or use our
+                    convenient online booking portal.</p>
+                <ul class="footer-contact">
+                    <li><i class="fa-solid fa-clock"></i> 8:00 AM - 11:00 AM</li>
+                    <li><i class="fa-solid fa-clock"></i> 2:00 PM - 05:00 PM</li>
+                    <li><i class="fa-solid fa-clock"></i> 8:00 PM - 11:00 PM</li>
+                    <li>
+                        <a href="mailto:support@medicareplus.com">
+                            <i class="fa-solid fa-envelope"></i> support@medicareplus.com
+                        </a>
+                    </li>
+                    <li><a href="tel:+94112499590">
+                            <i class="fa-solid fa-phone"></i> +94 11 2 499 590
+                        </a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-socials">
+                <a href="https://x.com/" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                <a href="https://facebook.com/" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+            <p>© 2025 Medicare Plus. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

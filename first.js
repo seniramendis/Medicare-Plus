@@ -32,6 +32,51 @@ document.addEventListener('DOMContentLoaded', function() {
     modal = document.getElementById("infoModal");
     modalTitle = document.getElementById("modalTitle");
     modalContent = document.getElementById("modalContent"); // This is the <div> wrapper
+
+    
+    // =======================================================
+    // === UPGRADED CONTACT FORM ALERT ===
+    // =======================================================
+    
+    // Find the form
+    var contactForm = document.getElementById("contactForm");
+    
+    // Find our new modal and its close button
+    var feedbackModal = document.getElementById("feedbackModal"); // Renamed to avoid conflict
+    var closeBtn = document.querySelector(".custom-alert-close");
+
+    // Check if the form exists on this page
+    if (contactForm && feedbackModal && closeBtn) {
+        
+        // Listen for the form to be submitted
+        contactForm.addEventListener("submit", function(event) {
+            
+            // 1. Prevent the page from reloading
+            event.preventDefault();
+            
+            // 2. Show our new custom modal
+            feedbackModal.style.display = "block";
+            
+            // 3. Clear all the form fields
+            contactForm.reset();
+        });
+
+        // When the user clicks on (x), close the modal
+        closeBtn.onclick = function() {
+            feedbackModal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.addEventListener("click", function(event) { // Changed to window.addEventListener
+            if (event.target == feedbackModal) {
+                feedbackModal.style.display = "none";
+            }
+        });
+    }
+    // =======================================================
+    // === END OF UPGRADED CODE ===
+    // =======================================================
+
 });
 
 // --- MANUAL CONTROLS (Called by your HTML) ---
@@ -138,11 +183,11 @@ function closeModal() {
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
+window.addEventListener("click", function(event) { // Changed to window.addEventListener
     if (event.target == modal) {
         modal.style.display = "none";
     }
-}
+});
 
 
 // ==========================================
@@ -151,7 +196,6 @@ window.onclick = function(event) {
 
 // --- MANUAL CONTROLS for Service Slideshow ---
 
-// Next/previous buttons
 function plusServiceSlides(n) {
     showServiceSlides(serviceSlideIndex += n);
 }
