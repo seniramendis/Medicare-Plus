@@ -1,0 +1,755 @@
+/*
+======================================================
+=== PROFESSIONAL STYLE REFACTOR (HOMESTYLES.CSS) ===
+======================================================
+* 1. Uses CSS variables (:root) for easy color management.
+* 2. Uses a modern, system-font stack for better typography.
+* 3. Improves spacing, shadows, and transitions.
+* 4. KEEPS THE ORIGINAL SLIDESHOW STYLES (as requested).
+* 5. FIXES: Blank modal popup on page load.
+* 6. IMPROVES: Modal decoration and close button.
+* 7. FIXES: Conflicting active dot class for service-carousel.
+*/
+
+:root {
+    --primary-blue: #1e3a8a;
+    --primary-blue-light: #2563eb;
+    --primary-green: #57c95a;
+    --primary-green-dark: #45a049;
+
+    --text-dark: #333;
+    --text-light: #666;
+    --text-white: #ffffff;
+    --border-light: #e9e9e9;
+    --bg-light: #f4f7f6;
+    --bg-white: #ffffff;
+    --bg-dark-gradient: linear-gradient(90deg, #1e3a8a, #2563eb, #1e3a8a);
+    --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 5px 15px rgba(12, 12, 12, 0.08);
+    --shadow-hover: 0 6px 15px rgba(30, 58, 138, 0.1);
+}
+
+/* --- Global & Base --- */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    margin-bottom: 0;
+    /* Modern System Font Stack */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 0;
+    line-height: 1.6;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    margin-top: 0;
+    font-weight: 600;
+}
+
+/* ======================================================
+=== ORIGINAL SLIDESHOW STYLES (UNCHANGED) ===
+======================================================
+*/
+.slideshow-container {
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    max-height: 550px;
+}
+
+.mySlides {
+    display: none;
+}
+
+.slideshow-container .mySlides img {
+    width: 100%;
+    height: 550px;
+    object-fit: cover;
+    vertical-align: middle;
+}
+
+.prev,
+.next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    margin-top: -22px;
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.15);
+    -webkit-user-select: none;
+    user-select: none;
+    border-radius: 0 3px 3px 0;
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.prev {
+    left: 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.prev:hover,
+.next:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.text {
+    color: #f2f2f2;
+    font-size: 15px;
+    padding: 12px 15px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.numbertext {
+    color: #f2f2ff;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 0 0 8px 0;
+}
+
+.dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 4px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: all 0.4s ease;
+    opacity: 0.5;
+}
+
+.active,
+.dot:hover {
+    background-color: #7171f1;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.fade {
+    animation-name: fade;
+    animation-duration: 0.8s;
+}
+
+@keyframes fade {
+    from {
+        opacity: 0.1;
+    }
+    to {
+        opacity: 1;
+    }
+}
+/* === END OF SLIDESHOW STYLES === */
+
+
+/* --- Quote Section --- */
+.quote {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-white);
+    background: var(--bg-dark-gradient);
+}
+
+.quote h1 {
+    font-size: 1.8rem;
+    font-style: italic;
+    font-weight: 400;
+    margin: 0 auto 1rem auto;
+    max-width: 800px;
+}
+
+.quote p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* === About Section === */
+.About {
+    margin: 2.5rem auto;
+    /* Center the section */
+    max-width: 1200px;
+    padding: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+    background-color: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+}
+
+.About h1 {
+    flex-basis: 100%;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+}
+
+.AboutText {
+    flex: 1;
+    font-size: 1.05rem;
+    color: var(--text-light);
+    text-align: left;
+    /* Better for readability than justify */
+    min-width: 300px;
+}
+
+.AboutText p {
+    margin-bottom: 1rem;
+}
+
+.AboutImage {
+    flex: 1;
+    max-width: 370px;
+    min-width: 300px;
+}
+
+.AboutImage img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+}
+
+/* === Homepage Service Section Container === */
+.page-container-home {
+    width: 90%;
+    max-width: 900px;
+    margin: 2.5rem auto;
+    padding: 2rem 2.5rem;
+    background-color: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+}
+
+.page-container-home h1 {
+    font-size: 2.2rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--primary-green);
+}
+
+.page-container-home>p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    max-width: 700px;
+    margin-bottom: 1.5rem;
+}
+
+.view-all-services-container {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.view-all-services-container a.button {
+    display: inline-block;
+    background-color: var(--primary-green);
+    color: var(--text-white);
+    padding: 10px 24px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 30px;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.view-all-services-container a.button:hover {
+    background-color: var(--primary-green-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* === Service Card Grid === */
+.service-grid-home {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.service-grid-home.service-grid-single {
+    grid-template-columns: 1fr;
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+.service-card {
+    background-color: #fdfdfd;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.service-card:hover .service-icon-container i {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.service-icon-container {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-icon-container i {
+    font-size: 30px;
+    color: var(--text-white);
+    transition: transform 0.3s ease;
+}
+
+/* Icon Colors */
+.icon-cardiology .service-icon-container {
+    background-color: #d9534f;
+}
+.icon-pediatrics .service-icon-container {
+    background-color: #5bc0de;
+}
+.icon-orthopedics .service-icon-container {
+    background-color: #f0ad4e;
+}
+.icon-dermatology .service-icon-container {
+    background-color: #5cb85c;
+}
+.icon-general .service-icon-container {
+    background-color: #4267B2;
+}
+.icon-diagnostic .service-icon-container {
+    background-color: #7E57C2;
+}
+.icon-emergency .service-icon-container {
+    background-color: #E63946;
+}
+
+.service-card h4 {
+    font-size: 1.3rem;
+    color: var(--primary-blue);
+    margin-bottom: 0.5rem;
+}
+
+.service-card p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.5;
+    flex-grow: 1;
+}
+
+.service-card .card-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    text-decoration: none;
+    color: var(--primary-blue-light);
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.service-card .card-link:hover {
+    color: var(--primary-blue);
+}
+
+
+/* === SERVICE SLIDESHOW (Carousel) === */
+.service-carousel-container {
+    position: relative;
+    padding: 0 10px;
+}
+
+.service-slide {
+    display: none;
+}
+
+.service-prev,
+.service-next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    color: var(--text-dark);
+    font-weight: bold;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    background-color: var(--bg-white);
+    -webkit-user-select: none;
+    user-select: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.service-next {
+    right: 15px;
+}
+
+.service-prev {
+    left: 15px;
+}
+
+.service-prev:hover,
+.service-next:hover {
+    background-color: #f1f1f1;
+    color: var(--primary-blue);
+}
+
+.service-dots-container {
+    text-align: center;
+    padding-top: 1rem;
+}
+
+.service-dot {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    margin: 0 4px;
+    background-color: #ddd;
+    border-radius: 50%;
+    display: inline-block;
+    transition: all 0.4s ease;
+}
+
+/* FIXED: Ensures only .service-active is used for the active state
+   and correctly handles the hover state for service dots. */
+.service-dot.service-active,
+.service-dot:hover {
+    background-color: var(--primary-blue);
+    opacity: 1; /* Match regular dot in being opaque */
+}
+
+
+/* ======================================================
+=== REFINED MODAL STYLES (for About Us links) ===
+======================================================
+*/
+.service-link {
+    text-decoration: none;
+}
+
+.service-link li {
+    color: var(--primary-blue);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    list-style-position: inside;
+    padding-left: 5px;
+    list-style-type: '✓';
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.service-link li:hover {
+    color: var(--primary-green);
+    transform: translateX(5px);
+}
+
+/* The Modal (background) - IMPORTANT: Default to hidden */
+.modal {
+    display: none; /* CRITICAL FIX: This hides the modal by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: var(--bg-white);
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    text-align: left;
+    margin: 0;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation-name: modalFadeIn;
+    animation-duration: 0.3s;
+}
+
+/* Modal Animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    background: var(--bg-dark-gradient);
+    color: var(--text-white);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--text-white);
+    font-size: 1.4rem;
+}
+
+/* New: Modal Close Button (styled as a button) */
+.modal-close-btn {
+    background-color: #f44336; /* Red for close */
+    color: var(--text-white);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.modal-close-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Specific style to remove margin on icon inside close button */
+.modal-close-btn i {
+    margin-right: 0; 
+}
+
+
+.modal-body {
+    padding: 1.5rem;
+    line-height: 1.6;
+    font-size: 1rem;
+    overflow-y: auto;
+}
+
+/* Modal Content Decorations */
+#modalContent h3 {
+    color: var(--primary-blue);
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    font-size: 1.25rem;
+}
+#modalContent ul {
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+    list-style-type: disc; /* Default disc for unordered lists */
+}
+#modalContent ul li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-light);
+}
+#modalContent p {
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+#modalContent p strong {
+    color: var(--text-dark);
+}
+#modalContent i {
+    margin-right: 0.5rem;
+    color: var(--primary-blue);
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f1f1f1;
+    text-align: right;
+    border-top: 1px solid #ddd;
+    display: flex; /* Make footer a flex container */
+    justify-content: space-between; /* Space out items */
+    align-items: center;
+}
+
+/* Modal Buttons */
+#modalLearnMoreLink { /* Targeting the anchor tag for "Learn More" */
+    background-color: var(--primary-blue);
+    color: var(--text-white);
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none; /* Remove underline */
+    display: inline-flex; /* Allow icon and text to align */
+    align-items: center;
+    gap: 8px; /* Space between text and icon */
+}
+
+#modalLearnMoreLink:hover {
+    background-color: var(--primary-blue-light);
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(30, 58, 138, 0.3);
+}
+
+#modalLearnMoreLink i { /* Styling the icon inside the learn more button */
+    color: var(--text-white); /* Keep icon white */
+    font-size: 1.1rem;
+    margin: 0; /* Reset default margin */
+}
+
+.cancelbtn { /* The "Close" button in the footer */
+    background-color: #aaa;
+    color: var(--text-white);
+    border: none;
+    border-radius: 20px; /* Make it rounded like "Learn More" */
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancelbtn:hover {
+    background-color: #888;
+}
+
+
+/* ======================================================
+=== RESPONSIVE DESIGN ===
+======================================================
+*/
+
+/* --- Tablet Breakpoint --- */
+@media screen and (max-width: 900px) {
+    .service-grid-home {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .About {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .AboutText {
+        text-align: center;
+    }
+}
+
+
+/* --- Mobile Breakpoint --- */
+@media screen and (max-width: 600px) {
+    .slideshow-container,
+    .slideshow-container .mySlides img {
+        height: auto;
+        max-height: none;
+    }
+
+    .About {
+        padding: 1.5rem;
+    }
+
+    .AboutImage {
+        max-width: 80%;
+    }
+
+    .page-container-home {
+        width: 95%;
+        padding: 1.5rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .service-carousel-container {
+        padding: 0;
+    }
+
+    .service-prev {
+        left: 10px;
+    }
+
+    .service-next {
+        right: 10px;
+    }
+
+    .service-grid-home {
+        grid-template-columns: 1fr;
+    }
+
+    .service-grid-home.service-grid-single {
+        max-width: none;
+    }
+
+    .modal-footer {
+        flex-direction: column; /* Stack buttons on mobile */
+        gap: 0.8rem;
+    }
+
+    #modalLearnMoreLink,
+    .cancelbtn {
+        width: 100%; /* Make buttons full width */
+        text-align: center;
+        justify-content: center; /* Center content within flex button */
+    }
+}

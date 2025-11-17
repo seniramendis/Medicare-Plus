@@ -1,128 +1,112 @@
+/*
+======================================================
+=== MEDICARE PLUS - HOME PAGE SCRIPT ===
+======================================================
+* This script handles all interactivity for the home page.
+* 1. Main Slideshow
+* 2. Service Carousel
+* 3. "About Us" Modal (Fixed: Will NOT show on page load)
+*/
+
 // --- GLOBAL VARIABLES ---
+
+// For Main Slideshow
 let slideIndex = 1; // Start at the first slide
 let autoSlideTimer; // This variable will hold our automatic timer
 
-// === MODIFIED ===
-// We DECLARE the modal variables here, but we don't assign them yet.
+// For Service Carousel
+let serviceSlideIndex = 1;
+
+// For Modal
 var modal;
 var modalTitle;
 var modalContent;
+var modalLearnMoreLink;
+var modalCloseBtn;
 
-// === NEW ===
-// Global variable for the SECOND slideshow (services)
-let serviceSlideIndex = 1;
-
-// INITIALIZE THE SLIDESHOW AND MODAL
-// Wait for the HTML document to be fully loaded before starting
+// --- INITIALIZATION ---
+// Wait for the HTML document to be fully loaded before running any JS
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // This code will now wait to run until the page is ready
-    showSlides(slideIndex);
 
-    // === NEW ===
-    // Initialize the NEW service slideshow
-    // We must check if the elements exist before trying to show them
+    // --- 1. Initialize Main Slideshow ---
+    if (document.getElementsByClassName("mySlides").length > 0) {
+        showSlides(slideIndex);
+    }
+
+    // --- 2. Initialize Service Carousel ---
     if (document.getElementsByClassName("service-slide").length > 0) {
         showServiceSlides(serviceSlideIndex);
     }
 
-    // === NEW ===
-    // Now that the page is loaded, we can safely find and assign
-    // our modal elements to the variables.
+    // --- 3. Initialize Modal Elements ---
     modal = document.getElementById("infoModal");
-    modalTitle = document.getElementById("modalTitle");
-    modalContent = document.getElementById("modalContent"); // This is the <div> wrapper
 
-    
-    // =======================================================
-    // === UPGRADED CONTACT FORM ALERT ===
-    // =======================================================
-    
-    // Find the form
-    var contactForm = document.getElementById("contactForm");
-    
-    // Find our new modal and its close button
-    var feedbackModal = document.getElementById("feedbackModal"); // Renamed to avoid conflict
-    var closeBtn = document.querySelector(".custom-alert-close");
-
-    // Check if the form exists on this page
-    if (contactForm && feedbackModal && closeBtn) {
+    if (modal) { // Only proceed if modal element is found
+        modalTitle = document.getElementById("modalTitle");
+        modalContent = document.getElementById("modalContent");
+        modalLearnMoreLink = document.getElementById("modalLearnMoreLink");
+        // Get the close buttons
+        modalCloseBtn = document.getElementById("modalCloseBtn");
         
-        // Listen for the form to be submitted
-        contactForm.addEventListener("submit", function(event) {
-            
-            // 1. Prevent the page from reloading
-            event.preventDefault();
-            
-            // 2. Show our new custom modal
-            feedbackModal.style.display = "block";
-            
-            // 3. Clear all the form fields
-            contactForm.reset();
-        });
-
-        // When the user clicks on (x), close the modal
-        closeBtn.onclick = function() {
-            feedbackModal.style.display = "none";
-        }
-
-        // When the user clicks anywhere outside of the modal, close it
-        window.addEventListener("click", function(event) { // Changed to window.addEventListener
-            if (event.target == feedbackModal) {
-                feedbackModal.style.display = "none";
+        // Add listeners
+        window.addEventListener("click", function(event) {
+            if (event.target == modal) {
+                closeModal();
             }
         });
+
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', closeModal);
+        }
+        
+        // CRITICAL FIX: Ensure the modal is hidden right away.
+        // This is a safety check in case CSS hasn't loaded or was overwritten.
+        modal.style.display = "none";
     }
-    // =======================================================
-    // === END OF UPGRADED CODE ===
-    // =======================================================
 
-});
+}); // --- END OF 'DOMContentLoaded' LISTENER ---
 
-// --- MANUAL CONTROLS (Called by your HTML) ---
 
-// Next/previous buttons
+/*
+======================================================
+=== 1. MAIN SLIDESHOW FUNCTIONS ===
+======================================================
+*/
+// --- MANUAL CONTROLS (Called by HTML onclick) ---
+
 function plusSlides(n) {
-    // Pass the new slide number to showSlides
     showSlides(slideIndex += n);
 }
 
 // Dot/thumbnail controls
 function currentSlide(n) {
-    // Pass the specific slide number to showSlides
     showSlides(slideIndex = n);
 }
 
 // --- AUTOMATIC TIMER FUNCTIONS ---
 
-// This function is called by the timer
 function autoAdvance() {
-    slideIndex++; // Increment the slide index
-    showSlides(slideIndex); // Show the next slide
+    slideIndex++;
+    showSlides(slideIndex);
 }
 
-// This function starts (or restarts) the timer
 function startAutoPlay() {
-    // Clear any existing timer to prevent bugs
-    clearTimeout(autoSlideTimer);  
-    
-    // Set a new timer that calls autoAdvance after 3 seconds (3000ms)
+    if (autoSlideTimer) {
+        clearTimeout(autoSlideTimer);
+    }
     autoSlideTimer = setTimeout(autoAdvance, 3000);
 }
 
-// --- THE MAIN SLIDESHOW FUNCTION ---
-
+// --- THE MAIN SLIDESHOW LOGIC ---
 function showSlides(n) {
     let i;
     let slides = document.getElementsByClassName("mySlides");
     let dots = document.getElementsByClassName("dot");
 
-    // This check prevents errors if the elements haven't loaded
-    if (slides.length === 0 || dots.length === 0) {
-        return; 
+    if (!slides || !dots || slides.length === 0 || dots.length === 0) {
+        return;
     }
 
-    // 1. Handle wrap-around
     if (n > slides.length) {
         slideIndex = 1;
     }
@@ -130,94 +114,42 @@ function showSlides(n) {
         slideIndex = slides.length;
     }
 
-    // 2. Hide all slides
     for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
+        if (slides[i]) slides[i].style.display = "none";
     }
 
-    // 3. Deactivate all dots
     for (i = 0; i < dots.length; i++) {
-        dots[i].className = dots[i].className.replace(" active", "");
+        if (dots[i]) dots[i].className = dots[i].className.replace(" active", "");
     }
 
-    // 4. Show the correct slide and activate its dot
-    slides[slideIndex - 1].style.display = "block";
-    dots[slideIndex - 1].className += " active";
-
-    // 5. Reset the automatic timer
+    if (slides[slideIndex - 1]) slides[slideIndex - 1].style.display = "block";
+    if (dots[slideIndex - 1]) dots[slideIndex - 1].className += " active";
     startAutoPlay();
 }
 
-
-// === MODAL FUNCTIONS (UPDATED) ===
-
-// Function to OPEN the modal with specific content AND a link
-function openModal(title, content, linkUrl) {
-    // Find the <a> tag for the "Learn More" button using its ID
-    var learnMoreLink = document.getElementById("modalLearnMoreLink");
-
-    // Add a check to make sure the modal AND the link button were found
-    if (modal && modalTitle && modalContent && learnMoreLink) {
-        modalTitle.innerText = title;
-        
-        // Use .innerHTML to make the browser read the HTML tags
-        modalContent.innerHTML = content; 
-        
-        // --- THIS IS THE NEW PART ---
-        // Set the 'href' attribute of the <a> tag dynamically
-        learnMoreLink.href = linkUrl;
-        // --- END OF NEW PART ---
-        
-        modal.style.display = "block";
-    } else {
-        // This will show an error in the console if any element is missing
-        console.error("Error: Modal or Learn More link element not found!");
-    }
-}
-
-// Function to CLOSE the modal
-function closeModal() {
-    if (modal) {
-        modal.style.display = "none";
-    }
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.addEventListener("click", function(event) { // Changed to window.addEventListener
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-});
-
-
-// ==========================================
-// === NEW SERVICE SLIDESHOW JAVASCRIPT ===
-// ==========================================
-
-// --- MANUAL CONTROLS for Service Slideshow ---
+/*
+======================================================
+=== 2. SERVICE CAROUSEL FUNCTIONS ===
+======================================================
+*/
 
 function plusServiceSlides(n) {
     showServiceSlides(serviceSlideIndex += n);
 }
 
-// Dot controls
 function currentServiceSlide(n) {
     showServiceSlides(serviceSlideIndex = n);
 }
 
-// --- THE MAIN SERVICE SLIDESHOW FUNCTION ---
-// This is separate from the main showSlides()
 function showServiceSlides(n) {
     let i;
     let slides = document.getElementsByClassName("service-slide");
     let dots = document.getElementsByClassName("service-dot");
 
-    // This check prevents errors if the elements haven't loaded
-    if (slides.length === 0 || dots.length === 0) {
-        return; 
+    if (!slides || !dots || slides.length === 0 || dots.length === 0) {
+        return;
     }
 
-    // 1. Handle wrap-around
     if (n > slides.length) {
         serviceSlideIndex = 1;
     }
@@ -225,17 +157,37 @@ function showServiceSlides(n) {
         serviceSlideIndex = slides.length;
     }
 
-    // 2. Hide all slides
     for (i = 0; i < slides.length; i++) {
         slides[i].style.display = "none";
     }
 
-    // 3. Deactivate all dots
     for (i = 0; i < dots.length; i++) {
-        dots[i].className = dots[i].className.replace(" active", "");
-    }
+        dots[i].className = dots[i].className.replace(" service-active", "");
+    
+}
 
-    // 4. Show the correct slide and activate its dot
     slides[serviceSlideIndex - 1].style.display = "block";
-    dots[serviceSlideIndex - 1].className += " active";
+    dots[serviceSlideIndex - 1].className += " service-active";
+}
+
+
+/*
+======================================================
+=== 3. MODAL FUNCTIONS (FIXED) ===
+======================================================
+*/
+
+function openModal(title, content, linkUrl) {
+    if (modal && modalTitle && modalContent && modalLearnMoreLink) {
+        modalTitle.innerText = title;
+        modalContent.innerHTML = content;
+        modalLearnMoreLink.href = linkUrl;
+        modal.style.display = "flex"; 
+    }
+}
+
+function closeModal() {
+    if (modal) {
+        modal.style.display = "none";
+    }
 }

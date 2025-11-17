@@ -1,78 +1,55 @@
+<?php
+$pageTitle = 'Home';
+$pageKey = 'home'; // This is the key! It tells header.php and footer.php to load the external files.
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicare Plus - Home</title>
+    <title><?php echo isset($pageTitle) ? $pageTitle . ' - Medicare Plus' : 'Medicare Plus - Your Lifetime Partner in Health'; ?></title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=e911_avatar" />
-    <script src="first.js" type="text/javascript"></script>
-    <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
+    <!-- Link to your new home page specific styles -->
+    <link rel="stylesheet" href="HomeStyles.css?v=1.1">
+
+    <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <header>
-        <a href="#"><img class="logo" src="images/Logo4.png" alt="Logo" height="100" width="100"></a>
 
-        <div class="brand-container">
-            <h1 class="brandName"> MEDICARE PLUS</h1>
-            <p>YOUR PARTNER FOR A LIFETIME OF HEALTH</p>
-        </div>
+    <?php
+    include 'header.php';
+    ?>
 
-        <div class="search-bar">
-            <form>
-                <div class="search-bar-box flex">
-                    <i class="fa-solid fa-magnifying-glass fa-1x"></i>
-                    <input type="search" class="search-control" placeholder="Search here">
-                </div>
-            </form>
-        </div>
-    </header>
-
-    <div class="pagination">
-        <div class="pagination-center">
-            <a href="" class="active"><i class="fa-solid fa-house"></i> HOME</a>
-            <a href="#Services"><i class="fa-solid fa-heart"></i> SERVICES</a>
-            <a href="Find a Doctor.html"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
-
-            <a href="blog.html"><i class="fa-solid fa-blog"></i> HEALTH BLOG & TIPS</a>
-            <a href="location.html"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
-
-            <a href="#AboutUs"><i class="fa-solid fa-address-card"></i> &nbsp;ABOUT US</a>
-            <a href="Contact.html"><i class="fa-solid fa-phone"></i> CONTACT</a>
-
-        </div>
-
-        <a href="login.html" class="login-button"><i class="fa-solid fa-user"></i> LOGIN / SIGNUP</a>
-    </div>
-
+    <!-- ================== -->
+    <!-- MAIN SLIDESHOW     -->
+    <!-- ================== -->
     <div class="slideshow-container">
 
         <div class="mySlides fade">
             <div class="numbertext">1 / 4</div>
-            <img src="images/Slideshow1.png">
+            <img src="images/Slideshow1.png" alt="Your partner for a lifetime of health">
             <div class="text">YOUR PARTNER FOR A LIFETIME OF HEALTH</div>
         </div>
 
         <div class="mySlides fade">
             <div class="numbertext">2 / 4</div>
-            <img src="images/Slideshow2.png">
+            <img src="images/Slideshow2.png" alt="Visit us on our website">
             <div class="text">VISIT US ON WWW.MEDICAREPLUS.LK</div>
         </div>
 
         <div class="mySlides fade">
             <div class="numbertext">3 / 4</div>
-            <img src="images/Slideshow3.png">
+            <img src="images/Slideshow3.png" alt="Follow us on social media">
             <div class="text">FOLLOW US ON SOCIAL MEDIA</div>
         </div>
 
         <div class="mySlides fade">
             <div class="numbertext">4 / 4</div>
-            <img src="images/Slideshow4.png">
+            <img src="images/Slideshow4.png" alt="Medicare Plus, your partner for health">
             <div class="text">YOUR PARTNER FOR A LIFETIME OF HEALTH</div>
         </div>
 
@@ -88,13 +65,18 @@
     </div>
     <br><br>
 
+    <!-- ================== -->
+    <!-- QUOTE SECTION      -->
+    <!-- ================== -->
     <div class="quote">
         <h1>"The good physician treats the disease;
             the great physician treats the patient who has the disease." </h1>
         <p>- William Osler</p>
     </div><br>
 
-
+    <!-- ================== -->
+    <!-- SERVICES SECTION   -->
+    <!-- ================== -->
     <main class="page-container-home" id="Services">
         <h1>OUR SERVICES</h1>
         <p>We provide world-class specialty care across a wide range of medical fields. Our expert teams use the
@@ -102,6 +84,7 @@
 
         <div class="service-carousel-container">
 
+            <!-- Slide 1 -->
             <div class="service-slide">
                 <div class="service-grid-home">
                     <div class="service-card icon-cardiology">
@@ -110,7 +93,7 @@
                         </div>
                         <h4>Cardiology</h4>
                         <p>Expert care for your heart, including disease management and post-heart attack care.</p>
-                        <a href="Cardiology Specialists.html" class="card-link">Learn More →</a>
+                        <a href="Cardiology Specialists.php" class="card-link">Learn More →</a>
                     </div>
                     <div class="service-card icon-pediatrics">
                         <div class="service-icon-container">
@@ -118,7 +101,7 @@
                         </div>
                         <h4>Pediatrics</h4>
                         <p>Comprehensive health services for infants, children, and adolescents.</p>
-                        <a href="pediatrics-doctors.html" class="card-link">Learn More →</a>
+                        <a href="pediatrics-doctors.php" class="card-link">Learn More →</a>
                     </div>
                     <div class="service-card icon-orthopedics">
                         <div class="service-icon-container">
@@ -126,11 +109,12 @@
                         </div>
                         <h4>Orthopedics</h4>
                         <p>Treatment for bone, joint, and sports-related injuries.</p>
-                        <a href="orthopedics-doctors.html" class="card-link">Learn More →</a>
+                        <a href="orthopedics-doctors.php" class="card-link">Learn More →</a>
                     </div>
                 </div>
             </div>
 
+            <!-- Slide 2 -->
             <div class="service-slide">
                 <div class="service-grid-home">
                     <div class="service-card icon-dermatology">
@@ -139,7 +123,7 @@
                         </div>
                         <h4>Dermatology</h4>
                         <p>Advanced care for all conditions of the skin, hair, and nails.</p>
-                        <a href="dermatology-doctors.html" class="card-link">Learn More →</a>
+                        <a href="dermatology-doctors.php" class="card-link">Learn More →</a>
                     </div>
                     <div class="service-card icon-general">
                         <div class="service-icon-container">
@@ -147,7 +131,7 @@
                         </div>
                         <h4>General Consultations</h4>
                         <p>Primary care for routine check-ups, preventative care, and managing common illnesses.</p>
-                        <a href="general-consultations.html" class="card-link">Learn More →</a>
+                        <a href="general-consultations.php" class="card-link">Learn More →</a>
                     </div>
                     <div class="service-card icon-diagnostic">
                         <div class="service-icon-container">
@@ -155,11 +139,12 @@
                         </div>
                         <h4>Advanced Diagnostics</h4>
                         <p>State-of-the-art imaging (MRI, CT) and comprehensive lab services for accurate diagnosis.</p>
-                        <a href="diagnostics.html" class="card-link">Learn More →</a>
+                        <a href="diagnostics.php" class="card-link">Learn More →</a>
                     </div>
                 </div>
             </div>
 
+            <!-- Slide 3 -->
             <div class="service-slide">
                 <div class="service-grid-home service-grid-single">
                     <div class="service-card icon-emergency">
@@ -169,7 +154,7 @@
                         <h4>Emergency Care</h4>
                         <p>Our 24/7 Emergency Room is equipped to handle all medical emergencies, from minor to
                             critical.</p>
-                        <a href="Emergency Care.html" class="card-link">Learn More →</a>
+                        <a href="Emergency Care.php" class="card-link">Learn More →</a>
                     </div>
                 </div>
             </div>
@@ -185,23 +170,27 @@
         </div>
 
         <div class="view-all-services-container">
-            <a href="services.html" class="button">View All Services</a>
+            <a href="services.php" class="button">View All Services</a>
         </div>
     </main>
+
+    <!-- ================== -->
+    <!-- ABOUT US SECTION   -->
+    <!-- ================== -->
     <div class="About" id="AboutUs">
         <h1>ABOUT US</h1>
         <section class="AboutText">
             <p>Welcome to MediCare Plus, a leading private healthcare provider dedicated to delivering a comprehensive
                 range of medical services. Our mission is to ensure the well-being of our community by offering
                 accessible,
-                efficient, and high-quality care.</P>
+                efficient, and high-quality care.</p>
             <p>We provide a wide array of services to meet your needs, including:</p>
 
             <a class="service-link" onclick="openModal('General Medical Consultations', `
                 <p><strong>Comprehensive care for your everyday health needs.</strong></p>
                 <p>This is your primary care service for non-emergency health concerns. Visit our general doctors for routine check-ups, preventative care, vaccinations, and treatment for common illnesses like colds, flu, and infections.</p>
                 <p>They also help manage chronic conditions like diabetes or asthma and can provide referrals to specialists when needed.</p>
-            `, 'General Medical Consultations.html')">
+                `, 'general-consultations.php')">
                 <li>General Medical Consultations</li>
             </a>
 
@@ -209,7 +198,7 @@
                 <h3><i class='fa-solid fa-stethoscope'></i> Expert Care by Leading Specialists</h3>
                 <p>MediCare Plus offers access to a network of highly qualified specialists across various fields including <strong>Cardiology, Neurology, Orthopedics,</strong> and more.</p>
                 <p>We facilitate timely appointments and ensure integrated care, using the latest techniques to provide effective treatment plans tailored to your needs.</p>
-            `, 'Specialist Treatments.html')">
+                `, 'specialist-treatments.php')">
                 <li>Specialist Treatments</li>
             </a>
 
@@ -223,7 +212,7 @@
                     <li>ECG and Stress Testing</li>
                 </ul>
                 <p>We believe precise diagnostics are the cornerstone of effective healthcare.</p>
-            `, 'Advanced Diagnostic Services.html')">
+                `, 'diagnostics.php')">
                 <li>Advanced Diagnostic Services</li>
             </a>
 
@@ -231,7 +220,7 @@
                 <h3><i class='fa-solid fa-truck-medical'></i> 24/7 Emergency & Trauma Care</h3>
                 <p><strong>Our Emergency Room is open 24 hours a day, 7 days a week.</strong></p>
                 <p>Staffed by highly trained emergency physicians and nurses, we are equipped to handle all medical emergencies, from minor injuries to critical, life-threatening conditions. Your health and safety are our first priority.</p>
-            `, 'Emergency Care.html')">
+                `, 'Emergency Care.php')">
                 <li>Emergency Care</li>
             </a>
 
@@ -244,85 +233,53 @@
         </section>
     </div>
 
+    <!-- ====================================================== -->
+    <!-- === ENHANCED & DECORATED MODAL === -->
+    <!-- ====================================================== -->
     <div id="infoModal" class="modal">
-        <div class="modal-content animate">
-            <div class="modal-header">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h2 id="modalTitle">Modal Title</h2>
-            </div>
-            <div class="modal-body">
-                <div id="modalContent"></div>
+        <div class="modal-content">
 
-                <a id="modalLearnMoreLink" href="#"><button class="LearnMorbtn">Learn More</button></a>
+            <div class="modal-header">
+                <h2 id="modalTitle">Modal Title</h2>
+                <!-- 
+                  NEW: Replaced the 'x' span with a styled button.
+                  The ID is used by the new JS to add a click listener.
+                -->
+                <button type="button" class="modal-close-btn" id="modalCloseBtn" onclick="closeModal()">
+                    <i class="fa-solid fa-times"></i> Close
+                </button>
             </div>
+
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Content is injected here by JavaScript -->
+                </div>
+            </div>
+
             <div class="modal-footer">
+                <!-- 
+                  NEW: Added an <a> tag as a wrapper for the button 
+                  and included a Font Awesome icon.
+                -->
+                <a id="modalLearnMoreLink" href="#">
+                    Learn More
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
                 <button type="button" class="cancelbtn" onclick="closeModal()">Close</button>
             </div>
+
         </div>
     </div>
 
-    <footer class="site-footer">
-        <div class="footer-container">
 
-            <div class="footer-column about-us">
+    <?php
+    include 'footer.php';
+    ?>
 
-                <img src="images/Logo4.png" alt="Medicare Plus Logo" class="footer-logo">
-                <p>Welcome to MediCare Plus, a leading private healthcare provider dedicated to delivering a
-                    comprehensive range of medical services.</p>
-                <p class="footer-address">
-                    Medicare Plus<br>
-                    No. 84 St.Rita's Road,<br>
-                    Mount Lavinia,<br>
-                    Sri Lanka
-                </p>
-            </div>
+    <!-- Link to your new home page specific script -->
+    <script src="home-script.js"></script>
 
-            <div class="footer-column quick-links">
-                <h3 style="margin-left: 100px;">QUICK LINKS</h3>
-                <ul class="footer-links">
-                    <li><a href="second.html">Our Services</a></li>
-                    <li><a href="second.html">Find a Doctor</a></li>
-                    <li><a href="blog.html">Health Blog & Tips</a></li>
-                    <li><a href="location.html">Location</a></li>
-                    <li><a href="medicare_plus.html#AboutUs">About Us</a></li>
-                    <li><a href="fourth.html">Contact</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column make-appointment">
-                <h3>MAKE AN APPOINTMENT</h3>
-                <p>To schedule an appointment, please contact our office directly during business hours or use our
-                    convenient online booking portal.
-                    Our team is ready to assist you in finding a date and time that best fits your schedule.</p>
-                <ul class="footer-contact">
-                    <li><i class="fa-solid fa-clock"></i> 8:00 AM - 11:00 AM</li>
-                    <li><i class="fa-solid fa-clock"></i> 2:00 PM - 05:00 PM</li>
-                    <li><i class="fa-solid fa-clock"></i> 8:00 PM - 11:00 PM</li>
-
-                    <li>
-                        <a href="mailto:support@medicareplus.com">
-                            <i class="fa-solid fa-envelope"></i> support@medicareplus.com
-                        </a>
-                    </li>
-
-                    <li><a href="tel:+94112499590">
-                            <i class="fa-solid fa-phone"></i> +94 11 2 499 590
-                        </a></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <div class="footer-bottom">
-            <div class="footer-socials">
-                <a href="https://x.com/" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
-                <a href="https://facebook.com/" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a href="https://www.linkedin.com/" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-            </div>
-            <p>&copy; 2025 Medicare Plus. All rights reserved.</p>
-        </div>
-    </footer>
 </body>
 
 </html>
