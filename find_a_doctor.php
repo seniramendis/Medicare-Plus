@@ -1,6 +1,7 @@
 <?php
+// find_doctor.php
 $pageTitle = 'Find a Doctor';
-$pageKey = 'find_doctor'; // Not 'home'
+$pageKey = 'find_doctor';
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +12,6 @@ $pageKey = 'find_doctor'; // Not 'home'
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - Medicare Plus' : 'Find a Doctor - Medicare Plus'; ?></title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
-
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
@@ -544,19 +544,17 @@ $pageKey = 'find_doctor'; // Not 'home'
             const nameInput = document.getElementById('doctorName');
             const specialtySelect = document.getElementById('doctorSpecialty');
             const doctorList = document.getElementById('allDoctorsList');
-            // Select all doctor-cards within the list
             const allCards = doctorList ? doctorList.querySelectorAll('.doctor-card') : [];
             const noResultsMessage = document.getElementById('noResultsMessage');
 
             function filterDoctors() {
-                if (!allCards.length) return; // Exit if no cards found
+                if (!allCards.length) return;
 
                 const nameQuery = nameInput.value.toLowerCase();
                 const specialtyQuery = specialtySelect.value;
                 let resultsFound = false;
 
                 allCards.forEach(card => {
-                    // Use optional chaining for robustness in case attributes are missing (though they shouldn't be)
                     const name = (card.getAttribute('data-name') || '').toLowerCase();
                     const specialty = card.getAttribute('data-specialty');
 
@@ -564,7 +562,7 @@ $pageKey = 'find_doctor'; // Not 'home'
                     const specialtyMatch = (specialtyQuery === 'all' || specialty === specialtyQuery);
 
                     if (nameMatch && specialtyMatch) {
-                        card.style.display = 'flex'; // Use 'flex' as per your card styles
+                        card.style.display = 'flex';
                         resultsFound = true;
                     } else {
                         card.style.display = 'none';
