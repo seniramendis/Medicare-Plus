@@ -874,3 +874,159 @@ h4 {
         justify-content: center; /* Center content within flex button */
     }
 }
+
+/* ... existing HOMESTYLES.CSS content ... */
+
+/* ======================================================
+=== NEW: LOCATION SECTION STYLES ===
+====================================================== */
+
+.location-section h1 i {
+    color: var(--primary-green-dark);
+}
+
+.location-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr; /* 1: Map gets more space */
+    gap: 2rem;
+    margin-top: 2rem;
+    align-items: center;
+}
+
+.location-details h3 {
+    color: var(--primary-blue);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.location-details .footer-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.location-details .footer-contact li {
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+.location-details .footer-contact li a {
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.location-details .footer-contact li a:hover {
+    color: var(--primary-green);
+    transform: scale(1.05);
+}
+.location-details .footer-contact i {
+    color: var(--primary-green);
+    margin-right: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Style for the Get Directions Button */
+.location-button {
+    background-color: var(--primary-blue);
+    display: inline-flex; /* Use flex to align icon and text */
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+}
+
+.location-button i {
+    color: var(--text-white); /* Ensure the route icon is white */
+    margin-right: 0; /* Reset margin from generic contact styles */
+}
+
+.location-button:hover {
+    background-color: var(--primary-blue-light);
+}
+
+.map-placeholder {
+    height: 300px;
+    /* Removed background-color: #e0e0e0; */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.map-placeholder iframe { /* Ensure the iframe fills the container */
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+
+/* --- RESPONSIVE ADJUSTMENTS for Location Section --- */
+@media screen and (max-width: 900px) {
+    .location-content-grid {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+    }
+    .location-details {
+        order: 2; /* Put details below map on small screens */
+        text-align: center;
+    }
+    .location-details .footer-contact {
+        text-align: left;
+        display: inline-block;
+    }
+    .map-placeholder {
+        order: 1; /* Map on top */
+        height: 250px;
+    }
+    /* Center the contents of the contact list items when section is centered */
+    .location-details .footer-contact li {
+        justify-content: flex-start;
+    }
+}
+
+/* ======================================================
+=== NEW: CHAT WIDGET STYLES ===
+====================================================== */
+
+.chat-button {
+    /* Fixed Positioning */
+    position: fixed;
+    bottom: 25px; /* Distance from the bottom edge */
+    right: 25px; /* Distance from the right edge */
+    z-index: 1000; /* Ensure it stays above everything else */
+
+    /* Appearance & Styling */
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary-green); /* Use your primary green color */
+    color: var(--text-white);
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+    /* Center the Icon */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    text-decoration: none; /* Remove underline */
+
+    /* Animation/Hover Effect */
+    transition: all 0.3s ease;
+}
+
+.chat-button:hover {
+    background-color: var(--primary-green-dark);
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Optional: Hide on very small mobile screens if desired */
+@media screen and (max-width: 480px) {
+    .chat-button {
+        width: 50px;
+        height: 50px;
+        bottom: 15px;
+        right: 15px;
+        font-size: 20px;
+    }
+}
+

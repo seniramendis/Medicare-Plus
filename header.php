@@ -12,6 +12,7 @@ $active = [
 ];
 
 // This logic sets the active page.
+// NOTE: $pageKey and $parentPageKey must be defined/set before this block runs
 if (isset($pageKey) && array_key_exists($pageKey, $active)) {
     $active[$pageKey] = 'active';
 }
@@ -23,12 +24,12 @@ if (isset($parentPageKey) && $parentPageKey == 'services') {
 
 // Standardize all page links
 $links = [
-    'home' => 'index.php',
+    'home' => 'Home.php',
     'services' => 'services.php',
     'find_doctor' => 'find_a_doctor.php',
     'blog' => 'blog.php',
     'location' => 'location.php',
-    'about' => 'index.php#AboutUs',
+    'about' => 'Home.php#AboutUs',
     'contact' => 'contact.php',
     'login' => 'login.php' // Assuming you have/will create a login.php
 ];
@@ -47,6 +48,8 @@ $links = [
         align-items: center;
         padding: 15px 40px;
         color: white;
+        z-index: 998;
+        /* New: Ensures nav sits on top if necessary */
     }
 
     /* 1st Column: Logo */
@@ -114,19 +117,42 @@ $links = [
 
 
     /* --- NAVIGATION BAR --- */
-    /* **FIX:** Renamed .pagination to .main-nav for semantic clarity */
     .main-nav {
         display: flex;
         align-items: center;
-        margin-bottom: 25px;
+        margin-bottom: 0;
+        /* Changed from 25px, no margin on the nav bar itself */
         background-color: #f8f9fa;
         padding: 10px 40px;
         border-bottom: 1px solid #e0e0e0;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-
+        z-index: 999;
+        /* Existing: Base z-index */
+        transition: all 0.3s ease-in-out;
+        /* New: For smoother transition to sticky */
     }
 
-    /* **FIX:** Renamed .pagination-center to .main-nav-center */
+    /* NEW STYLES FOR STICKY NAVIGATION */
+    .main-nav.sticky {
+        position: fixed;
+        top: 0;
+        /* Stick to the top of the viewport */
+        left: 0;
+        right: 0;
+        width: 100%;
+        z-index: 1000;
+        /* Higher Z-index for the fixed bar */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        /* Stronger shadow when fixed */
+    }
+
+    /* NEW: Placeholder to prevent content jump */
+    #main-nav-placeholder {
+        display: block;
+        height: 0;
+        /* JS will set the height when the nav is fixed */
+    }
+
     .main-nav-center {
         flex-grow: 1;
         display: flex;
@@ -248,37 +274,80 @@ $links = [
             margin-left: 0;
             width: 100%;
         }
+
+        /* Ensure the fixed nav works on mobile */
+        .main-nav.sticky {
+            position: fixed;
+        }
     }
 </style>
 
-<header>
-    <a href="<?php echo $links['home']; ?>"><img class="logo" src="images/Logo4.png" alt="Logo" height="95" width="120"></a>
+<div id="header-container">
+    <header>
+        <a href="<?php echo $links['home']; ?>"><img class="logo" src="images/Logo4.png" alt="Logo" height="95" width="120"></a>
 
-    <div class="brand-container">
-        <h1 class="brandName"> MEDICARE PLUS</h1>
-        <p>YOUR PARTNER FOR A LIFETIME OF HEALTH</p>
-    </div>
+        <div class="brand-container">
+            <h1 class="brandName"> MEDICARE PLUS</h1>
+            <p>YOUR PARTNER FOR A LIFETIME OF HEALTH</p>
+        </div>
 
-    <div class="search-bar">
-        <form>
-            <div class="search-bar-box flex">
-                <i class="fa-solid fa-magnifying-glass fa-1x"></i>
-                <input type="search" class="search-control" placeholder="Search here">
-            </div>
-        </form>
-    </div>
-</header>
+        <div class="search-bar">
+            <form>
+                <div class="search-bar-box flex">
+                    <i class="fa-solid fa-magnifying-glass fa-1x"></i>
+                    <input type="search" class="search-control" placeholder="Search here">
+                </div>
+            </form>
+        </div>
+    </header>
 
-<nav class="main-nav">
-    <div class="main-nav-center">
-        <a href="<?php echo $links['home']; ?>" class="<?php echo $active['home']; ?>"><i class="fa-solid fa-house"></i> HOME</a>
-        <a href="<?php echo $links['services']; ?>" class="<?php echo $active['services']; ?>"><i class="fa-solid fa-heart"></i> SERVICES</a>
-        <a href="<?php echo $links['find_doctor']; ?>" class="<?php echo $active['find_doctor']; ?>"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
-        <a href="<?php echo $links['blog']; ?>" class="<?php echo $active['blog']; ?>"><i class="fa-solid fa-blog"></i> HEALTH BLOG & TIPS</a>
-        <a href="<?php echo $links['location']; ?>" class="<?php echo $active['location']; ?>"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
-        <a href="<?php echo $links['about']; ?>" class="<?php echo $active['about']; ?>"><i class="fa-solid fa-address-card"></i> ABOUT US</a>
-        <a href="<?php echo $links['contact']; ?>" class="<?php echo $active['contact']; ?>"><i class="fa-solid fa-phone"></i> CONTACT</a>
-    </div>
+    <div id="main-nav-placeholder"></div>
 
-    <a href="<?php echo $links['login']; ?>" class="login-button <?php echo $active['login']; ?>"><i class="fa-solid fa-user"></i> LOGIN / SIGNUP</a>
-</nav>
+    <nav class="main-nav" id="main-nav">
+        <div class="main-nav-center">
+            <a href="<?php echo $links['home']; ?>" class="<?php echo $active['home']; ?>"><i class="fa-solid fa-house"></i> HOME</a>
+            <a href="<?php echo $links['services']; ?>" class="<?php echo $active['services']; ?>"><i class="fa-solid fa-heart"></i> SERVICES</a>
+            <a href="<?php echo $links['find_doctor']; ?>" class="<?php echo $active['find_doctor']; ?>"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
+            <a href="<?php echo $links['blog']; ?>" class="<?php echo $active['blog']; ?>"><i class="fa-solid fa-blog"></i> HEALTH BLOG & TIPS</a>
+            <a href="<?php echo $links['location']; ?>" class="<?php echo $active['location']; ?>"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
+            <a href="<?php echo $links['about']; ?>" class="<?php echo $active['about']; ?>"><i class="fa-solid fa-address-card"></i> ABOUT US</a>
+            <a href="<?php echo $links['contact']; ?>" class="<?php echo $active['contact']; ?>"><i class="fa-solid fa-phone"></i> CONTACT</a>
+        </div>
+
+        <a href="<?php echo $links['login']; ?>" class="login-button <?php echo $active['login']; ?>"><i class="fa-solid fa-user"></i> LOGIN / SIGNUP</a>
+    </nav>
+</div>
+<script>
+    function stickyNavOnScroll() {
+        const nav = document.getElementById('main-nav');
+        const placeholder = document.getElementById('main-nav-placeholder');
+        const headerContainer = document.getElementById('header-container');
+
+        // Get the height of the main header (header element)
+        // We want the nav to stick once the *entire* <header> has scrolled off-screen
+        const headerElement = headerContainer.querySelector('header');
+
+        if (!headerElement) return; // Exit if header is not found
+
+        // The point where the 'fixed' class should be applied is equal to the header's height
+        // (its distance from the top)
+        const stickyPoint = headerElement.offsetHeight;
+
+        // Check the current scroll position
+        if (window.scrollY >= stickyPoint) {
+            // Add the 'sticky' class to the nav
+            nav.classList.add('sticky');
+            // Set the placeholder's height to prevent content jump
+            placeholder.style.height = nav.offsetHeight + 'px';
+        } else {
+            // Remove the 'sticky' class
+            nav.classList.remove('sticky');
+            // Reset the placeholder's height
+            placeholder.style.height = '0';
+        }
+    }
+
+    // Attach the function to the window's scroll and load events
+    window.addEventListener('scroll', stickyNavOnScroll);
+    window.addEventListener('load', stickyNavOnScroll);
+</script>

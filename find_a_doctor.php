@@ -262,7 +262,7 @@ $pageKey = 'find_doctor'; // Not 'home'
 
         <div class="doctor-list" id="allDoctorsList">
 
-            <div class="doctor-card" data-name="Dr. Gotabhaya Ranasinghe" data-specialty="Cardiology">
+            <div class="doctor-card" data-name="Dr. Gotabhaya Ranasinghe" data-specialty="Cardiology" data-slug="gotabhaya-ranasinghe">
                 <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe">
                 <div class="doctor-info">
                     <h4>Dr. Gotabhaya Ranasinghe</h4>
@@ -273,11 +273,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.5 (120)</span>
                     </div>
                     <p class="doctor-description">Specializes in interventional cardiology and complex coronary procedures.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=gotabhaya-ranasinghe" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. S.A. Perera" data-specialty="Cardiology">
+            <div class="doctor-card" data-name="Dr. S.A. Perera" data-specialty="Cardiology" data-slug="s-a-perera">
                 <img src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. S.A. Perera">
                 <div class="doctor-info">
                     <h4>Dr. S.A. Perera</h4>
@@ -288,11 +288,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>5.0 (98)</span>
                     </div>
                     <p class="doctor-description">Specializes in heart rhythm disorders and electrophysiology.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=s-a-perera" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Chandra Silva" data-specialty="Cardiology">
+            <div class="doctor-card" data-name="Dr. Chandra Silva" data-specialty="Cardiology" data-slug="chandra-silva">
                 <img src="images/placeholder_doctor.png" alt="Dr. Chandra Silva">
                 <div class="doctor-info">
                     <h4>Dr. Chandra Silva</h4>
@@ -303,11 +303,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.7 (110)</span>
                     </div>
                     <p class="doctor-description">Expert in preventive cardiology and managing heart failure.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=chandra-silva" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Nayana Perera" data-specialty="Dermatology">
+            <div class="doctor-card" data-name="Dr. Nayana Perera" data-specialty="Dermatology" data-slug="nayana-perera">
                 <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera">
                 <div class="doctor-info">
                     <h4>Dr. Nayana Perera</h4>
@@ -318,11 +318,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>5.0 (250)</span>
                     </div>
                     <p class="doctor-description">Specializes in advanced cosmetic procedures, including laser treatments and injectables.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=nayana-perera" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Saman Weerakoon" data-specialty="Dermatology">
+            <div class="doctor-card" data-name="Dr. Saman Weerakoon" data-specialty="Dermatology" data-slug="saman-weerakoon">
                 <img src="images/placeholder_doctor_male.png" alt="Dr. Saman Weerakoon">
                 <div class="doctor-info">
                     <h4>Dr. Saman Weerakoon</h4>
@@ -333,11 +333,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.5 (95)</span>
                     </div>
                     <p class="doctor-description">Focuses on medical dermatology, including psoriasis, eczema, and skin cancer screenings.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=saman-weerakoon" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Priya Kumari" data-specialty="Dermatology">
+            <div class="doctor-card" data-name="Dr. Priya Kumari" data-specialty="Dermatology" data-slug="priya-kumari">
                 <img src="https://images.pexels.com/photos/5407054/pexels-photo-5407054.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Priya Kumari">
                 <div class="doctor-info">
                     <h4>Dr. Priya Kumari</h4>
@@ -348,11 +348,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.8 (188)</span>
                     </div>
                     <p class="doctor-description">Provides treatment for all skin, hair, and nail conditions.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=priya-kumari" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Ashan Abeyewardene" data-specialty="Orthopedics">
+            <div class="doctor-card" data-name="Dr. Ashan Abeyewardene" data-specialty="Orthopedics" data-slug="ashan-abeyewardene">
                 <img src="images/Ashan Abeyewardene.jpeg" alt="Dr. Ashan Abeyewardene">
                 <div class="doctor-info">
                     <h4>Dr. Ashan Abeyewardene</h4>
@@ -363,11 +363,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.5 (105)</span>
                     </div>
                     <p class="doctor-description">A leading surgeon in minimally invasive hip and knee replacement surgery.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=ashan-abeyewardene" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Narendra Pinto" data-specialty="Orthopedics">
+            <div class="doctor-card" data-name="Dr. Narendra Pinto" data-specialty="Orthopedics" data-slug="narendra-pinto">
                 <img src="images/Narendra Pinto.jpg" alt="Dr. Narendra Pinto">
                 <div class="doctor-info">
                     <h4>Dr. Narendra Pinto</h4>
@@ -378,11 +378,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>5.0 (150)</span>
                     </div>
                     <p class="doctor-description">Focuses on sports-related injuries, specializing in arthroscopic repair.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=narendra-pinto" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. V. Swarnakumaar" data-specialty="Orthopedics">
+            <div class="doctor-card" data-name="Dr. V. Swarnakumaar" data-specialty="Orthopedics" data-slug="v-swarnakumaar">
                 <img src="images/Velayutham Swarnakumaar.jpeg" alt="Dr. V. Swarnakumaar">
                 <div class="doctor-info">
                     <h4>Dr. V. Swarnakumaar</h4>
@@ -393,11 +393,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.7 (80)</span>
                     </div>
                     <p class="doctor-description">Dedicated to treating musculoskeletal problems in children.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=v-swarnakumaar" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Prof. Shaman Rajindrajith" data-specialty="Pediatrics">
+            <div class="doctor-card" data-name="Prof. Shaman Rajindrajith" data-specialty="Pediatrics" data-slug="shaman-rajindrajith">
                 <img src="images/dr-shaman.png" alt="Prof. Shaman Rajindrajith">
                 <div class="doctor-info">
                     <h4>Prof. Shaman Rajindrajith</h4>
@@ -408,11 +408,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.5 (180)</span>
                     </div>
                     <p class="doctor-description">A trusted expert in general pediatrics and child development.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=shaman-rajindrajith" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Prof. Pujitha Wickramasinghe" data-specialty="Pediatrics">
+            <div class="doctor-card" data-name="Prof. Pujitha Wickramasinghe" data-specialty="Pediatrics" data-slug="pujitha-wickramasinghe">
                 <img src="images/Prof-Pujitha-Wickramasinghe.jpg" alt="Prof. Pujitha Wickramasinghe">
                 <div class="doctor-info">
                     <h4>Prof. Pujitha Wickramasinghe</h4>
@@ -423,11 +423,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.9 (75)</span>
                     </div>
                     <p class="doctor-description">Specializes in neurological disorders in children.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=pujitha-wickramasinghe" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Duminda Samarasinghe" data-specialty="Pediatrics">
+            <div class="doctor-card" data-name="Dr. Duminda Samarasinghe" data-specialty="Pediatrics" data-slug="duminda-samarasinghe">
                 <img src="images/Dr. Duminda Samarasinghe.jpeg" alt="Dr. Duminda Samarasinghe">
                 <div class="doctor-info">
                     <h4>Dr. Duminda Samarasinghe</h4>
@@ -438,11 +438,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.8 (115)</span>
                     </div>
                     <p class="doctor-description">Leads our Neonatal Intensive Care Unit (NICU) with expertise in newborn care.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=duminda-samarasinghe" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Elena Fernando" data-specialty="General Practitioner">
+            <div class="doctor-card" data-name="Dr. Elena Fernando" data-specialty="General Practitioner" data-slug="elena-fernando">
                 <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando">
                 <div class="doctor-info">
                     <h4>Dr. Elena Fernando</h4>
@@ -453,11 +453,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.6 (220)</span>
                     </div>
                     <p class="doctor-description">Special interest in managing chronic conditions like diabetes and hypertension.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=elena-fernando" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Kevin Perera" data-specialty="General Practitioner">
+            <div class="doctor-card" data-name="Dr. Kevin Perera" data-specialty="General Practitioner" data-slug="kevin-perera">
                 <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera">
                 <div class="doctor-info">
                     <h4>Dr. Kevin Perera</h4>
@@ -468,11 +468,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.4 (150)</span>
                     </div>
                     <p class="doctor-description">Focuses on preventative health and wellness, promoting healthy lifestyles.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=kevin-perera" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Maria Silva" data-specialty="General Practitioner">
+            <div class="doctor-card" data-name="Dr. Maria Silva" data-specialty="General Practitioner" data-slug="maria-silva">
                 <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva">
                 <div class="doctor-info">
                     <h4>Dr. Maria Silva</h4>
@@ -483,11 +483,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.7 (190)</span>
                     </div>
                     <p class="doctor-description">Provides care for the entire family, with a focus on pediatric and women's health.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=maria-silva" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Mohan Raj" data-specialty="Neurology">
+            <div class="doctor-card" data-name="Dr. Mohan Raj" data-specialty="Neurology" data-slug="mohan-raj">
                 <img src="https://images.pexels.com/photos/5794038/pexels-photo-5794038.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Mohan Raj">
                 <div class="doctor-info">
                     <h4>Dr. Mohan Raj</h4>
@@ -498,11 +498,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.6 (112)</span>
                     </div>
                     <p class="doctor-description">Expert in treating stroke, epilepsy, and headache disorders.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=mohan-raj" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Fatima Hassan" data-specialty="Gynaecology">
+            <div class="doctor-card" data-name="Dr. Fatima Hassan" data-specialty="Gynaecology" data-slug="fatima-hassan">
                 <img src="https://images.pexels.com/photos/5327921/pexels-photo-5327921.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Fatima Hassan">
                 <div class="doctor-info">
                     <h4>Dr. Fatima Hassan</h4>
@@ -513,11 +513,11 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.8 (195)</span>
                     </div>
                     <p class="doctor-description">Compassionate care in women's health, from adolescence to menopause.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=fatima-hassan" class="button">View Profile</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Ajith Jayawardena" data-specialty="ENT">
+            <div class="doctor-card" data-name="Dr. Ajith Jayawardena" data-specialty="ENT" data-slug="ajith-jayawardena">
                 <img src="https://images.pexels.com/photos/5407206/pexels-photo-5407206.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Ajith Jayawardena">
                 <div class="doctor-info">
                     <h4>Dr. Ajith Jayawardena</h4>
@@ -528,7 +528,7 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.3 (64)</span>
                     </div>
                     <p class="doctor-description">Manages all types of ear, nose, and throat conditions in adults and children.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="doctor-profile.php?slug=ajith-jayawardena" class="button">View Profile</a>
                 </div>
             </div>
         </div>

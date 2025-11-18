@@ -12,10 +12,37 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - Medicare Plus' : 'Medicare Plus - Your Lifetime Partner in Health'; ?></title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
 
-    <!-- Link to your new home page specific styles -->
     <link rel="stylesheet" href="HomeStyles.css?v=1.1">
 
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* This style block ensures the new FAQ button is correctly placed. 
+           The Chat button now relies only on its class in HomeStyles.css. 
+           We assume HomeStyles.css positions .chat-button at bottom: 50px. */
+        #faq-widget {
+            /* General floating button appearance */
+            position: fixed;
+            right: 20px;
+            z-index: 1001;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            transition: background-color 0.3s;
+
+            /* Positioning above the chat button (assuming chat button is at ~50px bottom) */
+            bottom: 120px;
+            background-color: #57c95a;
+            /* Primary Green */
+        }
+    </style>
 </head>
 
 <body>
@@ -24,9 +51,6 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
     include 'header.php';
     ?>
 
-    <!-- ================== -->
-    <!-- MAIN SLIDESHOW     -->
-    <!-- ================== -->
     <div class="slideshow-container">
 
         <div class="mySlides fade">
@@ -53,8 +77,8 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
             <div class="text">YOUR PARTNER FOR A LIFETIME OF HEALTH</div>
         </div>
 
-        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        <a class="prev" onclick="plusSlides(-1)">❮</a>
+        <a class="next" onclick="plusSlides(1)">❯</a>
     </div>
 
     <div style="text-align:center">
@@ -65,18 +89,12 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
     </div>
     <br><br>
 
-    <!-- ================== -->
-    <!-- QUOTE SECTION      -->
-    <!-- ================== -->
     <div class="quote">
         <h1>"The good physician treats the disease;
             the great physician treats the patient who has the disease." </h1>
         <p>- William Osler</p>
     </div><br>
 
-    <!-- ================== -->
-    <!-- SERVICES SECTION   -->
-    <!-- ================== -->
     <main class="page-container-home" id="Services">
         <h1>OUR SERVICES</h1>
         <p>We provide world-class specialty care across a wide range of medical fields. Our expert teams use the
@@ -84,7 +102,6 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
 
         <div class="service-carousel-container">
 
-            <!-- Slide 1 -->
             <div class="service-slide">
                 <div class="service-grid-home">
                     <div class="service-card icon-cardiology">
@@ -114,7 +131,6 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
                 </div>
             </div>
 
-            <!-- Slide 2 -->
             <div class="service-slide">
                 <div class="service-grid-home">
                     <div class="service-card icon-dermatology">
@@ -144,7 +160,6 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
                 </div>
             </div>
 
-            <!-- Slide 3 -->
             <div class="service-slide">
                 <div class="service-grid-home service-grid-single">
                     <div class="service-card icon-emergency">
@@ -159,8 +174,8 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
                 </div>
             </div>
 
-            <a class="service-prev" onclick="plusServiceSlides(-1)">&#10094;</a>
-            <a class="service-next" onclick="plusServiceSlides(1)">&#10095;</a>
+            <a class="service-prev" onclick="plusServiceSlides(-1)">❮</a>
+            <a class="service-next" onclick="plusServiceSlides(1)">❯</a>
         </div>
 
         <div class="service-dots-container">
@@ -174,7 +189,6 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
         </div>
     </main>
 
-    <!-- Find A Doctor Section -->
     <section class="page-container-home doctor-preview-section">
         <h1><i class="fa-solid fa-user-doctor"></i> Featured Specialists</h1>
         <p>We make it easy to find the right expert. Swipe through our featured specialists below or use our full directory to search all doctors by name and specialty.</p>
@@ -247,8 +261,8 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
                     </div>
                 </div>
             </div>
-            <a class="service-prev" onclick="plusDoctorSlides(-1)">&#10094;</a>
-            <a class="service-next" onclick="plusDoctorSlides(1)">&#10095;</a>
+            <a class="service-prev" onclick="plusDoctorSlides(-1)">❮</a>
+            <a class="service-next" onclick="plusDoctorSlides(1)">❯</a>
         </div>
 
         <div class="service-dots-container doctor-dots-container">
@@ -258,14 +272,47 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
 
 
         <div class="view-all-services-container">
-            <a href="find_a_doctor.php" class="button button-large">Search All Specialists &rarr;</a>
+            <a href="find_a_doctor.php" class="button button-large">Search All Specialists →</a>
         </div>
 
     </section>
 
-    <!-- ================== -->
-    <!-- ABOUT US SECTION   -->
-    <!-- ================== -->
+    <section class="page-container-home location-section">
+        <h1><i class="fa-solid fa-location-dot"></i> Our Location & Contact Info</h1>
+        <p>We are conveniently located with ample parking and accessibility. Visit us or get in touch below.</p>
+
+        <div class="location-content-grid">
+            <div class="location-details">
+                <h3>Medicare Plus Hospital</h3>
+                <ul class="footer-contact">
+                    <li><i class="fa-solid fa-map-marker-alt"></i>No. 84 St.Rita's Road, Mount Lavinia,
+                        Sri Lanka</li>
+                    <li><i class="fa-solid fa-phone"></i><a href="tel:+94112499590">+94 11 2 499 590</a></li>
+                    <li><i class="fa-solid fa-envelope"></i><a href="mailto:info@medicareplus.lk"> info@medicareplus.lk</a></li>
+                    <li><i class="fa-solid fa-clock"></i> Open 24/7 for Emergency Services</li>
+                </ul>
+
+                <a href="https://www.google.com/maps/dir/?api=1&destination=Medicare+Plus,+No.+84+St.Rita's+Road,+Mount+Lavinia"
+                    target="_blank"
+                    class="button button-large location-button">
+                    <i class="fa-solid fa-route"></i> Get Directions
+                </a>
+            </div>
+
+            <div class="map-placeholder">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.4283597441464!2d79.8789504!3d6.828623599999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2458e0a75df89%3A0x67a3f87b328a6f67!2sSt%20Rita's%20Rd%2C%20Mount%20Lavinia!5e0!3m2!1sen!2slk!4v1700200000000!5m2!1sen!2slk"
+                    width="100%"
+                    height="100%"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
     <div class="About" id="AboutUs">
         <h1>ABOUT US</h1>
         <section class="AboutText">
@@ -287,7 +334,7 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
                 <h3><i class='fa-solid fa-stethoscope'></i> Expert Care by Leading Specialists</h3>
                 <p>MediCare Plus offers access to a network of highly qualified specialists across various fields including <strong>Cardiology, Neurology, Orthopedics,</strong> and more.</p>
                 <p>We facilitate timely appointments and ensure integrated care, using the latest techniques to provide effective treatment plans tailored to your needs.</p>
-                `, 'specialist-treatments.php')">
+                `, 'Specialist Treatments.php')">
                 <li>Specialist Treatments</li>
             </a>
 
@@ -322,18 +369,11 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
         </section>
     </div>
 
-    <!-- ====================================================== -->
-    <!-- === ENHANCED & DECORATED MODAL === -->
-    <!-- ====================================================== -->
     <div id="infoModal" class="modal">
         <div class="modal-content">
 
             <div class="modal-header">
                 <h2 id="modalTitle">Modal Title</h2>
-                <!-- 
-                  NEW: Replaced the 'x' span with a styled button.
-                  The ID is used by the new JS to add a click listener.
-                -->
                 <button type="button" class="modal-close-btn" id="modalCloseBtn" onclick="closeModal()">
                     <i class="fa-solid fa-times"></i> Close
                 </button>
@@ -341,15 +381,10 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
 
             <div class="modal-body">
                 <div id="modalContent">
-                    <!-- Content is injected here by JavaScript -->
                 </div>
             </div>
 
             <div class="modal-footer">
-                <!-- 
-                  NEW: Added an <a> tag as a wrapper for the button 
-                  and included a Font Awesome icon.
-                -->
                 <a id="modalLearnMoreLink" href="#">
                     Learn More
                     <i class="fa-solid fa-arrow-right"></i>
@@ -361,13 +396,20 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
         </div>
     </div>
 
+    <a href="faq.php" id="faq-widget" class="chat-button" title="Frequently Asked Questions">
+        <i class="fa-solid fa-circle-question"></i>
+    </a>
+
+    <a href="chat_with_us.php" id="chat-widget" class="chat-button" title="Chat with us" target="_blank" rel="noopener noreferrer">
+        <i class="fa-solid fa-comment-dots"></i>
+    </a>
+
 
     <?php
     include 'footer.php';
     ?>
 
-    <!-- Link to your new home page specific script -->
-    <script src="home-script.js"></script>
+    <script src="first.js"></script>
 
 </body>
 
