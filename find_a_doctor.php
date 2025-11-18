@@ -272,7 +272,7 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
                         <span>4.5 (120)</span>
                     </div>
-                    <p class="doctor-description">With over 20 years of experience, Dr. Ranasinghe is a leading expert...</p>
+                    <p class="doctor-description">Specializes in interventional cardiology and complex coronary procedures.</p>
                     <a href="#" class="button">Book Appointment</a>
                 </div>
             </div>
@@ -287,52 +287,202 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                         <span>5.0 (98)</span>
                     </div>
-                    <p class="doctor-description">Specializes in interventional cardiology and heart rhythm disorders.</p>
+                    <p class="doctor-description">Specializes in heart rhythm disorders and electrophysiology.</p>
                     <a href="#" class="button">Book Appointment</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Anusha Silva" data-specialty="Pediatrics">
-                <img src="https://images.pexels.com/photos/5214995/pexels-photo-5214995.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Anusha Silva">
+            <div class="doctor-card" data-name="Dr. Chandra Silva" data-specialty="Cardiology">
+                <img src="images/placeholder_doctor.png" alt="Dr. Chandra Silva">
                 <div class="doctor-info">
-                    <h4>Dr. Anusha Silva</h4>
+                    <h4>Dr. Chandra Silva</h4>
+                    <p class="doctor-title">Consultant Cardiologist</p>
+                    <p class="doctor-specialty">Cardiology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.7 (110)</span>
+                    </div>
+                    <p class="doctor-description">Expert in preventive cardiology and managing heart failure.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Nayana Perera" data-specialty="Dermatology">
+                <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera">
+                <div class="doctor-info">
+                    <h4>Dr. Nayana Perera</h4>
+                    <p class="doctor-title">Head of Cosmetic Dermatology</p>
+                    <p class="doctor-specialty">Dermatology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>5.0 (250)</span>
+                    </div>
+                    <p class="doctor-description">Specializes in advanced cosmetic procedures, including laser treatments and injectables.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Saman Weerakoon" data-specialty="Dermatology">
+                <img src="images/placeholder_doctor_male.png" alt="Dr. Saman Weerakoon">
+                <div class="doctor-info">
+                    <h4>Dr. Saman Weerakoon</h4>
+                    <p class="doctor-title">Consultant Dermatologist</p>
+                    <p class="doctor-specialty">Dermatology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (95)</span>
+                    </div>
+                    <p class="doctor-description">Focuses on medical dermatology, including psoriasis, eczema, and skin cancer screenings.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Priya Kumari" data-specialty="Dermatology">
+                <img src="https://images.pexels.com/photos/5407054/pexels-photo-5407054.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Priya Kumari">
+                <div class="doctor-info">
+                    <h4>Dr. Priya Kumari</h4>
+                    <p class="doctor-title">Dermatologist</p>
+                    <p class="doctor-specialty">Dermatology</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.8 (188)</span>
+                    </div>
+                    <p class="doctor-description">Provides treatment for all skin, hair, and nail conditions.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Ashan Abeyewardene" data-specialty="Orthopedics">
+                <img src="images/Ashan Abeyewardene.jpeg" alt="Dr. Ashan Abeyewardene">
+                <div class="doctor-info">
+                    <h4>Dr. Ashan Abeyewardene</h4>
+                    <p class="doctor-title">Head of Joint Replacement</p>
+                    <p class="doctor-specialty">Orthopedics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.5 (105)</span>
+                    </div>
+                    <p class="doctor-description">A leading surgeon in minimally invasive hip and knee replacement surgery.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Narendra Pinto" data-specialty="Orthopedics">
+                <img src="images/Narendra Pinto.jpg" alt="Dr. Narendra Pinto">
+                <div class="doctor-info">
+                    <h4>Dr. Narendra Pinto</h4>
+                    <p class="doctor-title">Sports Medicine Specialist</p>
+                    <p class="doctor-specialty">Orthopedics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        <span>5.0 (150)</span>
+                    </div>
+                    <p class="doctor-description">Focuses on sports-related injuries, specializing in arthroscopic repair.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. V. Swarnakumaar" data-specialty="Orthopedics">
+                <img src="images/Velayutham Swarnakumaar.jpeg" alt="Dr. V. Swarnakumaar">
+                <div class="doctor-info">
+                    <h4>Dr. V. Swarnakumaar</h4>
+                    <p class="doctor-title">Pediatric Orthopedic Surgeon</p>
+                    <p class="doctor-specialty">Orthopedics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.7 (80)</span>
+                    </div>
+                    <p class="doctor-description">Dedicated to treating musculoskeletal problems in children.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Prof. Shaman Rajindrajith" data-specialty="Pediatrics">
+                <img src="images/dr-shaman.png" alt="Prof. Shaman Rajindrajith">
+                <div class="doctor-info">
+                    <h4>Prof. Shaman Rajindrajith</h4>
                     <p class="doctor-title">Consultant Pediatrician</p>
                     <p class="doctor-specialty">Pediatrics</p>
                     <div class="doctor-rating">
                         <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.7 (150)</span>
+                        <span>4.5 (180)</span>
                     </div>
-                    <p class="doctor-description">A friendly and dedicated pediatrician focused on child wellness.</p>
+                    <p class="doctor-description">A trusted expert in general pediatrics and child development.</p>
                     <a href="#" class="button">Book Appointment</a>
                 </div>
             </div>
 
-            <div class="doctor-card" data-name="Dr. Nimal Fernando" data-specialty="Orthopedics">
-                <img src="https://images.pexels.com/photos/5452293/pexels-photo-5452293.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Nimal Fernando">
+            <div class="doctor-card" data-name="Prof. Pujitha Wickramasinghe" data-specialty="Pediatrics">
+                <img src="images/Prof-Pujitha-Wickramasinghe.jpg" alt="Prof. Pujitha Wickramasinghe">
                 <div class="doctor-info">
-                    <h4>Dr. Nimal Fernando</h4>
-                    <p class="doctor-title">Consultant Orthopedic Surgeon</p>
-                    <p class="doctor-specialty">Orthopedics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
-                        <span>4.1 (85)</span>
-                    </div>
-                    <p class="doctor-description">Expert in joint replacement surgeries and sports injuries.</p>
-                    <a href="#" class="button">Book Appointment</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Shalini Dias" data-specialty="Dermatology">
-                <img src="https://images.pexels.com/photos/5214949/pexels-photo-5214949.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Shalini Dias">
-                <div class="doctor-info">
-                    <h4>Dr. Shalini Dias</h4>
-                    <p class="doctor-title">Consultant Dermatologist</p>
-                    <p class="doctor-specialty">Dermatology</p>
+                    <h4>Prof. Pujitha Wickramasinghe</h4>
+                    <p class="doctor-title">Pediatric Neurologist</p>
+                    <p class="doctor-specialty">Pediatrics</p>
                     <div class="doctor-rating">
                         <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <span>4.9 (210)</span>
+                        <span>4.9 (75)</span>
                     </div>
-                    <p class="doctor-description">Specializing in cosmetic dermatology and skin cancer screening.</p>
+                    <p class="doctor-description">Specializes in neurological disorders in children.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Duminda Samarasinghe" data-specialty="Pediatrics">
+                <img src="images/Dr. Duminda Samarasinghe.jpeg" alt="Dr. Duminda Samarasinghe">
+                <div class="doctor-info">
+                    <h4>Dr. Duminda Samarasinghe</h4>
+                    <p class="doctor-title">Head of Neonatology</p>
+                    <p class="doctor-specialty">Pediatrics</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.8 (115)</span>
+                    </div>
+                    <p class="doctor-description">Leads our Neonatal Intensive Care Unit (NICU) with expertise in newborn care.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Elena Fernando" data-specialty="General Practitioner">
+                <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando">
+                <div class="doctor-info">
+                    <h4>Dr. Elena Fernando</h4>
+                    <p class="doctor-title">Senior General Practitioner</p>
+                    <p class="doctor-specialty">General Practitioner</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.6 (220)</span>
+                    </div>
+                    <p class="doctor-description">Special interest in managing chronic conditions like diabetes and hypertension.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Kevin Perera" data-specialty="General Practitioner">
+                <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera">
+                <div class="doctor-info">
+                    <h4>Dr. Kevin Perera</h4>
+                    <p class="doctor-title">General Practitioner</p>
+                    <p class="doctor-specialty">General Practitioner</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+                        <span>4.4 (150)</span>
+                    </div>
+                    <p class="doctor-description">Focuses on preventative health and wellness, promoting healthy lifestyles.</p>
+                    <a href="#" class="button">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="doctor-card" data-name="Dr. Maria Silva" data-specialty="General Practitioner">
+                <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva">
+                <div class="doctor-info">
+                    <h4>Dr. Maria Silva</h4>
+                    <p class="doctor-title">General Practitioner & Family Medicine</p>
+                    <p class="doctor-specialty">General Practitioner</p>
+                    <div class="doctor-rating">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        <span>4.7 (190)</span>
+                    </div>
+                    <p class="doctor-description">Provides care for the entire family, with a focus on pediatric and women's health.</p>
                     <a href="#" class="button">Book Appointment</a>
                 </div>
             </div>
@@ -348,21 +498,6 @@ $pageKey = 'find_doctor'; // Not 'home'
                         <span>4.6 (112)</span>
                     </div>
                     <p class="doctor-description">Expert in treating stroke, epilepsy, and headache disorders.</p>
-                    <a href="#" class="button">Book Appointment</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. R. M. Bandara" data-specialty="Orthopedics">
-                <img src="https://images.pexels.com/photos/5452201/pexels-photo-5452201.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. R. M. Bandara">
-                <div class="doctor-info">
-                    <h4>Dr. R. M. Bandara</h4>
-                    <p class="doctor-title">Orthopedic Surgeon</p>
-                    <p class="doctor-specialty">Orthopedics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
-                        <span>4.2 (76)</span>
-                    </div>
-                    <p class="doctor-description">Focuses on pediatric orthopedics and spinal disorders.</p>
                     <a href="#" class="button">Book Appointment</a>
                 </div>
             </div>
@@ -396,52 +531,6 @@ $pageKey = 'find_doctor'; // Not 'home'
                     <a href="#" class="button">Book Appointment</a>
                 </div>
             </div>
-
-            <div class="doctor-card" data-name="Dr. Kanishka Weerasinghe" data-specialty="Pediatrics">
-                <img src="https://images.pexels.com/photos/6234601/pexels-photo-6234601.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Kanishka Weerasinghe">
-                <div class="doctor-info">
-                    <h4>Dr. Kanishka Weerasinghe</h4>
-                    <p class="doctor-title">Senior Pediatrician</p>
-                    <p class="doctor-specialty">Pediatrics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.7 (133)</span>
-                    </div>
-                    <p class="doctor-description">Expert in newborn care and childhood developmental disorders.</p>
-                    <a href="#" class="button">Book Appointment</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Priya Kumari" data-specialty="Dermatology">
-                <img src="https://images.pexels.com/photos/5407054/pexels-photo-5407054.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Priya Kumari">
-                <div class="doctor-info">
-                    <h4>Dr. Priya Kumari</h4>
-                    <p class="doctor-title">Dermatologist</p>
-                    <p class="doctor-specialty">Dermatology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.8 (188)</span>
-                    </div>
-                    <p class="doctor-description">Provides treatment for all skin, hair, and nail conditions.</p>
-                    <a href="#" class="button">Book Appointment</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Ravi Pathirana" data-specialty="General Practitioner">
-                <img src="https://images.pexels.com/photos/5215017/pexels-photo-5215017.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Ravi Pathirana">
-                <div class="doctor-info">
-                    <h4>Dr. Ravi Pathirana</h4>
-                    <p class="doctor-title">Family Physician</p>
-                    <p class="doctor-specialty">General Practitioner</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
-                        <span>4.4 (92)</span>
-                    </div>
-                    <p class="doctor-description">Your first point of contact for all non-emergency health concerns.</p>
-                    <a href="#" class="button">Book Appointment</a>
-                </div>
-            </div>
-
         </div>
 
         <div id="noResultsMessage" style="display: none; text-align: center;">
@@ -455,6 +544,7 @@ $pageKey = 'find_doctor'; // Not 'home'
             const nameInput = document.getElementById('doctorName');
             const specialtySelect = document.getElementById('doctorSpecialty');
             const doctorList = document.getElementById('allDoctorsList');
+            // Select all doctor-cards within the list
             const allCards = doctorList ? doctorList.querySelectorAll('.doctor-card') : [];
             const noResultsMessage = document.getElementById('noResultsMessage');
 
@@ -466,7 +556,8 @@ $pageKey = 'find_doctor'; // Not 'home'
                 let resultsFound = false;
 
                 allCards.forEach(card => {
-                    const name = card.getAttribute('data-name').toLowerCase();
+                    // Use optional chaining for robustness in case attributes are missing (though they shouldn't be)
+                    const name = (card.getAttribute('data-name') || '').toLowerCase();
                     const specialty = card.getAttribute('data-specialty');
 
                     const nameMatch = name.includes(nameQuery);
@@ -485,8 +576,12 @@ $pageKey = 'find_doctor'; // Not 'home'
                 }
             }
 
+            // Bind filterDoctors to both input and select changes
             if (nameInput) nameInput.addEventListener('keyup', filterDoctors);
             if (specialtySelect) specialtySelect.addEventListener('change', filterDoctors);
+
+            // Run on load to ensure all doctors are visible initially
+            filterDoctors();
         });
     </script>
 

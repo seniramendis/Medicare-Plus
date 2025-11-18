@@ -9,6 +9,8 @@
 * 5. FIXES: Blank modal popup on page load.
 * 6. IMPROVES: Modal decoration and close button.
 * 7. FIXES: Conflicting active dot class for service-carousel.
+* 8. ADDED: Styles for the 'Find a Doctor' preview section.
+* 9. ADDED: Inner grid structure for doctor carousel.
 */
 
 :root {
@@ -247,7 +249,7 @@ h4 {
     border-radius: 8px;
 }
 
-/* === Homepage Service Section Container === */
+/* === Homepage Section Container (Shared) === */
 .page-container-home {
     width: 90%;
     max-width: 900px;
@@ -278,7 +280,9 @@ h4 {
     margin-top: 2rem;
 }
 
-.view-all-services-container a.button {
+/* Reusable Button Style (used for View All Services) */
+.view-all-services-container a.button,
+.button-large { /* Re-used from Find a Doctor preview */
     display: inline-block;
     background-color: var(--primary-green);
     color: var(--text-white);
@@ -291,13 +295,14 @@ h4 {
     transition: all 0.3s ease;
 }
 
-.view-all-services-container a.button:hover {
+.view-all-services-container a.button:hover,
+.button-large:hover {
     background-color: var(--primary-green-dark);
     transform: translateY(-3px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* === Service Card Grid === */
+/* === Service Card Grid (for services carousel) === */
 .service-grid-home {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -671,16 +676,126 @@ h4 {
     background-color: #888;
 }
 
+/* ======================================================
+=== NEW: FIND A DOCTOR PREVIEW STYLES ===
+====================================================== */
+
+/* Doctor Preview Section Overrides */
+.doctor-preview-section h1 {
+    font-size: 2.2rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid var(--primary-green);
+}
+.doctor-preview-section h1 i {
+    margin-right: 10px;
+    color: var(--primary-blue-light);
+}
+
+/* NEW: Inner container for the 3-card grid within the slide */
+.doctor-slide-inner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px; 
+    width: 100%;
+}
+
+/* Doctor Card Base */
+/* Reuses .service-card styles for box-shadow, radius, background */
+.doctor-card {
+    /* Base style for doctor card */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 25px;
+    background-color: #fdfdfd;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.doctor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.doctor-card img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-blue-light);
+}
+
+/* Doctor Info and Text */
+.doctor-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+}
+
+.doctor-card h4 {
+    font-size: 1.6em;
+    color: var(--primary-blue);
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.doctor-title {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--text-light);
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.doctor-specialty {
+    font-size: 1em;
+    font-weight: 500;
+    color: var(--text-light);
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+/* Small button for home page cards (View Profile) */
+.doctor-info a.button {
+    margin-top: auto;
+    font-size: 0.9em;
+    padding: 8px 18px;
+    background-color: var(--primary-blue);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 30px;
+    color: var(--text-white);
+}
+.doctor-info a.button:hover {
+    background-color: var(--primary-blue-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(30, 58, 138, 0.2);
+}
+
 
 /* ======================================================
 === RESPONSIVE DESIGN ===
 ======================================================
 */
 
-/* --- Tablet Breakpoint --- */
+/* --- Tablet Breakpoint (900px) --- */
 @media screen and (max-width: 900px) {
     .service-grid-home {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* NEW: Adjust inner grid for doctor carousel on tablet */
+    .doctor-slide-inner-grid {
+        grid-template-columns: repeat(2, 1fr); 
     }
 
     .About {
@@ -695,7 +810,7 @@ h4 {
 }
 
 
-/* --- Mobile Breakpoint --- */
+/* --- Mobile Breakpoint (600px) --- */
 @media screen and (max-width: 600px) {
     .slideshow-container,
     .slideshow-container .mySlides img {
@@ -735,6 +850,12 @@ h4 {
 
     .service-grid-home {
         grid-template-columns: 1fr;
+    }
+    
+    /* NEW: Adjust inner grid for doctor carousel on mobile */
+    .doctor-slide-inner-grid {
+        grid-template-columns: 1fr; /* Stack doctor cards on mobile */
+        gap: 20px;
     }
 
     .service-grid-home.service-grid-single {

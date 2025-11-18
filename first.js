@@ -5,7 +5,8 @@
 * This script handles all interactivity for the home page.
 * 1. Main Slideshow
 * 2. Service Carousel
-* 3. "About Us" Modal (Fixed: Will NOT show on page load)
+* 3. Doctor Carousel (NEW)
+* 4. "About Us" Modal (Fixed: Will NOT show on page load)
 */
 
 // --- GLOBAL VARIABLES ---
@@ -16,6 +17,9 @@ let autoSlideTimer; // This variable will hold our automatic timer
 
 // For Service Carousel
 let serviceSlideIndex = 1;
+
+// For Doctor Carousel (NEW)
+let doctorSlideIndex = 1;
 
 // For Modal
 var modal;
@@ -38,7 +42,13 @@ document.addEventListener('DOMContentLoaded', function() {
         showServiceSlides(serviceSlideIndex);
     }
 
-    // --- 3. Initialize Modal Elements ---
+    // --- 3. Initialize Doctor Carousel (NEW) ---
+    if (document.getElementsByClassName("doctor-slide").length > 0) {
+        showDoctorSlides(doctorSlideIndex);
+    }
+
+
+    // --- 4. Initialize Modal Elements ---
     modal = document.getElementById("infoModal");
 
     if (modal) { // Only proceed if modal element is found
@@ -129,7 +139,7 @@ function showSlides(n) {
 
 /*
 ======================================================
-=== 2. SERVICE CAROUSEL FUNCTIONS ===
+=== 2. SERVICE CAROUSEL FUNCTIONS (Shared Class Names) ===
 ======================================================
 */
 
@@ -164,16 +174,59 @@ function showServiceSlides(n) {
     for (i = 0; i < dots.length; i++) {
         dots[i].className = dots[i].className.replace(" service-active", "");
     
-}
+    }
 
     slides[serviceSlideIndex - 1].style.display = "block";
     dots[serviceSlideIndex - 1].className += " service-active";
 }
 
+/*
+======================================================
+=== 3. DOCTOR CAROUSEL FUNCTIONS (NEW - Dedicated Functions) ===
+======================================================
+*/
+function plusDoctorSlides(n) {
+    showDoctorSlides(doctorSlideIndex += n);
+}
+
+function currentDoctorSlide(n) {
+    showDoctorSlides(doctorSlideIndex = n);
+}
+
+function showDoctorSlides(n) {
+    let i;
+    let slides = document.getElementsByClassName("doctor-slide");
+    let dots = document.getElementsByClassName("doctor-dot");
+
+    if (!slides || !dots || slides.length === 0 || dots.length === 0) {
+        return;
+    }
+
+    if (n > slides.length) {
+        doctorSlideIndex = 1;
+    }
+    if (n < 1) {
+        doctorSlideIndex = slides.length;
+    }
+
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+
+    for (i = 0; i < dots.length; i++) {
+        // NOTE: Reusing the 'service-active' class for consistency
+        dots[i].className = dots[i].className.replace(" service-active", "");
+    
+    }
+
+    slides[doctorSlideIndex - 1].style.display = "block";
+    dots[doctorSlideIndex - 1].className += " service-active";
+}
+
 
 /*
 ======================================================
-=== 3. MODAL FUNCTIONS (FIXED) ===
+=== 4. MODAL FUNCTIONS (FIXED) ===
 ======================================================
 */
 

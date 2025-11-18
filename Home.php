@@ -174,6 +174,95 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
         </div>
     </main>
 
+    <!-- Find A Doctor Section -->
+    <section class="page-container-home doctor-preview-section">
+        <h1><i class="fa-solid fa-user-doctor"></i> Featured Specialists</h1>
+        <p>We make it easy to find the right expert. Swipe through our featured specialists below or use our full directory to search all doctors by name and specialty.</p>
+
+        <div class="service-carousel-container doctor-carousel-container">
+
+            <div class="service-slide doctor-slide" data-slide-index="1">
+                <div class="doctor-slide-inner-grid">
+                    <div class="doctor-card" data-name="Dr. Gotabhaya Ranasinghe" data-specialty="Cardiology">
+                        <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe">
+                        <div class="doctor-info">
+                            <h4>Dr. Gotabhaya Ranasinghe</h4>
+                            <p class="doctor-title">Senior Consultant Cardiologist</p>
+                            <p class="doctor-specialty">Cardiology</p>
+                            <a href="find_a_doctor.php#Dr. Gotabhaya Ranasinghe" class="button button-small">View Profile</a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card" data-name="Prof. Shaman Rajindrajith" data-specialty="Pediatrics">
+                        <img src="images/dr-shaman.png" alt="Prof. Shaman Rajindrajith">
+                        <div class="doctor-info">
+                            <h4>Prof. Shaman Rajindrajith</h4>
+                            <p class="doctor-title">Consultant Pediatrician</p>
+                            <p class="doctor-specialty">Pediatrics</p>
+                            <a href="find_a_doctor.php#Prof. Shaman Rajindrajith" class="button button-small">View Profile</a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card" data-name="Dr. Nayana Perera" data-specialty="Dermatology">
+                        <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera">
+                        <div class="doctor-info">
+                            <h4>Dr. Nayana Perera</h4>
+                            <p class="doctor-title">Head of Cosmetic Dermatology</p>
+                            <p class="doctor-specialty">Dermatology</p>
+                            <a href="find_a_doctor.php#Dr. Nayana Perera" class="button button-small">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="service-slide doctor-slide" data-slide-index="2">
+                <div class="doctor-slide-inner-grid">
+                    <div class="doctor-card" data-name="Dr. Ashan Abeyewardene" data-specialty="Orthopedics">
+                        <img src="images/Ashan Abeyewardene.jpeg" alt="Dr. Ashan Abeyewardene">
+                        <div class="doctor-info">
+                            <h4>Dr. Ashan Abeyewardene</h4>
+                            <p class="doctor-title">Head of Joint Replacement</p>
+                            <p class="doctor-specialty">Orthopedics</p>
+                            <a href="find_a_doctor.php#Dr. Ashan Abeyewardene" class="button button-small">View Profile</a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card" data-name="Dr. Elena Fernando" data-specialty="General Practitioner">
+                        <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando">
+                        <div class="doctor-info">
+                            <h4>Dr. Elena Fernando</h4>
+                            <p class="doctor-title">Senior General Practitioner</p>
+                            <p class="doctor-specialty">General Practitioner</p>
+                            <a href="find_a_doctor.php#Dr. Elena Fernando" class="button button-small">View Profile</a>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card" data-name="Dr. Chandra Silva" data-specialty="Cardiology">
+                        <img src="images/placeholder_doctor.png" alt="Dr. Chandra Silva">
+                        <div class="doctor-info">
+                            <h4>Dr. Chandra Silva</h4>
+                            <p class="doctor-title">Consultant Cardiologist</p>
+                            <p class="doctor-specialty">Cardiology</p>
+                            <a href="find_a_doctor.php#Dr. Chandra Silva" class="button button-small">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="service-prev" onclick="plusDoctorSlides(-1)">&#10094;</a>
+            <a class="service-next" onclick="plusDoctorSlides(1)">&#10095;</a>
+        </div>
+
+        <div class="service-dots-container doctor-dots-container">
+            <span class="service-dot doctor-dot" onclick="currentDoctorSlide(1)"></span>
+            <span class="service-dot doctor-dot" onclick="currentDoctorSlide(2)"></span>
+        </div>
+
+
+        <div class="view-all-services-container">
+            <a href="find_a_doctor.php" class="button button-large">Search All Specialists &rarr;</a>
+        </div>
+
+    </section>
+
     <!-- ================== -->
     <!-- ABOUT US SECTION   -->
     <!-- ================== -->

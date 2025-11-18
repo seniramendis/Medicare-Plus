@@ -247,10 +247,6 @@ $pageKey = 'blog'; // Not 'home'
                         <span>Nutrition</span> | Nov 11, 2025
                     </div>
                     <h4>The Top 5 Superfoods for Heart Health</h4>
-
-
-                    [Image of superfoods for heart health like salmon, berries, and nuts]
-
                     <p>Discover five simple, nutrient-dense foods you can add to your diet...</p>
                     <a href="#" class="button">Read More</a>
                 </div>
@@ -276,10 +272,6 @@ $pageKey = 'blog'; // Not 'home'
                         <span>Mental Health</span> | Nov 9, 2025
                     </div>
                     <h4>The Science of Sleep: Why It's So Important</h4>
-
-
-                    [Image of the stages of the human sleep cycle]
-
                     <p>Learn why quality sleep is crucial for your physical and mental well-being.</p>
                     <a href="#" class="button">Read More</a>
                 </div>
@@ -304,10 +296,6 @@ $pageKey = 'blog'; // Not 'home'
                         <span>Pediatrics</span> | Nov 7, 2025
                     </div>
                     <h4>Understanding Childhood Vaccinations</h4>
-
-
-                    [Image of a vaccination schedule chart]
-
                     <p>Our pediatric expert answers common questions from parents.</p>
                     <a href="#" class="button">Read More</a>
                 </div>
@@ -320,7 +308,7 @@ $pageKey = 'blog'; // Not 'home'
                         <span>Fitness</span> | Nov 6, 2025
                     </div>
                     <h4>5 Benefits of Regular Cardiovascular Exercise</h4>
-                    [Image illustrating the benefits of cardio on the heart, lungs, and brain]
+
                     <p>It's not just about weight loss. See how cardio boosts your overall health.</p>
                     <a href="#" class="button">Read More</a>
                 </div>
@@ -342,10 +330,6 @@ $pageKey = 'blog'; // Not 'home'
                 </div>
                 <div class="video-content">
                     <h4>Understanding Blood Pressure</h4>
-
-
-                    [Image of a blood pressure chart showing normal, elevated, and hypertension ranges]
-
                     <p>Dr. Perera explains what your blood pressure numbers mean.</p>
                 </div>
             </div>
