@@ -4,26 +4,23 @@
 // Include the database connection file
 include 'db_connect.php';
 
-// Start the session for user tracking
+// Start the session
 session_start();
 
 // --- AUTHENTICATION CHECK ---
-// Checks if the user is logged in using session variables set by login.php
 $is_logged_in = isset($_SESSION['user_id']);
 $current_user_id = $is_logged_in ? $_SESSION['user_id'] : 0;
-$current_user_name = $is_logged_in ? $_SESSION['user_name'] : 'Guest';
+$current_user_name = $is_logged_in ? (isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Authenticated User') : 'Guest';
 // ----------------------------
-
 
 // 1. Get Doctor Slug from URL
 $doctor_slug = $_GET['slug'] ?? null;
 if (!$doctor_slug) {
-    // Redirect if no slug is provided
     header('Location: find_doctor.php');
     exit;
 }
 
-// 2. Fetch Doctor Details (using the fixed database schema)
+// 2. Fetch Doctor Details 
 $stmt = $conn->prepare("SELECT id, name, title, specialty, image_url, bio, qualifications, schedule FROM doctors WHERE slug = ?");
 $stmt->bind_param("s", $doctor_slug);
 $stmt->execute();
@@ -32,7 +29,6 @@ $doctor = $doctor_result->fetch_assoc();
 $stmt->close();
 
 if (!$doctor) {
-    // Show a 404 error if the doctor is not found
     header("HTTP/1.0 404 Not Found");
     echo "<h1>404 Doctor Profile Not Found</h1><p>The doctor profile you requested could not be found.</p>";
     exit;
@@ -41,7 +37,6 @@ if (!$doctor) {
 $doctor_id = $doctor['id'];
 
 // 3. Fetch Reviews and Calculate Average Rating
-// This query now relies on the corrected 'reviews' table structure
 $reviews_query = $conn->prepare("SELECT user_name, rating, review_text, review_date FROM reviews WHERE doctor_id = ? ORDER BY review_date DESC");
 $reviews_query->bind_param("i", $doctor_id);
 $reviews_query->execute();
@@ -57,7 +52,6 @@ $has_half_star = ($average_rating - $full_stars) >= 0.5;
 
 // Set Page Title
 $pageTitle = $doctor['name'] . ' - Profile';
-$pageKey = 'doctor_profile';
 ?>
 
 <!DOCTYPE html>
@@ -66,14 +60,12 @@ $pageKey = 'doctor_profile';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $pageTitle; ?> - Medicare Plus</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?> - Medicare Plus</title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- ENHANCED PROFESSIONAL CSS --- */
-
-        /* --- 1. GLOBAL BODY STYLES --- */
+        /* --- GLOBAL STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -81,69 +73,77 @@ $pageKey = 'doctor_profile';
         body {
             margin: 0;
             font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #f0f3f5;
+            background-color: #f4f7f6;
             line-height: 1.6;
             color: #333;
         }
 
-        /* --- 2. LAYOUT & CONTAINER STYLES --- */
+        /* --- LAYOUT --- */
         .profile-container {
             width: 90%;
             max-width: 1200px;
             margin: 50px auto;
             padding: 40px;
             background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 40px;
+            grid-template-columns: 340px 1fr;
+            /* Slightly wider sidebar for buttons */
+            gap: 50px;
         }
 
-        /* --- 3. DOCTOR SIDEBAR STYLES --- */
+        /* --- SIDEBAR --- */
         .doctor-sidebar {
             text-align: center;
             padding: 20px;
-            border-right: 1px solid #e0e0e0;
+            border-right: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .doctor-sidebar img {
-            width: 250px;
-            height: 250px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             object-fit: cover;
-            border: 6px solid #1e3a8a;
-            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+            border: 5px solid #fff;
+            outline: 3px solid #1e3a8a;
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
             margin-bottom: 25px;
         }
 
         .doctor-sidebar h2 {
-            font-size: 2em;
+            font-size: 1.8em;
             color: #1e3a8a;
-            margin-top: 10px;
-            margin-bottom: 5px;
+            margin: 15px 0 5px 0;
+            font-weight: 800;
         }
 
         .doctor-title {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: 600;
             color: #57c95a;
             margin-bottom: 5px;
         }
 
         .doctor-specialty {
-            font-size: 1.1em;
-            color: #777;
+            font-size: 1em;
+            color: #8898aa;
             margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .profile-rating {
-            font-size: 1.3em;
+            font-size: 1.1em;
             color: #555;
             margin-bottom: 30px;
-            padding: 10px 0;
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
+            width: 100%;
+            padding: 15px 0;
+            border-top: 1px dashed #ddd;
+            border-bottom: 1px dashed #ddd;
         }
 
         .profile-rating .fa-star,
@@ -151,47 +151,108 @@ $pageKey = 'doctor_profile';
             color: #f0ad4e;
         }
 
+        /* --- SIDEBAR ACTION BUTTONS --- */
 
-        /* --- 4. MAIN CONTENT STYLES --- */
+        /* 1. Primary: Book Appointment */
+        .btn-book-appointment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            /* Blue Gradient */
+            color: #fff;
+            padding: 15px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 50px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3);
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-book-appointment i {
+            margin-right: 10px;
+        }
+
+        .btn-book-appointment:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(30, 58, 138, 0.4);
+        }
+
+        /* 2. Secondary: Write a Review (Ghost Button) */
+        .btn-write-review-sidebar {
+            display: inline-block;
+            width: 100%;
+            background-color: transparent;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-write-review-sidebar:hover {
+            border-color: #57c95a;
+            color: #57c95a;
+            background-color: #f0fdf4;
+        }
+
+
+        /* --- MAIN CONTENT --- */
         .doctor-main-content {
             padding-top: 10px;
         }
 
         .doctor-main-content h1 {
-            font-size: 2.8em;
+            font-size: 2.5em;
             color: #1e3a8a;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 4px solid #57c95a;
-            font-weight: 700;
+            border-bottom: 3px solid #eef1f5;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
-        .doctor-main-content h3 {
+        .tab-content h3 {
             color: #1e3a8a;
-            font-size: 1.6em;
+            font-size: 1.5em;
             margin-top: 30px;
             margin-bottom: 15px;
-            border-left: 5px solid #57c95a;
-            padding-left: 15px;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
         }
 
-        /* --- 5. TABS STYLING --- */
+        .tab-content h3::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 24px;
+            background-color: #57c95a;
+            margin-right: 12px;
+            border-radius: 3px;
+        }
+
+        /* --- TABS --- */
         .tabs {
             display: flex;
             margin-bottom: 30px;
-            border-bottom: 2px solid #ddd;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .tab-button {
-            padding: 12px 25px;
+            padding: 15px 25px;
             cursor: pointer;
             border: none;
             background-color: transparent;
             border-bottom: 3px solid transparent;
-            font-size: 1.1em;
+            font-size: 1.05em;
             font-weight: 600;
-            color: #555;
+            color: #6c757d;
             transition: all 0.3s;
         }
 
@@ -200,64 +261,42 @@ $pageKey = 'doctor_profile';
         }
 
         .tab-button.active {
-            border-bottom: 3px solid #1e3a8a;
+            border-bottom: 3px solid #57c95a;
             color: #1e3a8a;
-            background-color: #f7f7f7;
-            border-radius: 5px 5px 0 0;
         }
 
         .tab-content {
-            padding: 15px 10px;
-            border: 1px solid #eee;
-            border-radius: 0 8px 8px 8px;
-            background-color: #fcfcfc;
-        }
-
-        .tab-content p {
-            padding: 0 10px;
-        }
-
-        /* --- 6. BUTTON STYLES --- */
-        .button {
-            display: inline-block;
-            background-color: #57c95a;
-            color: #fff;
-            padding: 10px 25px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1em;
-            border-radius: 50px;
-            margin-top: 15px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* --- 7. REVIEWS STYLES --- */
-        .review-card {
-            border: 1px solid #e0e0e0;
-            padding: 15px;
+            padding: 20px;
+            border: 1px solid #f0f0f0;
             border-radius: 8px;
-            margin-bottom: 15px;
-            background-color: #fcfcfc;
+            background-color: #fff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* --- REVIEWS LIST --- */
+        .review-card {
+            border: 1px solid #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
         }
 
         .review-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .review-author {
             font-weight: bold;
             color: #1e3a8a;
+            font-size: 1.1em;
         }
 
         .review-date {
@@ -265,35 +304,117 @@ $pageKey = 'doctor_profile';
             color: #999;
         }
 
-        .review-rating .fa-star,
-        .review-rating .fa-star-half-stroke {
-            color: #f0ad4e;
+        .review-text {
+            overflow-wrap: break-word;
+            color: #555;
         }
 
-        /* --- 8. REVIEW FORM / LOGIN PROMPT --- */
+        /* =======================================================
+           PROFESSIONAL REVIEW AREA + PRETTY BUTTONS
+           ======================================================= */
         #review-form-container {
-            padding: 30px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            margin-top: 40px;
-            background-color: #f8f9fa;
-            text-align: left;
+            background-color: #ffffff;
+            padding: 40px;
+            border: 1px solid #eef1f5;
+            border-radius: 16px;
+            margin-top: 50px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+            position: relative;
         }
 
-        #review-form-container a.button {
+        #review-form-container h3 {
+            margin-top: 0;
+            color: #1e3a8a;
+            border-left: 6px solid #57c95a;
+            padding-left: 18px;
+            font-size: 1.6em;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        /* --- PRETTY AUTH BUTTONS --- */
+        .login-prompt-message {
+            text-align: center;
+            /* Center the prompt */
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .prompt-text {
+            display: block;
+            font-size: 1.2em;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .auth-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 35px;
+            color: #fff !important;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            /* Pill Shape */
+            font-size: 1em;
+            margin: 0 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            min-width: 140px;
+        }
+
+        /* Log In - Green Gradient */
+        .btn-login {
+            background: linear-gradient(135deg, #57c95a 0%, #45a049 100%);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Register - Blue Gradient */
+        .btn-register {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        /* Textarea */
+        #review-form textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            min-height: 120px;
+            margin-bottom: 20px;
+            font-family: inherit;
+            font-size: 1em;
+            transition: all 0.3s;
+            background-color: #fcfcfc;
+        }
+
+        #review-form textarea:focus {
+            outline: none;
+            border-color: #57c95a;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(87, 201, 90, 0.1);
+        }
+
+        /* Star Rating */
+        .star-rating-input {
+            margin: 10px 0 20px 0;
+            direction: rtl;
+            unicode-bidi: bidi-override;
             display: inline-block;
-            padding: 6px 15px;
-            margin: 5px 5px 5px 0;
-            font-size: 0.9em;
-            border-radius: 5px;
-        }
-
-        #review-form-container a.button.register {
-            background-color: #1e3a8a;
-        }
-
-        #review-form-container a.button.register:hover {
-            background-color: #152d6a;
         }
 
         .star-rating-input input[type="radio"] {
@@ -301,11 +422,16 @@ $pageKey = 'doctor_profile';
         }
 
         .star-rating-input label {
-            font-size: 2em;
-            color: #ccc;
+            font-size: 2.2em;
+            color: #e2e8f0;
             cursor: pointer;
-            padding: 5px;
-            transition: color 0.2s;
+            padding: 0 2px;
+            transition: color 0.2s, transform 0.2s;
+            display: inline-block;
+        }
+
+        .star-rating-input label:hover {
+            transform: scale(1.1);
         }
 
         .star-rating-input label:hover,
@@ -314,34 +440,24 @@ $pageKey = 'doctor_profile';
             color: #f0ad4e;
         }
 
-        #review-form textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            resize: vertical;
-            min-height: 100px;
-            margin-bottom: 15px;
+        .is-submitting {
+            opacity: 0.6;
+            pointer-events: none;
         }
 
-        #review-submit-status {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        /* --- 9. RESPONSIVE STYLES --- */
+        /* --- RESPONSIVE --- */
         @media screen and (max-width: 900px) {
             .profile-container {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 30px;
                 width: 95%;
-                padding: 20px;
+                padding: 25px;
             }
 
             .doctor-sidebar {
                 border-right: none;
                 border-bottom: 1px solid #e0e0e0;
-                padding-bottom: 20px;
+                padding-bottom: 30px;
             }
 
             .tabs {
@@ -349,8 +465,15 @@ $pageKey = 'doctor_profile';
                 white-space: nowrap;
             }
 
-            .tab-button {
-                flex-shrink: 0;
+            .auth-btn {
+                margin: 10px;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .btn-book-appointment {
+                font-size: 1.2em;
+                padding: 18px;
             }
         }
     </style>
@@ -370,7 +493,6 @@ $pageKey = 'doctor_profile';
 
                 <div class="profile-rating">
                     <?php
-                    // Display calculated average rating
                     for ($i = 1; $i <= 5; $i++) {
                         if ($i <= $full_stars) {
                             echo '<i class="fa-solid fa-star"></i>';
@@ -381,20 +503,28 @@ $pageKey = 'doctor_profile';
                         }
                     }
                     ?>
-                    <span><?php echo number_format($average_rating, 1); ?> (<?php echo $total_ratings; ?> Reviews)</span>
+                    <div style="margin-top: 5px; font-size: 0.9em;">
+                        <?php echo number_format($average_rating, 1); ?> / 5.0 (<?php echo $total_ratings; ?> Reviews)
+                    </div>
                 </div>
 
-                <a href="#review-form-container" class="button">Submit a Review</a>
+                <a href="book_appointment.php?doctor_id=<?php echo $doctor_id; ?>" class="btn-book-appointment">
+                    <i class="fa-regular fa-calendar-check"></i> Book Appointment
+                </a>
+
+                <a href="#review-form-container" class="btn-write-review-sidebar">
+                    Write a Review
+                </a>
             </div>
 
             <div class="doctor-main-content">
-                <h1><?php echo htmlspecialchars($doctor['name']); ?> Profile</h1>
+                <h1><?php echo htmlspecialchars($doctor['name']); ?></h1>
 
                 <div class="tabs">
                     <button class="tab-button active" data-tab="bio">Biography</button>
-                    <button class="tab-button" data-tab="qualifications">Qualifications & Experience</button>
+                    <button class="tab-button" data-tab="qualifications">Qualifications</button>
                     <button class="tab-button" data-tab="schedule">Schedule</button>
-                    <button class="tab-button" data-tab="reviews">Patient Reviews</button>
+                    <button class="tab-button" data-tab="reviews">Reviews</button>
                 </div>
 
                 <div id="bio" class="tab-content">
@@ -413,7 +543,7 @@ $pageKey = 'doctor_profile';
                 </div>
 
                 <div id="reviews" class="tab-content hidden">
-                    <h3>Latest Patient Reviews (<span id="review-count-display"><?php echo $total_ratings; ?></span>)</h3>
+                    <h3>Patient Reviews (<span id="review-count-display"><?php echo $total_ratings; ?></span>)</h3>
                     <div id="reviews-list">
                         <?php if ($total_ratings > 0): ?>
                             <?php foreach ($reviews as $review): ?>
@@ -426,7 +556,7 @@ $pageKey = 'doctor_profile';
                                             <?php endfor; ?>
                                         </div>
                                     </div>
-                                    <p class="review-date">Reviewed on: <?php echo date('F j, Y', strtotime($review['review_date'])); ?></p>
+                                    <p class="review-date"><?php echo date('F j, Y', strtotime($review['review_date'])); ?></p>
                                     <p class="review-text"><?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
                                 </div>
                             <?php endforeach; ?>
@@ -439,33 +569,39 @@ $pageKey = 'doctor_profile';
                 <div id="review-form-container">
                     <h3>Write a Review for Dr. <?php echo htmlspecialchars(explode(' ', $doctor['name'])[1] ?? 'Doctor'); ?></h3>
 
-                    <?php if ($is_logged_in): ?>
-                        <form id="review-form">
-                            <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
-                            <input type="hidden" name="user_id" value="<?php echo $current_user_id; ?>">
-                            <input type="hidden" name="user_name" value="<?php echo htmlspecialchars($current_user_name); ?>">
+                    <?php if (!$is_logged_in): ?>
+                        <div class="login-prompt-message" id="login-prompt">
+                            <span class="prompt-text">Please <strong>Log In</strong> or <strong>Register</strong> to submit your review.</span>
 
-                            <label>Your Rating:</label>
-                            <div class="star-rating-input" dir="rtl">
-                                <input type="radio" id="star5" name="rating" value="5" required><label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
-                                <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
-                                <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
-                                <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
-                                <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
-                            </div>
-
-                            <label for="review_text">Your Review:</label>
-                            <textarea id="review_text" name="review_text" rows="4" placeholder="Share your experience..." required></textarea>
-
-                            <button type="submit" class="button">Submit Review</button>
-                            <p id="review-submit-status" style="display: none;"></p>
-                        </form>
-                    <?php else: ?>
-                        <p>You must be **logged in** to submit a review. Please
-                            <a href="login.php" class="button">Log In</a> or
-                            <a href="register.php" class="button register">Register</a>.
-                        </p>
+                            <a href="login.php" class="auth-btn btn-login">
+                                <i class="fa-solid fa-right-to-bracket" style="margin-right:8px;"></i> Log In
+                            </a>
+                            <a href="register.php" class="auth-btn btn-register">
+                                <i class="fa-solid fa-user-plus" style="margin-right:8px;"></i> Register
+                            </a>
+                        </div>
                     <?php endif; ?>
+
+                    <form id="review-form" <?php echo !$is_logged_in ? 'style="display: none;"' : ''; ?>>
+                        <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
+                        <input type="hidden" name="user_id" value="<?php echo $current_user_id; ?>">
+                        <input type="hidden" name="user_name" value="<?php echo htmlspecialchars($current_user_name); ?>">
+
+                        <label style="font-weight: bold; display: block; margin-bottom: 5px;">Your Rating:</label>
+                        <div class="star-rating-input" dir="rtl">
+                            <input type="radio" id="star5" name="rating" value="5" required><label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
+                        </div>
+
+                        <label for="review_text" style="font-weight: bold; display: block; margin-bottom: 5px;">Your Review:</label>
+                        <textarea id="review_text" name="review_text" rows="4" placeholder="Share your experience with this doctor..." required></textarea>
+
+                        <button type="submit" class="auth-btn btn-login" id="submitReviewButton">Submit Review</button>
+                        <p id="review-submit-status" style="display: none; margin-top:15px; font-weight:bold;"></p>
+                    </form>
                 </div>
 
             </div>
@@ -474,6 +610,15 @@ $pageKey = 'doctor_profile';
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const is_logged_in = <?php echo json_encode($is_logged_in); ?>;
+            const reviewForm = document.getElementById('review-form');
+            const submitButton = document.getElementById('submitReviewButton');
+            const statusMessage = document.getElementById('review-submit-status');
+            const reviewsList = document.getElementById('reviews-list');
+            const reviewCountDisplay = document.getElementById('review-count-display');
+            const noReviewsMessage = document.getElementById('no-reviews-message');
+            const loginPrompt = document.getElementById('login-prompt');
+
             // --- Tab Functionality ---
             const tabButtons = document.querySelectorAll('.tab-button');
             const tabContents = document.querySelectorAll('.tab-content');
@@ -482,25 +627,43 @@ $pageKey = 'doctor_profile';
                 button.addEventListener('click', () => {
                     tabButtons.forEach(btn => btn.classList.remove('active'));
                     tabContents.forEach(content => content.classList.add('hidden'));
-
                     button.classList.add('active');
-
                     const targetId = button.getAttribute('data-tab');
                     document.getElementById(targetId).classList.remove('hidden');
                 });
             });
 
+            // Ensure state is correct on load
+            if (!is_logged_in) {
+                if (reviewForm) reviewForm.style.display = 'none';
+                if (loginPrompt) loginPrompt.style.display = 'block';
+            } else {
+                if (reviewForm) reviewForm.style.display = 'block';
+                if (loginPrompt) loginPrompt.style.display = 'none';
+            }
 
-            // --- Review Submission (AJAX) ---
-            const reviewForm = document.getElementById('review-form');
-            const statusMessage = document.getElementById('review-submit-status');
-            const reviewsList = document.getElementById('reviews-list');
-            const reviewCountDisplay = document.getElementById('review-count-display');
-            const noReviewsMessage = document.getElementById('no-reviews-message');
+            // --- Helper to Sanitize HTML ---
+            function escapeHtml(text) {
+                if (!text) return '';
+                return text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
 
+            // --- Review Submission Logic ---
             if (reviewForm) {
                 reviewForm.addEventListener('submit', function(e) {
                     e.preventDefault();
+
+                    if (!is_logged_in) {
+                        statusMessage.style.display = 'block';
+                        statusMessage.style.color = 'red';
+                        statusMessage.textContent = 'Submission failed: Please Log In or Register.';
+                        return;
+                    }
 
                     const formData = new FormData(reviewForm);
 
@@ -508,21 +671,22 @@ $pageKey = 'doctor_profile';
                     statusMessage.style.color = '#1e3a8a';
                     statusMessage.textContent = 'Submitting review...';
 
+                    // Loading State
+                    reviewForm.classList.add('is-submitting');
+
                     fetch('submit_review.php', {
                             method: 'POST',
                             body: formData
                         })
                         .then(response => response.json())
                         .then(data => {
+                            reviewForm.classList.remove('is-submitting');
+
                             if (data.success) {
                                 statusMessage.textContent = 'Review submitted successfully!';
                                 statusMessage.style.color = '#57c95a';
                                 reviewForm.reset();
-
-                                // Re-check rating radio buttons (workaround for some browsers)
                                 document.querySelectorAll('.star-rating-input input[type="radio"]').forEach(radio => radio.checked = false);
-
-                                // Dynamically add the new review to the list
                                 addNewReviewToDOM(data.review);
                             } else {
                                 statusMessage.textContent = 'Error: ' + data.message;
@@ -530,8 +694,9 @@ $pageKey = 'doctor_profile';
                             }
                         })
                         .catch(error => {
+                            reviewForm.classList.remove('is-submitting');
                             console.error('Fetch Error:', error);
-                            statusMessage.textContent = 'An unexpected error occurred.';
+                            statusMessage.textContent = 'An unexpected error occurred. Please try again.';
                             statusMessage.style.color = 'red';
                         });
                 });
@@ -543,14 +708,17 @@ $pageKey = 'doctor_profile';
                     starHtml += (i <= reviewData.rating) ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>';
                 }
 
+                const safeName = escapeHtml(reviewData.user_name);
+                const safeText = escapeHtml(reviewData.review_text).replace(/\n/g, '<br>');
+
                 const newReviewHtml = `
-                    <div class="review-card">
+                    <div class="review-card" style="animation: fadeIn 0.5s;">
                         <div class="review-header">
-                            <span class="review-author">${reviewData.user_name}</span>
+                            <span class="review-author">${safeName}</span>
                             <div class="review-rating">${starHtml}</div>
                         </div>
                         <p class="review-date">Reviewed on: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} (Just Now)</p>
-                        <p class="review-text">${reviewData.review_text.replace(/\n/g, '<br>')}</p>
+                        <p class="review-text">${safeText}</p>
                     </div>
                 `;
 
@@ -560,12 +728,10 @@ $pageKey = 'doctor_profile';
                     noReviewsMessage.style.display = 'none';
                 }
 
-                // Update the review count display
-                let currentCount = parseInt(reviewCountDisplay.textContent);
-                reviewCountDisplay.textContent = currentCount + 1;
-
-                // Note: Updating the average star rating requires another AJAX call 
-                // or a more complex calculation, which is left out for simplicity.
+                if (reviewCountDisplay) {
+                    let currentCount = parseInt(reviewCountDisplay.textContent) || 0;
+                    reviewCountDisplay.textContent = currentCount + 1;
+                }
             }
         });
     </script>

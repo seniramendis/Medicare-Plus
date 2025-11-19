@@ -1,5 +1,24 @@
 <?php
-// This variable will be an array to hold 'active' status
+// header.php
+
+// --- CRITICAL FIX: SESSION START CHECK ---
+// This ensures the header can access the user's login data
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 1. CHECK LOGIN STATUS
+$isLoggedIn = isset($_SESSION['user_id']);
+$user_name_display = 'Account';
+
+if ($isLoggedIn && isset($_SESSION['user_name'])) {
+    // Get just the first name
+    $parts = explode(' ', $_SESSION['user_name']);
+    $user_name_display = $parts[0];
+}
+
+// 2. ACTIVE PAGE LOGIC
+// This prevents "Undefined index" errors
 $active = [
     'home' => '',
     'services' => '',
@@ -8,21 +27,15 @@ $active = [
     'location' => '',
     'about' => '',
     'contact' => '',
+    'patient_portal' => '',
     'login' => ''
 ];
 
-// This logic sets the active page.
-// NOTE: $pageKey and $parentPageKey must be defined/set before this block runs
 if (isset($pageKey) && array_key_exists($pageKey, $active)) {
     $active[$pageKey] = 'active';
 }
 
-// This is for the 'Services' link, which has many sub-pages.
-if (isset($parentPageKey) && $parentPageKey == 'services') {
-    $active['services'] = 'active';
-}
-
-// Standardize all page links
+// 3. DEFINE LINKS
 $links = [
     'home' => 'Home.php',
     'services' => 'services.php',
@@ -31,47 +44,47 @@ $links = [
     'location' => 'location.php',
     'about' => 'Home.php#AboutUs',
     'contact' => 'contact.php',
-    'login' => 'login.php' // Assuming you have/will create a login.php
+    'login' => 'login.php',
+    'patient_portal' => 'Home.php',
+    'view_profile' => 'profile.php',
+    'edit_profile' => 'edit_profile.php',
+    'logout' => 'logout.php'
 ];
 ?>
+
 <style>
-    /* --- HEADER & NAVIGATION STYLES --- */
+    /* HEADER STYLES */
     header {
         background: linear-gradient(90deg, #1e3a8a, #2563eb, #1e3a8a);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-        /* NEW LAYOUT: Use Grid for 3 columns */
         display: grid;
         grid-template-columns: 1fr auto 1fr;
-        /* Left (flexible) | Center (auto-width) | Right (flexible) */
-
         align-items: center;
         padding: 15px 40px;
         color: white;
         z-index: 998;
-        /* New: Ensures nav sits on top if necessary */
+        position: relative;
     }
 
-    /* 1st Column: Logo */
     header>a {
         justify-self: start;
-        /* Aligns logo to the far left */
     }
 
     .logo {
         width: 120px;
         height: 95px;
+        object-fit: contain;
     }
 
-    /* 2nd Column: Brand Text */
     .brand-container {
         text-align: center;
-        /* This centers the H1 and P */
     }
 
     .brandName {
         margin: 0;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        font-size: 2em;
+        font-weight: 700;
     }
 
     header p {
@@ -79,12 +92,11 @@ $links = [
         font-size: 16px;
         text-align: center;
         opacity: 0.9;
+        letter-spacing: 1px;
     }
 
-    /* 3rd Column: Search Bar */
     .search-bar {
         justify-self: end;
-        /* Aligns search bar to the far right */
     }
 
     .search-bar-box {
@@ -115,42 +127,31 @@ $links = [
         box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
     }
 
-
-    /* --- NAVIGATION BAR --- */
     .main-nav {
         display: flex;
         align-items: center;
-        margin-bottom: 0;
-        /* Changed from 25px, no margin on the nav bar itself */
         background-color: #f8f9fa;
         padding: 10px 40px;
         border-bottom: 1px solid #e0e0e0;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         z-index: 999;
-        /* Existing: Base z-index */
+        justify-content: space-between;
         transition: all 0.3s ease-in-out;
-        /* New: For smoother transition to sticky */
     }
 
-    /* NEW STYLES FOR STICKY NAVIGATION */
     .main-nav.sticky {
         position: fixed;
         top: 0;
-        /* Stick to the top of the viewport */
         left: 0;
         right: 0;
         width: 100%;
         z-index: 1000;
-        /* Higher Z-index for the fixed bar */
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        /* Stronger shadow when fixed */
     }
 
-    /* NEW: Placeholder to prevent content jump */
     #main-nav-placeholder {
         display: block;
         height: 0;
-        /* JS will set the height when the nav is fixed */
     }
 
     .main-nav-center {
@@ -160,7 +161,7 @@ $links = [
         flex-wrap: wrap;
     }
 
-    .main-nav a {
+    .main-nav a.nav-link {
         color: #333;
         padding: 8px 14px;
         text-decoration: none;
@@ -174,88 +175,163 @@ $links = [
         gap: 8px;
     }
 
-    .main-nav a.active {
+    .main-nav a.nav-link.active {
         background-color: #57c95a;
         color: white;
         font-weight: bold;
     }
 
-    .main-nav a:hover:not(.active):not(.login-button) {
+    .main-nav a.nav-link:hover:not(.active) {
         background-color: #e9e9e9;
     }
 
-    .main-nav a.login-button {
+    .login-button {
         margin-left: auto;
+        background-color: #1e3a8a !important;
+        color: white !important;
+        font-weight: bold;
+        padding: 8px 20px !important;
+    }
+
+    .login-button:hover {
+        background-color: #2563eb !important;
+    }
+
+    .portal-link {
+        color: #1e3a8a !important;
+        font-weight: 700 !important;
+        border: 1px solid #e0e0e0;
+    }
+
+    .profile-container {
+        position: relative;
+        margin-left: auto;
+    }
+
+    .profile-btn {
+        background: #fff;
+        border: 1px solid #d1d5db;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 15px 5px 5px;
+        border-radius: 30px;
+        transition: 0.3s;
+    }
+
+    .profile-btn:hover {
+        background-color: #f3f4f6;
+        border-color: #1e3a8a;
+    }
+
+    .profile-icon-circle {
+        width: 35px;
+        height: 35px;
         background-color: #1e3a8a;
         color: white;
-        font-weight: bold;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
     }
 
-    .main-nav a.login-button:hover {
-        background-color: #2563eb;
+    .profile-text {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
     }
 
-    /* Active state for login button */
-    .main-nav a.login-button.active {
-        background-color: #57c95a;
+    .profile-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 55px;
+        background-color: white;
+        min-width: 200px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        z-index: 1001;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
     }
 
-    .main-nav a.login-button.active:hover {
-        background-color: #45a049;
+    .profile-dropdown.show {
+        display: block;
+        animation: fadeDown 0.2s ease-in-out;
     }
 
+    .profile-dropdown a {
+        color: #333;
+        padding: 12px 20px;
+        text-decoration: none;
+        display: block;
+        font-size: 14px;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-    /* --- RESPONSIVE STYLES (Header & Nav) --- */
-    @media screen and (max-width: 768px) {
+    .profile-dropdown a:hover {
+        background-color: #f5f7fa;
+        color: #1e3a8a;
+    }
+
+    .profile-dropdown a.sign-out {
+        border-top: 1px solid #eee;
+        color: #dc2626;
+    }
+
+    .profile-dropdown a.sign-out:hover {
+        background-color: #fef2f2;
+    }
+
+    @keyframes fadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media screen and (max-width: 900px) {
         header {
-            display: grid;
             grid-template-columns: 1fr;
-            /* Switch to a single column */
-            justify-items: center;
-            /* Center all items */
-            padding: 15px;
             gap: 15px;
+            padding: 15px;
+            text-align: center;
         }
 
-        /* 1st Column: Logo (now first row) */
         header>a {
-            justify-self: center;
-            /* Center the logo */
             order: 2;
-            /* Set order: Brand, Logo, Search */
+            justify-self: center;
         }
 
-        .logo {
-            margin-left: 0;
-        }
-
-        /* 2nd Column: Brand (now second row) */
         .brand-container {
             order: 1;
-            /* Brand text comes first */
-            text-align: center;
         }
 
-        header p {
-            text-align: center;
-        }
-
-        /* 3rd Column: Search (now third row) */
         .search-bar {
-            justify-self: stretch;
-            /* Make search bar full width */
-            width: 100%;
             order: 3;
+            width: 100%;
+            justify-self: center;
         }
 
         .search-control {
             width: 100%;
         }
 
-        /* Navigation on Mobile */
         .main-nav {
             flex-direction: column;
-            padding: 5px;
+            gap: 10px;
+            padding: 15px;
+            height: auto;
         }
 
         .main-nav-center {
@@ -263,34 +339,46 @@ $links = [
             width: 100%;
         }
 
-        .main-nav a {
-            margin: 5px 0;
-            text-align: center;
-            justify-content: center;
+        .main-nav a.nav-link {
             width: 100%;
+            justify-content: center;
+            margin: 5px 0;
         }
 
-        .main-nav a.login-button {
+        .login-button {
             margin-left: 0;
             width: 100%;
         }
 
-        /* Ensure the fixed nav works on mobile */
-        .main-nav.sticky {
-            position: fixed;
+        .profile-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .profile-dropdown {
+            position: relative;
+            top: 5px;
+            width: 100%;
+            text-align: center;
+            box-shadow: none;
+            border: 1px solid #eee;
+        }
+
+        .profile-dropdown a {
+            justify-content: center;
         }
     }
 </style>
 
 <div id="header-container">
     <header>
-        <a href="<?php echo $links['home']; ?>"><img class="logo" src="images/Logo4.png" alt="Logo" height="95" width="120"></a>
-
+        <a href="<?php echo $links['home']; ?>"><img class="logo" src="images/Logo4.png" alt="Logo"></a>
         <div class="brand-container">
             <h1 class="brandName"> MEDICARE PLUS</h1>
             <p>YOUR PARTNER FOR A LIFETIME OF HEALTH</p>
         </div>
-
         <div class="search-bar">
             <form>
                 <div class="search-bar-box flex">
@@ -305,49 +393,75 @@ $links = [
 
     <nav class="main-nav" id="main-nav">
         <div class="main-nav-center">
-            <a href="<?php echo $links['home']; ?>" class="<?php echo $active['home']; ?>"><i class="fa-solid fa-house"></i> HOME</a>
-            <a href="<?php echo $links['services']; ?>" class="<?php echo $active['services']; ?>"><i class="fa-solid fa-heart"></i> SERVICES</a>
-            <a href="<?php echo $links['find_doctor']; ?>" class="<?php echo $active['find_doctor']; ?>"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
-            <a href="<?php echo $links['blog']; ?>" class="<?php echo $active['blog']; ?>"><i class="fa-solid fa-blog"></i> HEALTH BLOG & TIPS</a>
-            <a href="<?php echo $links['location']; ?>" class="<?php echo $active['location']; ?>"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
-            <a href="<?php echo $links['about']; ?>" class="<?php echo $active['about']; ?>"><i class="fa-solid fa-address-card"></i> ABOUT US</a>
-            <a href="<?php echo $links['contact']; ?>" class="<?php echo $active['contact']; ?>"><i class="fa-solid fa-phone"></i> CONTACT</a>
+            <a href="<?php echo $links['home']; ?>" class="nav-link <?php echo $active['home']; ?>"><i class="fa-solid fa-house"></i> HOME</a>
+            <a href="<?php echo $links['services']; ?>" class="nav-link <?php echo $active['services']; ?>"><i class="fa-solid fa-heart"></i> SERVICES</a>
+
+            <?php if ($isLoggedIn): ?>
+                <a href="<?php echo $links['patient_portal']; ?>" class="nav-link portal-link <?php echo $active['patient_portal']; ?>">
+                    <i class="fa-solid fa-laptop-medical"></i> PATIENT PORTAL
+                </a>
+            <?php endif; ?>
+
+            <a href="<?php echo $links['find_doctor']; ?>" class="nav-link <?php echo $active['find_doctor']; ?>"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
+            <a href="<?php echo $links['blog']; ?>" class="nav-link <?php echo $active['blog']; ?>"><i class="fa-solid fa-blog"></i> HEALTH BLOG</a>
+            <a href="<?php echo $links['location']; ?>" class="nav-link <?php echo $active['location']; ?>"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
+            <a href="<?php echo $links['about']; ?>" class="nav-link <?php echo $active['about']; ?>"><i class="fa-solid fa-address-card"></i> ABOUT US</a>
+            <a href="<?php echo $links['contact']; ?>" class="nav-link <?php echo $active['contact']; ?>"><i class="fa-solid fa-phone"></i> CONTACT</a>
         </div>
 
-        <a href="<?php echo $links['login']; ?>" class="login-button <?php echo $active['login']; ?>"><i class="fa-solid fa-user"></i> LOGIN / SIGNUP</a>
+        <?php if ($isLoggedIn): ?>
+            <div class="profile-container">
+                <div class="profile-btn" onclick="toggleProfileMenu()">
+                    <div class="profile-icon-circle">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span class="profile-text">Hi, <?php echo htmlspecialchars($user_name_display); ?> <i class="fa-solid fa-caret-down"></i></span>
+                </div>
+                <div id="profileDropdown" class="profile-dropdown">
+                    <a href="<?php echo $links['view_profile']; ?>"><i class="fa-regular fa-id-card"></i> View Profile</a>
+                    <a href="<?php echo $links['edit_profile']; ?>"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+                    <a href="<?php echo $links['logout']; ?>" class="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
+                </div>
+            </div>
+        <?php else: ?>
+            <a href="<?php echo $links['login']; ?>" class="nav-link login-button <?php echo $active['login']; ?>">
+                <i class="fa-solid fa-user"></i> LOGIN / SIGNUP
+            </a>
+        <?php endif; ?>
     </nav>
 </div>
+
 <script>
     function stickyNavOnScroll() {
         const nav = document.getElementById('main-nav');
         const placeholder = document.getElementById('main-nav-placeholder');
         const headerContainer = document.getElementById('header-container');
-
-        // Get the height of the main header (header element)
-        // We want the nav to stick once the *entire* <header> has scrolled off-screen
         const headerElement = headerContainer.querySelector('header');
-
-        if (!headerElement) return; // Exit if header is not found
-
-        // The point where the 'fixed' class should be applied is equal to the header's height
-        // (its distance from the top)
+        if (!headerElement) return;
         const stickyPoint = headerElement.offsetHeight;
-
-        // Check the current scroll position
         if (window.scrollY >= stickyPoint) {
-            // Add the 'sticky' class to the nav
             nav.classList.add('sticky');
-            // Set the placeholder's height to prevent content jump
             placeholder.style.height = nav.offsetHeight + 'px';
         } else {
-            // Remove the 'sticky' class
             nav.classList.remove('sticky');
-            // Reset the placeholder's height
             placeholder.style.height = '0';
         }
     }
 
-    // Attach the function to the window's scroll and load events
+    function toggleProfileMenu() {
+        const dropdown = document.getElementById("profileDropdown");
+        if (dropdown) dropdown.classList.toggle("show");
+    }
+    window.onclick = function(event) {
+        if (!event.target.closest('.profile-container')) {
+            const dropdowns = document.getElementsByClassName("profile-dropdown");
+            for (let i = 0; i < dropdowns.length; i++) {
+                if (dropdowns[i].classList.contains('show')) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+    }
     window.addEventListener('scroll', stickyNavOnScroll);
     window.addEventListener('load', stickyNavOnScroll);
 </script>

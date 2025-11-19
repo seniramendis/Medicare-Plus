@@ -1,9 +1,12 @@
 <?php
-$pageTitle = 'Advanced Diagnostic Services';
-$parentPageKey = 'services'; // Keeps "Services" nav item active
-// The 'header.php' include is now called inside the <body>
-?>
+ob_start(); // Buffering to prevent "headers already sent" errors
+if (session_status() === PHP_SESSION_NONE) {
+    session_start(); // Only start session if one isn't active
+}
 
+$pageTitle = 'Advanced Diagnostic Services';
+$parentPageKey = 'services';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +19,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* GLOBAL BODY STYLES */
         * {
             box-sizing: border-box;
         }
@@ -28,7 +31,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             line-height: 1.6;
         }
 
-        /* --- 2. PAGE-SPECIFIC STYLES --- */
+        /* PAGE-SPECIFIC STYLES */
         .page-container {
             width: 85%;
             max-width: 900px;
@@ -103,7 +106,6 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
         @media screen and (max-width: 600px) {
             .page-container {
                 width: 95%;
@@ -116,20 +118,20 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 <body>
 
     <?php
-    include 'header.php';
+    // Ensure header.php exists in the same folder, or the script will warn you.
+    if (file_exists('header.php')) {
+        include 'header.php';
+    } else {
+        echo "<p style='color:red; text-align:center;'>Error: header.php not found.</p>";
+    }
     ?>
 
     <main class="page-container">
         <section class="service-detail">
             <h2>Advanced Diagnostic Services</h2>
-            <p>Our facility is equipped with state-of-the-art diagnostic technology to provide accurate and timely
-                results, helping your doctor create the best treatment plan for you.</p>
+            <p>Our facility is equipped with state-of-the-art diagnostic technology to provide accurate and timely results, helping your doctor create the best treatment plan for you.</p>
 
             <h3>Radiology & Imaging:</h3>
-
-
-            [Image of an MRI machine in a hospital room]
-
             <ul>
                 <li>X-Ray</li>
                 <li>CT Scans</li>
@@ -138,10 +140,6 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             </ul>
 
             <h3>Laboratory Services:</h3>
-
-
-            [Image of a medical laboratory with microscopes and test tubes]
-
             <ul>
                 <li>Comprehensive Blood Tests</li>
                 <li>Urine Analysis</li>
@@ -152,8 +150,6 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             <a href="login.php" class="button">Access Patient Portal</a>
         </section>
     </main>
-
-
 
     <?php
     include 'footer.php';
