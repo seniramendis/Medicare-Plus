@@ -1,6 +1,11 @@
 <?php
+// --- LINE 1: START SESSION HERE (THE BOSS) ---
+ob_start();      // Buffer output to prevent header errors
+session_start(); // Start the session immediately
+// ---------------------------------------------
+
 $pageTitle = 'Dermatology Specialists';
-$parentPageKey = 'services'; // Keeps "Services" nav item active
+$pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns GREEN
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +20,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -27,7 +32,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             line-height: 1.6;
         }
 
-        /* --- 2. PAGE-SPECIFIC STYLES (Service Detail + Doctor List) --- */
+        /* --- 2. PAGE-SPECIFIC STYLES --- */
         .page-container {
             width: 85%;
             max-width: 900px;
@@ -171,10 +176,8 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             margin-top: auto;
         }
 
-        /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
+        /* Responsive */
         @media screen and (max-width: 600px) {
-
-            /* Page Specific Responsive */
             .page-container {
                 width: 95%;
                 padding: 20px 15px;
@@ -190,8 +193,10 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 <body>
 
     <?php
-    // HEADER GOES HERE, INSIDE THE BODY
-    include 'header.php';
+    // Include Header safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
@@ -200,6 +205,11 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 
             <p><strong>Complete Care for Your Skin, Hair, and Nails</strong></p>
             <p>Our Dermatology Department offers a comprehensive range of services for both medical and cosmetic skin concerns, using the latest technology and treatments.</p>
+
+
+
+            [Image of human skin anatomy]
+
 
             <h3>Services Include:</h3>
             <ul>
@@ -214,7 +224,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 
         <div class="doctor-list">
             <div class="doctor-card">
-                <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera">
+                <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Nayana Perera</h4>
                     <p class="doctor-title">Head of Cosmetic Dermatology</p>
@@ -246,10 +256,10 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
         </div>
     </main>
 
-
-
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 
 </body>

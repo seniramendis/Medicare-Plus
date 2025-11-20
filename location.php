@@ -1,6 +1,13 @@
 <?php
+// --- LINE 1: START SESSION SAFELY ---
+ob_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// ------------------------------------
+
 $pageTitle = 'Our Locations';
-$pageKey = 'location'; // Not 'home'
+$pageKey = 'location'; // This turns the "LOCATION" tab GREEN in the header
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +22,8 @@ $pageKey = 'location'; // Not 'home'
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
+        /* We keep these because your Header relies on them */
         * {
             box-sizing: border-box;
         }
@@ -27,7 +35,7 @@ $pageKey = 'location'; // Not 'home'
             line-height: 1.6;
         }
 
-        /* --- 2. PAGE-SPECIFIC STYLES (Location) --- */
+        /* --- 2. PAGE-SPECIFIC STYLES --- */
         .page-container {
             width: 85%;
             max-width: 900px;
@@ -78,7 +86,6 @@ $pageKey = 'location'; // Not 'home'
             min-width: 300px;
         }
 
-        /* Added a container class for the map */
         .map-container {
             flex: 1;
             min-width: 300px;
@@ -106,12 +113,10 @@ $pageKey = 'location'; // Not 'home'
             text-align: center;
         }
 
-        /* Specific style for phone/address text */
         .contact-details-list span {
             display: block;
         }
 
-        /* Style for the sub-text like '(Appointments)' */
         .contact-details-list small {
             font-size: 0.9em;
             color: #777;
@@ -178,10 +183,8 @@ $pageKey = 'location'; // Not 'home'
             margin-right: 8px;
         }
 
-        /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
+        /* Responsive */
         @media screen and (max-width: 600px) {
-
-            /* Page Specific Responsive */
             .page-container {
                 width: 95%;
                 padding: 20px 15px;
@@ -198,15 +201,18 @@ $pageKey = 'location'; // Not 'home'
 <body>
 
     <?php
-    // HEADER GOES HERE, INSIDE THE BODY
-    include 'header.php';
+    // Include Header Safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
         <div class="service-detail">
             <h2>Our Locations</h2>
-            <p>Find our main hospital and clinics. We are conveniently located to serve you better. Below are our
-                addresses, contact details, and operating hours.</p>
+            <p>Find our main hospital and clinics. We are conveniently located to serve you better. Below are our addresses, contact details, and operating hours.</p>
+
+
         </div>
 
         <div class="location-branch">
@@ -245,14 +251,14 @@ $pageKey = 'location'; // Not 'home'
                         </li>
                     </ul>
 
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=St+Rita's+Rd,+Dehiwala-Mount+Lavinia,+Sri+Lanka" target="_blank" class="button direction-button">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Mount+Lavinia" target="_blank" class="button direction-button">
                         <i class="fa-solid fa-directions"></i> Get Directions
                     </a>
                 </div>
 
                 <div class="map-container">
                     <div class="map-wrapper">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.417255162464!2d79.8660341152335!3d6.840211195055042!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae25b2dd143e11f%3A0x685f061266072138!2sSt%20Rita's%20Rd%2C%20Dehiwala-Mount%20Lavinia%2C%20Sri%20Lanka!5e0!3m2!1sen!2sus!4v1678888999999!5m2!1sen!2sus"
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63381.92321947962!2d79.8211860263484!3d6.840353062361308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae25a497f406159%3A0x10860b418c9c366f!2sMount%20Lavinia%2C%20Dehiwala-Mount%20Lavinia!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk"
                             width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
@@ -309,14 +315,14 @@ $pageKey = 'location'; // Not 'home'
                         </li>
                     </ul>
 
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=Ward+Place,+Colombo,+Sri+Lanka" target="_blank" class="button direction-button">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Colombo+07" target="_blank" class="button direction-button">
                         <i class="fa-solid fa-directions"></i> Get Directions
                     </a>
                 </div>
 
                 <div class="map-container">
                     <div class="map-wrapper">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.77123164369!2d79.8601236152345!3d6.91795179500192!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae259156d95333f%3A0x23166d909b7f1e59!2sWard%20Pl%2C%20Colombo%2000700%2C%20Sri%20Lanka!5e0!3m2!1sen!2sus!4v1678888888888!5m2!1sen!2sus"
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15843.19351484781!2d79.862256!3d6.915576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae25996564b8b8f%3A0x45972432222b4893!2sCinnamon%20Gardens%2C%20Colombo%2007!5e0!3m2!1sen!2slk!4v1700000000001!5m2!1sen!2slk"
                             width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
@@ -326,7 +332,9 @@ $pageKey = 'location'; // Not 'home'
     </main>
 
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 

@@ -152,7 +152,9 @@ $parentPageKey = 'services';
     </main>
 
     <?php
+
     include 'footer.php';
+
     ?>
 </body>
 

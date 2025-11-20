@@ -1,7 +1,11 @@
 <?php
+// --- LINE 1: START SESSION HERE (THE BOSS) ---
+ob_start();      // Buffer output to prevent header errors
+session_start(); // Start the session immediately
+// ---------------------------------------------
+
 $pageTitle = 'Contact Us';
-$pageKey = 'contact'; // Not 'home'
-// The 'header.php' include is now called inside the <body>
+$pageKey = 'contact'; // This turns the "Contact" tab GREEN in the header
 ?>
 
 <!DOCTYPE html>
@@ -13,13 +17,10 @@ $pageKey = 'contact'; // Not 'home'
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - Medicare Plus' : 'Medicare Plus'; ?></title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
 
-
-
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 2. PAGE-SPECIFIC STYLES (Contact) --- */
-        /* All global styles (Section 1 & 3) have been moved to styles.css */
+        /* --- GLOBAL STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -31,6 +32,7 @@ $pageKey = 'contact'; // Not 'home'
             line-height: 1.6;
         }
 
+        /* --- PAGE-SPECIFIC STYLES --- */
         .page-container {
             width: 85%;
             max-width: 900px;
@@ -102,8 +104,7 @@ $pageKey = 'contact'; // Not 'home'
             transition: all 0.3s ease;
         }
 
-        #contactForm input[type="text"]:focus,
-        #contactForm input[type="email"]:focus,
+        #contactForm input:focus,
         #contactForm textarea:focus {
             outline: none;
             border-color: #2563eb;
@@ -174,6 +175,7 @@ $pageKey = 'contact'; // Not 'home'
             text-decoration: underline;
         }
 
+        /* Map Styles */
         .map-wrapper {
             width: 100%;
             border-radius: 10px;
@@ -189,6 +191,7 @@ $pageKey = 'contact'; // Not 'home'
             border: none;
         }
 
+        /* Modal Styles */
         .custom-alert-modal {
             display: none;
             position: fixed;
@@ -222,21 +225,18 @@ $pageKey = 'contact'; // Not 'home'
             font-size: 28px;
             font-weight: bold;
             margin-top: -15px;
-        }
-
-        .custom-alert-close:hover,
-        .custom-alert-close:focus {
-            color: #f44336;
-            text-decoration: none;
             cursor: pointer;
         }
 
+        .custom-alert-close:hover {
+            color: #f44336;
+        }
+
         .custom-alert-content .fa-circle-check {
-            font-size: 1.5em;
-            /* Significantly reduced size */
+            font-size: 3em;
             color: #57c95a;
             margin-bottom: 10px;
-            line-height: 1;
+            display: block;
         }
 
         .custom-alert-content h2 {
@@ -259,14 +259,16 @@ $pageKey = 'contact'; // Not 'home'
 <body>
 
     <?php
-    include 'header.php';
+    // Include Header safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
         <div class="service-detail">
             <h2>Contact Us</h2>
-            <p>We're here to help. Whether you have a question about our services, need to book an appointment, or
-                require assistance, please don't hesitate to get in touch.</p>
+            <p>We're here to help. Whether you have a question about our services, need to book an appointment, or require assistance, please don't hesitate to get in touch.</p>
         </div>
 
         <div class="contact-layout">
@@ -320,9 +322,8 @@ $pageKey = 'contact'; // Not 'home'
 
                 <div class="map-wrapper">
                     <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.503460818231!2d79.86475731523474!3d6.830200921406517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae25a66b7264429%3A0x6854b0c79f36f616!2sSt.Rita's%20Rd%2C%20Mount%20Lavinia!5e0!3m2!1sen!2slk!4v1678886521345!5m2!1sen!2slk"
-                        width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
+                        src="https://maps.google.com/maps?q=Mount%20Lavinia%2C%20Sri%20Lanka&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        allowfullscreen>
                     </iframe>
                 </div>
 
@@ -332,8 +333,9 @@ $pageKey = 'contact'; // Not 'home'
 
     <div id="feedbackModal" class="custom-alert-modal">
         <div class="custom-alert-content">
-            <span class="custom-alert-close">×</span>
-            <h2><i class="fa-solid fa-circle-check"></i> Thank You!</h2>
+            <span class="custom-alert-close">&times;</span>
+            <i class="fa-solid fa-circle-check"></i>
+            <h2>Thank You!</h2>
             <p>Your message has been sent successfully. We'll get back to you soon.</p>
         </div>
     </div>
@@ -346,9 +348,9 @@ $pageKey = 'contact'; // Not 'home'
 
             if (contactForm && feedbackModal) {
                 contactForm.addEventListener("submit", function(event) {
-                    event.preventDefault();
-                    feedbackModal.style.display = "block";
-                    contactForm.reset();
+                    event.preventDefault(); // Stop form from actually submitting
+                    feedbackModal.style.display = "block"; // Show popup
+                    contactForm.reset(); // Clear inputs
                 });
             }
 
@@ -367,7 +369,9 @@ $pageKey = 'contact'; // Not 'home'
     </script>
 
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 

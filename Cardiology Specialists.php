@@ -1,7 +1,11 @@
 <?php
+// --- LINE 1: START SESSION HERE (THE BOSS) ---
+ob_start();      // Buffer output to prevent header errors
+session_start(); // Start the session immediately
+// ---------------------------------------------
+
 $pageTitle = 'Cardiology Specialists';
-$parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
-// The 'header.php' include is now called inside the <body>
+$pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns GREEN
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +20,7 @@ $parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -28,7 +32,7 @@ $parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
             line-height: 1.6;
         }
 
-        /* --- 2. PAGE-SPECIFIC STYLES (Service Detail + Doctor List) --- */
+        /* --- 2. PAGE-SPECIFIC STYLES --- */
         .page-container {
             width: 85%;
             max-width: 900px;
@@ -172,10 +176,8 @@ $parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
             margin-top: auto;
         }
 
-        /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
+        /* Responsive */
         @media screen and (max-width: 600px) {
-
-            /* Page Specific Responsive */
             .page-container {
                 width: 95%;
                 padding: 20px 15px;
@@ -191,7 +193,10 @@ $parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
 <body>
 
     <?php
-    include 'header.php';
+    // Include Header safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
@@ -200,11 +205,9 @@ $parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
             <h3>Advanced Heart Care from a Team You Can Trust</h3>
             <p>Our Cardiology Department is dedicated to the complete health of your heart. We provide a full spectrum of services, from prevention and diagnosis to advanced treatment and rehabilitation, ensuring you receive the highest standard of care.</p>
 
-
-
-
-            [Image of a human heart with arteries and veins]
-
+            <div style="text-align: center; margin: 30px 0;">
+                <img src="images/heart-diagram.jpg" alt="Human Heart Diagram" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onerror="this.style.display='none'">
+            </div>
 
             <h3>Services Include:</h3>
             <ul>
@@ -214,12 +217,12 @@ $parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
                 <li>Electrophysiology (Arrhythmia and Pacemaker Services)</li>
                 <li>Preventive Cardiology & Risk Assessment</li>
             </ul>
-            <h3>Our Specialists </h3>
+            <h3>Our Specialists</h3>
         </div>
 
         <div class="doctor-list">
             <div class="doctor-card">
-                <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe">
+                <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Gotabhaya Ranasinghe</h4>
                     <p class="doctor-title">Senior Consultant Cardiologist</p>
@@ -251,10 +254,10 @@ $parentPageKey = 'services'; // This keeps the main "SERVICES" nav link active
         </div>
     </main>
 
-
-
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 

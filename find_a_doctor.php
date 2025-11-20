@@ -1,7 +1,13 @@
 <?php
-// find_doctor.php
+// --- LINE 1: START SESSION SAFELY (THE BOSS) ---
+ob_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// ---------------------------------------------
+
 $pageTitle = 'Find a Doctor';
-$pageKey = 'find_doctor';
+$pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the header
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +21,7 @@ $pageKey = 'find_doctor';
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -27,7 +33,7 @@ $pageKey = 'find_doctor';
             line-height: 1.6;
         }
 
-        /* --- 2. PAGE-SPECIFIC STYLES (Find a Doctor) --- */
+        /* --- 2. PAGE-SPECIFIC STYLES --- */
         .page-container {
             width: 85%;
             max-width: 900px;
@@ -216,8 +222,6 @@ $pageKey = 'find_doctor';
 
         /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
         @media screen and (max-width: 600px) {
-
-            /* Page Specific Responsive */
             .page-container {
                 width: 95%;
                 padding: 20px 15px;
@@ -233,15 +237,20 @@ $pageKey = 'find_doctor';
 <body>
 
     <?php
-    // HEADER GOES HERE, INSIDE THE BODY
-    include 'header.php';
+    // Include Header Safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
         <div class="service-detail">
             <h2>Find a Doctor</h2>
-            <p>Search for our specialists by name or filter by department to find the right doctor for your needs. Our
-                world-class team is here to provide you with expert care.</p>
+            <p>Search for our specialists by name or filter by department to find the right doctor for your needs. Our world-class team is here to provide you with expert care.</p>
+
+            <div style="width:100%; height:auto; margin-bottom: 30px; text-align:center;">
+                <img src="images/doctors-banner.jpg" alt="Medical Specialists" style="max-width:100%; border-radius:10px;" onerror="this.style.display='none'">
+            </div>
         </div>
 
         <div class="filter-bar">
@@ -263,7 +272,7 @@ $pageKey = 'find_doctor';
         <div class="doctor-list" id="allDoctorsList">
 
             <div class="doctor-card" data-name="Dr. Gotabhaya Ranasinghe" data-specialty="Cardiology" data-slug="gotabhaya-ranasinghe">
-                <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe">
+                <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Gotabhaya Ranasinghe</h4>
                     <p class="doctor-title">Senior Consultant Cardiologist</p>
@@ -278,7 +287,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. S.A. Perera" data-specialty="Cardiology" data-slug="s-a-perera">
-                <img src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. S.A. Perera">
+                <img src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. S.A. Perera" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. S.A. Perera</h4>
                     <p class="doctor-title">Consultant Cardiologist</p>
@@ -308,7 +317,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Nayana Perera" data-specialty="Dermatology" data-slug="nayana-perera">
-                <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera">
+                <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Nayana Perera</h4>
                     <p class="doctor-title">Head of Cosmetic Dermatology</p>
@@ -338,7 +347,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Priya Kumari" data-specialty="Dermatology" data-slug="priya-kumari">
-                <img src="https://images.pexels.com/photos/5407054/pexels-photo-5407054.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Priya Kumari">
+                <img src="https://images.pexels.com/photos/5407054/pexels-photo-5407054.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Priya Kumari" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Priya Kumari</h4>
                     <p class="doctor-title">Dermatologist</p>
@@ -353,7 +362,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Ashan Abeyewardene" data-specialty="Orthopedics" data-slug="ashan-abeyewardene">
-                <img src="images/Ashan Abeyewardene.jpeg" alt="Dr. Ashan Abeyewardene">
+                <img src="images/Ashan Abeyewardene.jpeg" alt="Dr. Ashan Abeyewardene" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Ashan Abeyewardene</h4>
                     <p class="doctor-title">Head of Joint Replacement</p>
@@ -368,7 +377,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Narendra Pinto" data-specialty="Orthopedics" data-slug="narendra-pinto">
-                <img src="images/Narendra Pinto.jpg" alt="Dr. Narendra Pinto">
+                <img src="images/Narendra Pinto.jpg" alt="Dr. Narendra Pinto" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Narendra Pinto</h4>
                     <p class="doctor-title">Sports Medicine Specialist</p>
@@ -383,7 +392,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. V. Swarnakumaar" data-specialty="Orthopedics" data-slug="v-swarnakumaar">
-                <img src="images/Velayutham Swarnakumaar.jpeg" alt="Dr. V. Swarnakumaar">
+                <img src="images/Velayutham Swarnakumaar.jpeg" alt="Dr. V. Swarnakumaar" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. V. Swarnakumaar</h4>
                     <p class="doctor-title">Pediatric Orthopedic Surgeon</p>
@@ -398,7 +407,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Prof. Shaman Rajindrajith" data-specialty="Pediatrics" data-slug="shaman-rajindrajith">
-                <img src="images/dr-shaman.png" alt="Prof. Shaman Rajindrajith">
+                <img src="images/dr-shaman.png" alt="Prof. Shaman Rajindrajith" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Prof. Shaman Rajindrajith</h4>
                     <p class="doctor-title">Consultant Pediatrician</p>
@@ -413,7 +422,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Prof. Pujitha Wickramasinghe" data-specialty="Pediatrics" data-slug="pujitha-wickramasinghe">
-                <img src="images/Prof-Pujitha-Wickramasinghe.jpg" alt="Prof. Pujitha Wickramasinghe">
+                <img src="images/Prof-Pujitha-Wickramasinghe.jpg" alt="Prof. Pujitha Wickramasinghe" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Prof. Pujitha Wickramasinghe</h4>
                     <p class="doctor-title">Pediatric Neurologist</p>
@@ -428,7 +437,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Duminda Samarasinghe" data-specialty="Pediatrics" data-slug="duminda-samarasinghe">
-                <img src="images/Dr. Duminda Samarasinghe.jpeg" alt="Dr. Duminda Samarasinghe">
+                <img src="images/Dr. Duminda Samarasinghe.jpeg" alt="Dr. Duminda Samarasinghe" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Duminda Samarasinghe</h4>
                     <p class="doctor-title">Head of Neonatology</p>
@@ -443,7 +452,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Elena Fernando" data-specialty="General Practitioner" data-slug="elena-fernando">
-                <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando">
+                <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Elena Fernando</h4>
                     <p class="doctor-title">Senior General Practitioner</p>
@@ -458,7 +467,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Kevin Perera" data-specialty="General Practitioner" data-slug="kevin-perera">
-                <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera">
+                <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Kevin Perera</h4>
                     <p class="doctor-title">General Practitioner</p>
@@ -473,7 +482,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Maria Silva" data-specialty="General Practitioner" data-slug="maria-silva">
-                <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva">
+                <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Maria Silva</h4>
                     <p class="doctor-title">General Practitioner & Family Medicine</p>
@@ -488,7 +497,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Mohan Raj" data-specialty="Neurology" data-slug="mohan-raj">
-                <img src="https://images.pexels.com/photos/5794038/pexels-photo-5794038.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Mohan Raj">
+                <img src="https://images.pexels.com/photos/5794038/pexels-photo-5794038.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Mohan Raj" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Mohan Raj</h4>
                     <p class="doctor-title">Consultant Neurologist</p>
@@ -503,7 +512,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Fatima Hassan" data-specialty="Gynaecology" data-slug="fatima-hassan">
-                <img src="https://images.pexels.com/photos/5327921/pexels-photo-5327921.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Fatima Hassan">
+                <img src="https://images.pexels.com/photos/5327921/pexels-photo-5327921.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Fatima Hassan" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Fatima Hassan</h4>
                     <p class="doctor-title">Consultant Gynaecologist</p>
@@ -518,7 +527,7 @@ $pageKey = 'find_doctor';
             </div>
 
             <div class="doctor-card" data-name="Dr. Ajith Jayawardena" data-specialty="ENT" data-slug="ajith-jayawardena">
-                <img src="https://images.pexels.com/photos/5407206/pexels-photo-5407206.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Ajith Jayawardena">
+                <img src="https://images.pexels.com/photos/5407206/pexels-photo-5407206.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Ajith Jayawardena" onerror="this.src='images/placeholder_doctor.png'">
                 <div class="doctor-info">
                     <h4>Dr. Ajith Jayawardena</h4>
                     <p class="doctor-title">Consultant ENT Surgeon</p>
@@ -531,6 +540,7 @@ $pageKey = 'find_doctor';
                     <a href="doctor-profile.php?slug=ajith-jayawardena" class="button">View Profile</a>
                 </div>
             </div>
+
         </div>
 
         <div id="noResultsMessage" style="display: none; text-align: center;">
@@ -574,17 +584,18 @@ $pageKey = 'find_doctor';
                 }
             }
 
-            // Bind filterDoctors to both input and select changes
             if (nameInput) nameInput.addEventListener('keyup', filterDoctors);
             if (specialtySelect) specialtySelect.addEventListener('change', filterDoctors);
 
-            // Run on load to ensure all doctors are visible initially
+            // Initialize filter on load
             filterDoctors();
         });
     </script>
 
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 

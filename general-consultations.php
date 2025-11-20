@@ -1,6 +1,11 @@
 <?php
+// --- LINE 1: START SESSION HERE (THE BOSS) ---
+ob_start();      // Buffer output to prevent header errors
+session_start(); // Start the session immediately
+// ---------------------------------------------
+
 $pageTitle = 'General Consultations';
-$parentPageKey = 'services'; // Keeps "Services" nav item active
+$pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns GREEN
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +20,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -102,33 +107,19 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- 2b. DOCTOR CARD STYLES --- */
-        .service-detail h3 {
-            /* This existing style will apply to "Our Specialists" */
-            font-size: 1.6em;
-            color: #333;
-            margin-top: 40px;
-            /* Added more top margin */
-            margin-bottom: 20px;
-        }
-
+        /* Doctor Card Styles */
         .doctor-list {
             display: flex;
             flex-wrap: wrap;
-            /* Allows cards to wrap on smaller screens */
             justify-content: space-between;
             gap: 20px;
-            /* Spacing between cards */
             margin-top: 20px;
             margin-bottom: 30px;
-            /* Space before the final button */
         }
 
         .doctor-card {
             flex: 1;
-            /* Each card will grow to fill space */
             min-width: 240px;
-            /* Minimum width before wrapping */
             background-color: #fdfdfd;
             border: 1px solid #eef;
             border-radius: 12px;
@@ -137,9 +128,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             padding: 25px 20px 20px 20px;
             transition: all 0.3s ease;
             display: flex;
-            /* Use flex to align content */
             flex-direction: column;
-            /* Stack content vertically */
         }
 
         .doctor-card:hover {
@@ -152,18 +141,15 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            /* Ensures image fills circle */
             border: 4px solid #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 15px;
             margin-left: auto;
-            /* Center the image */
             margin-right: auto;
         }
 
         .doctor-info {
             flex-grow: 1;
-            /* Allows this container to fill remaining space */
             display: flex;
             flex-direction: column;
         }
@@ -188,12 +174,10 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             line-height: 1.5;
             margin-bottom: 20px;
             flex-grow: 1;
-            /* Ensures text area expands, pushing button down */
         }
 
         .doctor-info .button {
             margin-top: auto;
-            /* Pushes button to the bottom of the card */
         }
 
         .FindDoctorbutton {
@@ -215,7 +199,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
+        /* Responsive */
         @media screen and (max-width: 600px) {
             .page-container {
                 width: 95%;
@@ -224,17 +208,14 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 
             .doctor-list {
                 flex-direction: column;
-                /* Stack doctor cards vertically */
             }
 
             .doctor-card {
                 min-width: 100%;
-                /* Make cards full width */
             }
 
             .doctor-info p {
                 min-height: auto;
-                /* Remove fixed height on mobile */
             }
         }
     </style>
@@ -243,8 +224,10 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 <body>
 
     <?php
-    // HEADER GOES HERE, INSIDE THE BODY
-    include 'header.php';
+    // Include Header Safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
@@ -252,21 +235,11 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             <h2>General Medical Consultations</h2>
 
             <p><strong>Your First Step to Better Health and Wellness</strong></p>
-            <p>Our General Consultations service (Outpatient Department, or OPD) is your central point of access to our
-                hospital's trusted medical care. This is the ideal starting point for any non-emergency health concern,
-                from common colds and fevers to managing long-term health. Our experienced General Practitioners (GPs)
-                and Family Medicine specialists are dedicated to providing holistic, patient-centered care.</p>
+            <p>Our General Consultations service (Outpatient Department, or OPD) is your central point of access to our hospital's trusted medical care. This is the ideal starting point for any non-emergency health concern, from common colds and fevers to managing long-term health. Our experienced General Practitioners (GPs) and Family Medicine specialists are dedicated to providing holistic, patient-centered care.</p>
 
 
 
-            [Image of a friendly general practitioner talking to a patient at a desk]
-
-
-            <p>We focus on preventive health, including routine check-ups, immunizations, and lifestyle counseling. Our
-                team is also skilled in managing chronic conditions such as diabetes, hypertension, and asthma,
-                coordinating your care to ensure the best possible outcomes. If specialized treatment is needed, your GP
-                will seamlessly connect you with the right specialist within our network, acting as your dedicated
-                health advocate every step of the way.</p>
+            <p>We focus on preventive health, including routine check-ups, immunizations, and lifestyle counseling. Our team is also skilled in managing chronic conditions such as diabetes, hypertension, and asthma, coordinating your care to ensure the best possible outcomes. If specialized treatment is needed, your GP will seamlessly connect you with the right specialist within our network, acting as your dedicated health advocate every step of the way.</p>
 
             <h3>Services Include:</h3>
             <ul>
@@ -284,46 +257,45 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             <div class="doctor-list">
 
                 <div class="doctor-card">
-                    <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando">
+                    <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando" onerror="this.src='images/placeholder_doctor.png'">
                     <div class="doctor-info">
                         <h4>Dr. Elena Fernando</h4>
                         <p class="doctor-title">Senior General Practitioner</p>
-                        <p>With over 25 years in family medicine, Dr. Fernando has a special interest in managing chronic
-                            conditions like diabetes and hypertension. She is known for her thorough and caring approach.
-                        </p>
+                        <p>With over 25 years in family medicine, Dr. Fernando has a special interest in managing chronic conditions like diabetes and hypertension. She is known for her thorough and caring approach.</p>
                         <a href="#" class="button">Book Appointment</a>
                     </div>
                 </div>
 
                 <div class="doctor-card">
-                    <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera">
+                    <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera" onerror="this.src='images/placeholder_doctor.png'">
                     <div class="doctor-info">
                         <h4>Dr. Kevin Perera</h4>
                         <p class="doctor-title">General Practitioner</p>
-                        <p>Dr. Perera focuses on preventative health and wellness. He is passionate about helping patients
-                            achieve their health goals through lifestyle modifications and routine check-ups.</p>
+                        <p>Dr. Perera focuses on preventative health and wellness. He is passionate about helping patients achieve their health goals through lifestyle modifications and routine check-ups.</p>
                         <a href="#" class="button">Book Appointment</a>
                     </div>
                 </div>
 
                 <div class="doctor-card">
-                    <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva">
+                    <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva" onerror="this.src='images/placeholder_doctor.png'">
                     <div class="doctor-info">
                         <h4>Dr. Maria Silva</h4>
                         <p class="doctor-title">General Practitioner & Family Medicine</p>
-                        <p>Dr. Silva provides care for the entire family, from infants to seniors. She has a special focus
-                            on pediatric primary care and women's health.</p>
+                        <p>Dr. Silva provides care for the entire family, from infants to seniors. She has a special focus on pediatric primary care and women's health.</p>
                         <a href="#" class="button">Book Appointment</a>
                     </div>
                 </div>
 
-            </div> <a href="find_a_doctor.php" class="FindDoctorbutton"><i class="fa-solid fa-user-doctor"></i> Find Doctors</a>
+            </div>
+
+            <a href="find_a_doctor.php" class="FindDoctorbutton"><i class="fa-solid fa-user-doctor"></i> Find Doctors</a>
         </section>
     </main>
 
-
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 

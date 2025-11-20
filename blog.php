@@ -1,6 +1,11 @@
 <?php
+// --- LINE 1: START SESSION HERE (THE BOSS) ---
+ob_start();      // Buffer output to prevent header errors
+session_start(); // Start the session immediately
+// ---------------------------------------------
+
 $pageTitle = 'Health Blog & Tips';
-$pageKey = 'blog'; // Not 'home'
+$pageKey = 'blog'; // This turns the "Health Blog" tab GREEN in the header
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +20,7 @@ $pageKey = 'blog'; // Not 'home'
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -88,7 +93,6 @@ $pageKey = 'blog'; // Not 'home'
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
             overflow: hidden;
-            /* Added overflow: hidden to contain the image */
         }
 
         .blog-card:hover {
@@ -142,11 +146,10 @@ $pageKey = 'blog'; // Not 'home'
             align-self: flex-start;
         }
 
-        /* --- Video List (NEW) --- */
+        /* --- Video List --- */
         .video-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            /* 2 videos per row */
             gap: 25px;
             margin-top: 30px;
         }
@@ -171,7 +174,6 @@ $pageKey = 'blog'; // Not 'home'
         .video-embed {
             position: relative;
             padding-bottom: 56.25%;
-            /* 16:9 aspect ratio */
             height: 0;
             overflow: hidden;
         }
@@ -205,8 +207,6 @@ $pageKey = 'blog'; // Not 'home'
 
         /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
         @media screen and (max-width: 600px) {
-
-            /* Page Specific Responsive */
             .page-container {
                 width: 95%;
                 padding: 20px 15px;
@@ -214,12 +214,10 @@ $pageKey = 'blog'; // Not 'home'
 
             .blog-list {
                 grid-template-columns: 1fr;
-                /* This makes it a single column on mobile */
             }
 
             .video-list {
                 grid-template-columns: 1fr;
-                /* This makes videos single column on mobile */
             }
         }
     </style>
@@ -228,24 +226,23 @@ $pageKey = 'blog'; // Not 'home'
 <body>
 
     <?php
-    // HEADER GOES HERE, INSIDE THE BODY
-    include 'header.php';
+    // Include Header safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
         <div class="service-detail">
             <h2>Health Blog & Tips</h2>
-            <p>Explore our latest articles on health, wellness, and medical advancements, written by the expert team at
-                Medicare Plus.</p>
+            <p>Explore our latest articles on health, wellness, and medical advancements, written by the expert team at Medicare Plus.</p>
         </div>
 
         <div class="blog-list">
             <div class="blog-card">
                 <img src="images/blog pic1.jpeg" alt="A bowl of healthy food">
                 <div class="blog-content">
-                    <div class="blog-meta">
-                        <span>Nutrition</span> | Nov 11, 2025
-                    </div>
+                    <div class="blog-meta"><span>Nutrition</span> | Nov 11, 2025</div>
                     <h4>The Top 5 Superfoods for Heart Health</h4>
                     <p>Discover five simple, nutrient-dense foods you can add to your diet...</p>
                     <a href="#" class="button">Read More</a>
@@ -255,11 +252,8 @@ $pageKey = 'blog'; // Not 'home'
             <div class="blog-card">
                 <img src="https://images.pexels.com/photos/416809/pexels-photo-416809.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Person stretching at desk">
                 <div class="blog-content">
-                    <div class="blog-meta">
-                        <span>Wellness</span> | Nov 10, 2025
-                    </div>
+                    <div class="blog-meta"><span>Wellness</span> | Nov 10, 2025</div>
                     <h4>Easy Stretches to Do at Your Desk</h4>
-
                     <p>Feeling stiff? Try these simple stretches to relieve tension...</p>
                     <a href="#" class="button">Read More</a>
                 </div>
@@ -268,9 +262,7 @@ $pageKey = 'blog'; // Not 'home'
             <div class="blog-card">
                 <img src="https://images.pexels.com/photos/3771045/pexels-photo-3771045.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Person sleeping">
                 <div class="blog-content">
-                    <div class="blog-meta">
-                        <span>Mental Health</span> | Nov 9, 2025
-                    </div>
+                    <div class="blog-meta"><span>Mental Health</span> | Nov 9, 2025</div>
                     <h4>The Science of Sleep: Why It's So Important</h4>
                     <p>Learn why quality sleep is crucial for your physical and mental well-being.</p>
                     <a href="#" class="button">Read More</a>
@@ -280,9 +272,7 @@ $pageKey = 'blog'; // Not 'home'
             <div class="blog-card">
                 <img src="https://images.pexels.com/photos/2182979/pexels-photo-2182979.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Doctor talking to patient">
                 <div class="blog-content">
-                    <div class="blog-meta">
-                        <span>Patient Care</span> | Nov 8, 2025
-                    </div>
+                    <div class="blog-meta"><span>Patient Care</span> | Nov 8, 2025</div>
                     <h4>Preparing for Your Hospital Visit</h4>
                     <p>A simple checklist to make your admission process smooth and stress-free.</p>
                     <a href="#" class="button">Read More</a>
@@ -292,9 +282,7 @@ $pageKey = 'blog'; // Not 'home'
             <div class="blog-card">
                 <img src="https://images.pexels.com/photos/6776366/pexels-photo-6776366.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Child receiving a vaccine">
                 <div class="blog-content">
-                    <div class="blog-meta">
-                        <span>Pediatrics</span> | Nov 7, 2025
-                    </div>
+                    <div class="blog-meta"><span>Pediatrics</span> | Nov 7, 2025</div>
                     <h4>Understanding Childhood Vaccinations</h4>
                     <p>Our pediatric expert answers common questions from parents.</p>
                     <a href="#" class="button">Read More</a>
@@ -304,11 +292,8 @@ $pageKey = 'blog'; // Not 'home'
             <div class="blog-card">
                 <img src="https://images.pexels.com/photos/1127000/pexels-photo-1127000.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Person running outdoors">
                 <div class="blog-content">
-                    <div class="blog-meta">
-                        <span>Fitness</span> | Nov 6, 2025
-                    </div>
+                    <div class="blog-meta"><span>Fitness</span> | Nov 6, 2025</div>
                     <h4>5 Benefits of Regular Cardiovascular Exercise</h4>
-
                     <p>It's not just about weight loss. See how cardio boosts your overall health.</p>
                     <a href="#" class="button">Read More</a>
                 </div>
@@ -323,7 +308,6 @@ $pageKey = 'blog'; // Not 'home'
         </div>
 
         <div class="video-list">
-
             <div class="video-card">
                 <div class="video-embed">
                     <iframe src="https://www.youtube.com/embed/gC_L9qAHVJ8" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -340,19 +324,16 @@ $pageKey = 'blog'; // Not 'home'
                 </div>
                 <div class="video-content">
                     <h4>5-Minute Stretches for Back Pain</h4>
-
                     <p>A quick, real-time guide from our physiotherapy department.</p>
                 </div>
             </div>
-
         </div>
-
     </main>
 
-
-
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 

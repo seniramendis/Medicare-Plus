@@ -2,16 +2,25 @@
 $pageTitle = 'Chat With Us';
 $pageKey = 'contact';
 
-// --- IMPORTANT: Define PHP variables for JS login state ---
-// You MUST integrate this with your actual session/authentication system.
-// This example uses placeholder logic for demonstration.
+// --- 1. SESSION & AUTHENTICATION ---
+// Start the session to access user data
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Initialize default variables
 $isUserLoggedIn = false;
 $userName = "Guest";
 
-// Example placeholder for fetching user status from a session (if sessions were started)
+// Check if the user is logged in via Session
 if (isset($_SESSION['user_id'])) {
     $isUserLoggedIn = true;
-    $userName = $_SESSION['first_name']; // Assumes $_SESSION['first_name'] is set
+    // Use the session name, or fallback to 'User' if missing
+    $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'User';
+
+    // Optional: If you store "First Name" specifically, extract it:
+    // $parts = explode(' ', $userName);
+    // $userName = $parts[0]; 
 } else {
     $userName = 'Anonymous';
 }
@@ -29,7 +38,7 @@ if (isset($_SESSION['user_id'])) {
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* CSS Variables assumed to be defined globally or in the style sheet */
+        /* --- CSS VARIABLES --- */
         :root {
             --primary-blue: #1e3a8a;
             --primary-blue-light: #2563eb;
@@ -44,7 +53,7 @@ if (isset($_SESSION['user_id'])) {
             --shadow-md: 0 5px 15px rgba(12, 12, 12, 0.08);
         }
 
-        /* Basic Page Container and Text Styles (Replicated from home styles) */
+        /* --- GLOBAL STYLES --- */
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -71,7 +80,7 @@ if (isset($_SESSION['user_id'])) {
             box-shadow: var(--shadow-md);
         }
 
-        /* Chat Page Specific Styles */
+        /* --- CHAT PAGE STYLES --- */
         .chat-intro-section {
             text-align: center;
             margin-bottom: 30px;
@@ -104,7 +113,7 @@ if (isset($_SESSION['user_id'])) {
             align-items: center;
         }
 
-        /* Contact List Styling */
+        /* Contact List */
         .contact-details h3 {
             color: var(--primary-blue);
             margin-bottom: 15px;
@@ -132,11 +141,6 @@ if (isset($_SESSION['user_id'])) {
             flex-shrink: 0;
         }
 
-        .footer-contact .list-content {
-            flex-grow: 1;
-        }
-
-        /* Link Color Fix: Ensure the link color is BLACK/DARK text */
         .footer-contact a {
             color: var(--text-dark) !important;
             text-decoration: none;
@@ -147,7 +151,7 @@ if (isset($_SESSION['user_id'])) {
             color: var(--primary-green-dark) !important;
         }
 
-        /* Style for the "Send" button (formerly "Start Chat") */
+        /* Buttons */
         .start-chat-button {
             display: inline-flex;
             align-items: center;
@@ -187,7 +191,7 @@ if (isset($_SESSION['user_id'])) {
             background-color: var(--primary-green-dark);
         }
 
-        /* New CSS for the Textarea */
+        /* Chat Input */
         #chat-message-preview {
             width: 90%;
             max-width: 90%;
@@ -212,7 +216,12 @@ if (isset($_SESSION['user_id'])) {
 
 <body>
 
-    <?php include 'header.php'; ?>
+    <?php
+    // Ensure header exists before including
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
+    ?>
 
     <main class="page-container">
         <section class="chat-intro-section">
@@ -223,26 +232,24 @@ if (isset($_SESSION['user_id'])) {
         <div class="chat-options-grid">
 
             <div class="chat-embed-area" id="live-chat-area">
-                <h3 id="chat-greeting">Hello, Guest!</h3>
-                <p style="text-align: center; color: var(--text-light);">
-                    Start a general conversation with hospital staff only.
-                    *Do not share sensitive personal or medical details here.*
+                <h3 id="chat-greeting">Hello!</h3>
+
+                <p style="text-align: center; color: var(--text-light); max-width: 80%;">
+                    Start a general conversation with hospital staff. <br>
+                    <small><em>*Do not share sensitive personal or medical details here.*</em></small>
                 </p>
 
-                <label for="chat-message-preview" style="align-self: flex-start; margin-top: 15px; font-weight: 600; color: var(--text-dark); width: 90%; max-width: 90%;">
-                    What is your question about? (Optional)
+                <label for="chat-message-preview" style="align-self: flex-start; margin-top: 15px; margin-left: 5%; font-weight: 600; color: var(--text-dark);">
+                    How can we help you today?
                 </label>
+
                 <textarea
                     id="chat-message-preview"
                     placeholder="E.g., What are your visiting hours? How do I book an appointment?"
-                    rows="4"
-                    title="Enter your preliminary question here"></textarea>
-                <div style="width: 90%; background: var(--bg-white); border: 1px solid var(--border-light); border-radius: 8px; margin-top: 15px; padding: 15px; overflow-y: auto; display: none;">
-                    <p style="text-align: center; color: var(--text-light);">[Third-party Live Chat Widget or Custom Form Embeds here]</p>
-                </div>
+                    rows="4"></textarea>
 
                 <a href="#" class="start-chat-button" id="start-chat-btn">
-                    <i class="fa-solid fa-paper-plane"></i> Send Message
+                    <i class="fa-solid fa-paper-plane"></i> Start Live Chat
                 </a>
             </div>
 
@@ -252,22 +259,20 @@ if (isset($_SESSION['user_id'])) {
                     <ul class="footer-contact">
                         <li>
                             <i class="fa-solid fa-phone"></i>
-                            <span class="list-content">Call Us: <a href="tel:+94112345678"> +94 11 234 5678</a> (General Line)</span>
+                            <span class="list-content">Call Us: <a href="tel:+94112345678"> +94 11 234 5678</a></span>
                         </li>
-
                         <li>
                             <i class="fa-solid fa-clock"></i>
-                            <span class="list-content">Hours: 8:00 AM - 5:00 PM (Monday - Friday)</span>
+                            <span class="list-content">Hours: 8:00 AM - 5:00 PM (Mon - Fri)</span>
                         </li>
-
                         <li>
                             <i class="fa-solid fa-envelope"></i>
-                            <span class="list-content">Email: <a href="mailto:info@medicareplus.lk">info@medicareplus.lk</a> (Response within 24 hours)</span>
+                            <span class="list-content">Email: <a href="mailto:info@medicareplus.lk">info@medicareplus.lk</a></span>
                         </li>
                     </ul>
                 </div>
 
-                <div class="faq-link" style="text-align: center; padding-top: 30px; border-top: 1px solid var(--border-light);">
+                <div class="faq-link" style="text-align: center; padding-top: 30px; margin-top: 30px; border-top: 1px solid var(--border-light);">
                     <h3>Need Quick Answers?</h3>
                     <p>Check our detailed Frequently Asked Questions section before starting a chat.</p>
                     <a href="faq.php" class="button-large">View FAQ</a>
@@ -277,29 +282,46 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </main>
 
-    <?php include 'footer.php'; ?>
+    <?php if (file_exists('footer.php')) {
+        include 'footer.php';
+    } ?>
 
     <script>
-        // --- PHP INJECTION: Read variables set at the top of the file ---
+        // 1. PASS PHP DATA TO JS
         const isUserLoggedIn = <?php echo $isUserLoggedIn ? 'true' : 'false'; ?>;
-        const userName = '<?php echo $userName; ?>';
+        const userName = "<?php echo htmlspecialchars($userName); ?>";
 
         document.addEventListener('DOMContentLoaded', function() {
             const chatGreeting = document.getElementById('chat-greeting');
 
-            // Set the greeting based on the PHP variables
+            // 2. UPDATE UI BASED ON STATE
             if (chatGreeting) {
                 if (isUserLoggedIn && userName !== 'Anonymous') {
-                    // Logged in user greeting
-                    chatGreeting.innerHTML = `<h3>Hello, ${userName}!</h3>`;
+                    // Logic: If user is logged in, personalize the greeting
+                    chatGreeting.innerHTML = `Hello, ${userName}!`;
+                    chatGreeting.style.color = "#1e3a8a";
                 } else {
-                    // Anonymous user greeting
-                    chatGreeting.innerHTML = `<h3>Hello, Anonymous!</h3>`;
+                    // Logic: If guest, show generic greeting
+                    chatGreeting.innerHTML = `Hello, Guest!`;
                 }
+            }
+
+            // Optional: Button click handler
+            const startBtn = document.getElementById('start-chat-btn');
+            if (startBtn) {
+                startBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const msg = document.getElementById('chat-message-preview').value;
+                    if (msg.trim() === "") {
+                        alert("Please type a message first.");
+                    } else {
+                        alert("Connecting you to an agent... (Demo)");
+                        // Here you would redirect to the actual chat system or open a websocket connection
+                    }
+                });
             }
         });
     </script>
-
 </body>
 
 </html>

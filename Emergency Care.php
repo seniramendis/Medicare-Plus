@@ -1,6 +1,11 @@
 <?php
+// --- LINE 1: START SESSION SAFELY (THE BOSS) ---
+ob_start();      // Buffer output to prevent header errors
+session_start(); // Start the session immediately
+// ---------------------------------------------
+
 $pageTitle = 'Emergency Care';
-$parentPageKey = 'services'; // Keeps "Services" nav item active
+$pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns GREEN
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +20,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -83,6 +88,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             font-size: 1.2em;
         }
 
+        /* Emergency Specific Styles */
         .emergency-alert {
             background-color: #E63946;
             color: white;
@@ -94,14 +100,20 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             margin-bottom: 25px;
         }
 
-        /* Style for the clickable emergency number */
         .emergency-alert a {
             color: white;
             text-decoration: underline;
             font-weight: bold;
         }
 
-        .button.direction-button {
+        /* Button Groups */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .button {
             display: inline-block;
             text-decoration: none;
             font-weight: bold;
@@ -109,79 +121,56 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             padding: 8px 20px;
             border-radius: 30px;
             margin-top: 20px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .direction-button {
             background: linear-gradient(45deg, #1e3a8a, #2563eb) !important;
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
-            border: none;
-            transition: all 0.3s ease;
         }
 
-        .button.direction-button:hover {
+        .direction-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 18px rgba(30, 58, 138, 0.4);
             background: linear-gradient(45deg, #2563eb, #3b82f6) !important;
         }
 
-        .button.direction-button i {
-            margin-right: 8px;
-        }
-
-        /* --- NEW BUTTON STYLES --- */
-        .button.call-button {
-            display: inline-block;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1em;
-            padding: 8px 20px;
-            border-radius: 30px;
-            margin-top: 20px;
+        .call-button {
             background: #E63946 !important;
-            /* Emergency Red */
             color: white !important;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
-            border: none;
-            transition: all 0.3s ease;
         }
 
-        .button.call-button:hover {
+        .call-button:hover {
             transform: translateY(-3px);
             background: #d62828 !important;
-            /* Darker Red */
             box-shadow: 0 7px 18px rgba(230, 57, 70, 0.4);
         }
 
-        .button.call-button i {
+        .button i {
             margin-right: 8px;
-        }
-
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            /* Allows buttons to stack on small screens */
-            gap: 15px;
-            /* Adds space between the buttons */
         }
 
         a.emergency_no {
             text-decoration: none;
             font-weight: bold;
             transition: transform 0.2s ease;
+            display: inline-block;
         }
 
         a.emergency_no:hover {
             transform: scale(1.1);
         }
 
-        /* --- ----------------- --- */
-
-
-        /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
+        /* Responsive */
         @media screen and (max-width: 600px) {
             .page-container {
                 width: 95%;
@@ -194,8 +183,10 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 <body>
 
     <?php
-    // HEADER GOES HERE, INSIDE THE BODY
-    include 'header.php';
+    // Include Header Safely
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
@@ -212,6 +203,9 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
 
 
 
+            [Image of emergency room triage process]
+
+
             <h3>Services Include:</h3>
             <ul>
                 <li>24/7/365 Emergency Physician Coverage</li>
@@ -224,8 +218,7 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
             <p><strong>Location:</strong> No. 84 St.Rita's Road, Mount Lavinia, Sri Lanka</p>
 
             <div class="button-group">
-                <a href="https://www.google.com/maps/dir/?api=1&destination=No.+84+St.Rita's+Road,+Mount+Lavinia,+Sri+Lanka"
-                    target="_blank" class="button direction-button">
+                <a href="https://www.google.com/maps?q=Mount+Lavinia,+Sri+Lanka" target="_blank" class="button direction-button">
                     <i class="fa-solid fa-diamond-turn-right"></i> Get Directions
                 </a>
 
@@ -237,7 +230,9 @@ $parentPageKey = 'services'; // Keeps "Services" nav item active
     </main>
 
     <?php
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 

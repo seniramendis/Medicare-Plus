@@ -1,6 +1,11 @@
 <?php
+// --- CRITICAL FIX: ADD THIS AT THE VERY TOP ---
+ob_start();      // 1. Buffers output so headers don't send too early
+session_start(); // 2. Starts the session so we know who is logged in
+// ----------------------------------------------
+
 $pageTitle = 'Our Services';
-$pageKey = 'services'; // Not 'home'
+$pageKey = 'services'; // This makes the Services tab green in the header
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +20,7 @@ $pageKey = 'services'; // Not 'home'
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- 1. GLOBAL BODY STYLES (Keep this here) --- */
+        /* --- 1. GLOBAL BODY STYLES --- */
         * {
             box-sizing: border-box;
         }
@@ -91,6 +96,7 @@ $pageKey = 'services'; // Not 'home'
             color: #ffffff;
         }
 
+        /* Icon Background Colors */
         .icon-cardiology .service-icon-container {
             background-color: #d9534f;
         }
@@ -147,8 +153,6 @@ $pageKey = 'services'; // Not 'home'
 
         /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
         @media screen and (max-width: 600px) {
-
-            /* Page Specific Responsive */
             .page-container {
                 width: 95%;
                 padding: 20px 15px;
@@ -164,15 +168,17 @@ $pageKey = 'services'; // Not 'home'
 <body>
 
     <?php
-    // HEADER GOES HERE, INSIDE THE BODY
-    include 'header.php';
+    // Include header
+    // Because we started the session at the very top (Line 4), the header will work perfectly!
+    if (file_exists('header.php')) {
+        include 'header.php';
+    }
     ?>
 
     <main class="page-container">
         <div class="service-listing">
             <h2>Our Services</h2>
-            <p>We provide world-class specialty care across a wide range of medical fields. Our expert teams use the
-                latest technology to ensure the best possible outcomes for our patients.</p>
+            <p>We provide world-class specialty care across a wide range of medical fields. Our expert teams use the latest technology to ensure the best possible outcomes for our patients.</p>
 
             <div class="service-grid">
 
@@ -235,9 +241,7 @@ $pageKey = 'services'; // Not 'home'
                         <i class="fa-solid fa-truck-medical"></i>
                     </div>
                     <h4>Emergency Care</h4>
-
-                    <p>Our 24/7 Emergency Room is equipped to handle all medical emergencies, from minor to critical.
-                    </p>
+                    <p>Our 24/7 Emergency Room is equipped to handle all medical emergencies, from minor to critical.</p>
                     <a href="Emergency Care.php" class="card-link">Learn More →</a>
                 </div>
 
@@ -246,8 +250,9 @@ $pageKey = 'services'; // Not 'home'
     </main>
 
     <?php
-
-    include 'footer.php';
+    if (file_exists('footer.php')) {
+        include 'footer.php';
+    }
     ?>
 </body>
 
