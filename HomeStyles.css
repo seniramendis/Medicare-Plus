@@ -986,47 +986,76 @@ h4 {
 /* ======================================================
 === NEW: CHAT WIDGET STYLES ===
 ====================================================== */
+/* =========================================
+   FLOATING WIDGETS (Chat & FAQ)
+   ========================================= */
 
+/* 1. Shared Styles (The look) */
 .chat-button {
-    /* Fixed Positioning */
     position: fixed;
-    bottom: 25px; /* Distance from the bottom edge */
-    right: 25px; /* Distance from the right edge */
-    z-index: 1000; /* Ensure it stays above everything else */
-
-    /* Appearance & Styling */
+    right: 25px;
+    z-index: 1000; /* Above everything */
+    
+    /* Size & Shape */
     width: 60px;
     height: 60px;
-    background-color: var(--primary-green); /* Use your primary green color */
-    color: var(--text-white);
     border-radius: 50%;
+    
+    /* Colors & Shadow */
+    background-color: var(--primary-green);
+    color: var(--text-white);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-
-    /* Center the Icon */
+    
+    /* Icon Centering */
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 24px;
-    text-decoration: none; /* Remove underline */
-
-    /* Animation/Hover Effect */
+    text-decoration: none;
+    
+    /* Animation */
     transition: all 0.3s ease;
 }
 
+/* 2. Specific Positioning (The stack) */
+
+/* Chat Button - Stays at the bottom */
+#chat-widget {
+    bottom: 25px;
+}
+
+/* FAQ Button - Sits ABOVE the chat button */
+/* Calculation: 25px (bottom) + 60px (height) + 15px (gap) = 100px */
+#faq-widget {
+    bottom: 100px; 
+    /* Optional: Make FAQ a slightly different shade if you want? */
+    /* background-color: #4CAF50; */ 
+}
+
+/* 3. Hover Effects */
 .chat-button:hover {
     background-color: var(--primary-green-dark);
     transform: scale(1.05) translateY(-2px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Optional: Hide on very small mobile screens if desired */
+/* 4. Mobile Responsiveness */
 @media screen and (max-width: 480px) {
     .chat-button {
         width: 50px;
         height: 50px;
-        bottom: 15px;
         right: 15px;
         font-size: 20px;
+    }
+
+    #chat-widget {
+        bottom: 15px;
+    }
+
+    /* Adjust FAQ position for smaller buttons */
+    /* 15px (bottom) + 50px (height) + 15px (gap) = 80px */
+    #faq-widget {
+        bottom: 80px;
     }
 }
 

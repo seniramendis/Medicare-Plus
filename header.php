@@ -1,294 +1,360 @@
 <?php
 // header.php
 
-// --- CRITICAL FIX: SESSION START CHECK ---
-// This ensures the header can access the user's login data
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. CHECK LOGIN STATUS
+// 0. CONNECT TO DB (If not already connected)
+if (!isset($conn)) {
+    include 'db_connect.php';
+}
+
+// --- GLOBAL SECURITY CHECK ---
+// This ensures that if a user is deleted from the DB, they are logged out from ANY page they visit.
+if (isset($_SESSION['user_id'])) {
+    $sec_id = $_SESSION['user_id'];
+    // Fast query to check existence
+    $sec_check = $conn->query("SELECT id FROM users WHERE id = '$sec_id'");
+
+    if ($sec_check->num_rows == 0) {
+        // User does not exist in DB anymore (Deleted)
+        session_unset();
+        session_destroy();
+
+        // Force redirect using JavaScript (Safe to use inside included files)
+        echo "<script>
+            alert('Your account no longer exists.');
+            window.location.href = 'login.php';
+        </script>";
+        exit();
+    }
+}
+// -----------------------------
+
+// 1. GET USER INFO
 $isLoggedIn = isset($_SESSION['user_id']);
-$user_name_display = 'Account';
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
+$isDoctor = ($role === 'doctor');
 
-if ($isLoggedIn && isset($_SESSION['user_name'])) {
-    // Get just the first name
-    $parts = explode(' ', $_SESSION['user_name']);
-    $user_name_display = $parts[0];
+$displayName = 'Guest';
+if ($isLoggedIn && isset($_SESSION['username'])) {
+    $parts = explode(' ', $_SESSION['username']);
+    $displayName = $parts[0];
 }
 
-// 2. ACTIVE PAGE LOGIC
-// This prevents "Undefined index" errors
+// 2. PORTAL LOGIC
+$portal_url = 'dashboard_patient.php';
+if ($role === 'doctor') $portal_url = 'dashboard_doctor.php';
+elseif ($role === 'admin') $portal_url = 'dashboard_admin.php';
+
+// 3. ACTIVE TAB LOGIC
+$current_page = basename($_SERVER['PHP_SELF']);
 $active = [
-    'home' => '',
-    'services' => '',
-    'find_doctor' => '',
-    'blog' => '',
-    'location' => '',
-    'about' => '',
-    'contact' => '',
-    'patient_portal' => '',
-    'login' => ''
+    'Home.php' => '',
+    'services.php' => '',
+    'dashboard_patient.php' => '',
+    'dashboard_doctor.php' => '',
+    'dashboard_admin.php' => '',
+    'find_a_doctor.php' => '',
+    'blog.php' => '',
+    'location.php' => '',
+    'contact.php' => '',
+    'login.php' => '',
+    'messages.php' => '',
+    'edit_profile.php' => ''
 ];
+if (array_key_exists($current_page, $active)) $active[$current_page] = 'active-link';
+$portal_is_active = ($active['dashboard_patient.php'] || $active['dashboard_doctor.php'] || $active['dashboard_admin.php']) ? 'active-link' : '';
 
-if (isset($pageKey) && array_key_exists($pageKey, $active)) {
-    $active[$pageKey] = 'active';
-}
-
-// 3. DEFINE LINKS
-$links = [
-    'home' => 'Home.php',
-    'services' => 'services.php',
-    'find_doctor' => 'find_a_doctor.php',
-    'blog' => 'blog.php',
-    'location' => 'location.php',
-    'about' => 'Home.php#AboutUs',
-    'contact' => 'contact.php',
-    'login' => 'login.php',
-    'patient_portal' => 'Home.php',
-    'view_profile' => 'profile.php',
-    'edit_profile' => 'edit_profile.php',
-    'logout' => 'logout.php'
-];
+$notif_count = 3;
 ?>
 
+<script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <style>
-    /* HEADER STYLES */
-    header {
-        background: linear-gradient(90deg, #1e3a8a, #2563eb, #1e3a8a);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
-        padding: 15px 40px;
-        color: white;
-        z-index: 998;
-        position: relative;
+    /* --- 1. GLOBAL FIXES --- */
+    :root {
+        --primary-blue: #1e3a8a;
+        --primary-light: #2563eb;
+        --accent-green: #57c95a;
+        --text-white: #ffffff;
+        --glass-bg: rgba(255, 255, 255, 0.15);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --header-height: 70px;
     }
 
-    header>a {
-        justify-self: start;
+    body {
+        margin-top: var(--header-height) !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .logo {
-        width: 120px;
-        height: 95px;
-        object-fit: contain;
-    }
-
-    .brand-container {
-        text-align: center;
-    }
-
-    .brandName {
-        margin: 0;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-        font-size: 2em;
-        font-weight: 700;
-    }
-
-    header p {
-        margin: 0;
-        font-size: 16px;
-        text-align: center;
-        opacity: 0.9;
-        letter-spacing: 1px;
-    }
-
-    .search-bar {
-        justify-self: end;
-    }
-
-    .search-bar-box {
-        display: inline-flex;
-        align-items: center;
-        position: relative;
-    }
-
-    .search-bar-box i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #555;
-    }
-
-    .search-control {
-        height: 42px;
-        width: 250px;
-        padding: 3px 20px 3px 45px;
-        border-radius: 1.9rem;
-        border: none;
-        font-size: 15px;
-    }
-
-    .search-control:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
-    }
-
-    .main-nav {
-        display: flex;
-        align-items: center;
-        background-color: #f8f9fa;
-        padding: 10px 40px;
-        border-bottom: 1px solid #e0e0e0;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        z-index: 999;
-        justify-content: space-between;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .main-nav.sticky {
+    /* --- 2. HEADER CONTAINER --- */
+    .site-header {
+        background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 100%);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
         width: 100%;
-        z-index: 1000;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    #main-nav-placeholder {
-        display: block;
-        height: 0;
-    }
-
-    .main-nav-center {
-        flex-grow: 1;
+        height: var(--header-height);
+        z-index: 9999;
         display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
+        align-items: center;
+        padding: 0 15px;
+        box-sizing: border-box;
     }
 
-    .main-nav a.nav-link {
-        color: #333;
-        padding: 8px 14px;
-        text-decoration: none;
-        font-size: 15px;
-        border-radius: 20px;
-        transition: all 0.3s ease;
-        font-weight: 500;
-        margin: 0 4px;
+    .header-wrapper {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* --- 3. LOGO --- */
+    .logo-section {
         display: flex;
         align-items: center;
         gap: 8px;
+        text-decoration: none;
+        padding: 0;
+        flex-shrink: 0;
     }
 
-    .main-nav a.nav-link.active {
-        background-color: #57c95a;
-        color: white;
-        font-weight: bold;
+    .logo-img {
+        height: 40px;
+        width: auto;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
     }
 
-    .main-nav a.nav-link:hover:not(.active) {
-        background-color: #e9e9e9;
+    .logo-text {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 
-    .login-button {
-        margin-left: auto;
-        background-color: #1e3a8a !important;
-        color: white !important;
-        font-weight: bold;
-        padding: 8px 20px !important;
+    .logo-text span {
+        color: var(--accent-green);
     }
 
-    .login-button:hover {
-        background-color: #2563eb !important;
+    /* --- 4. NAVIGATION --- */
+    .nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin: 0 15px;
+        flex-wrap: nowrap;
     }
 
-    .portal-link {
-        color: #1e3a8a !important;
-        font-weight: 700 !important;
-        border: 1px solid #e0e0e0;
+    .nav-item {
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+        font-size: 13px;
+        padding: 8px 10px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
     }
 
-    .profile-container {
+    .nav-item:hover {
+        background-color: var(--glass-bg);
+        color: #fff;
+    }
+
+    .nav-item.active-link {
+        background-color: var(--accent-green);
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* --- 5. SEARCH BAR --- */
+    .search-container {
+        margin-right: 10px;
+    }
+
+    .search-box {
         position: relative;
-        margin-left: auto;
+        display: flex;
+        align-items: center;
     }
 
-    .profile-btn {
-        background: #fff;
-        border: 1px solid #d1d5db;
-        cursor: pointer;
+    .search-box input {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 6px 15px 6px 30px;
+        color: white;
+        outline: none;
+        width: 140px;
+        font-size: 13px;
+        transition: width 0.3s ease, background 0.3s;
+    }
+
+    .search-box input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .search-box input:focus {
+        background: rgba(255, 255, 255, 0.25);
+        width: 180px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 10px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        pointer-events: none;
+    }
+
+    /* --- 6. RIGHT ACTIONS --- */
+    .right-actions {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 5px 15px 5px 5px;
-        border-radius: 30px;
-        transition: 0.3s;
+        flex-shrink: 0;
     }
 
-    .profile-btn:hover {
-        background-color: #f3f4f6;
-        border-color: #1e3a8a;
-    }
-
-    .profile-icon-circle {
-        width: 35px;
-        height: 35px;
-        background-color: #1e3a8a;
+    .icon-btn {
+        position: relative;
         color: white;
+        font-size: 16px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 16px;
-    }
-
-    .profile-text {
-        font-weight: 600;
-        color: #333;
-        font-size: 14px;
-    }
-
-    .profile-dropdown {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: 55px;
-        background-color: white;
-        min-width: 200px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        border-radius: 12px;
-        z-index: 1001;
-        overflow: hidden;
-        border: 1px solid #f0f0f0;
-    }
-
-    .profile-dropdown.show {
-        display: block;
-        animation: fadeDown 0.2s ease-in-out;
-    }
-
-    .profile-dropdown a {
-        color: #333;
-        padding: 12px 20px;
-        text-decoration: none;
-        display: block;
-        font-size: 14px;
+        cursor: pointer;
         transition: 0.2s;
+        text-decoration: none;
+    }
+
+    .icon-btn:hover {
+        background: var(--glass-bg);
+    }
+
+    .badge {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background: #ff4757;
+        color: white;
+        font-size: 9px;
+        font-weight: bold;
+        padding: 1px 4px;
+        border-radius: 10px;
+        border: 1px solid var(--primary-blue);
+        animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+        from {
+            transform: scale(0);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
+
+    .user-profile-wrapper {
+        position: relative;
+    }
+
+    .user-profile {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
+        background: var(--glass-bg);
+        padding: 4px 12px 4px 4px;
+        border-radius: 30px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: 0.3s;
     }
 
-    .profile-dropdown a:hover {
-        background-color: #f5f7fa;
-        color: #1e3a8a;
+    .user-profile:hover {
+        background: rgba(255, 255, 255, 0.25);
     }
 
-    .profile-dropdown a.sign-out {
-        border-top: 1px solid #eee;
-        color: #dc2626;
+    .avatar-circle {
+        width: 28px;
+        height: 28px;
+        background: #fff;
+        color: var(--primary-blue);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        overflow: hidden;
     }
 
-    .profile-dropdown a.sign-out:hover {
-        background-color: #fef2f2;
+    .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    @keyframes fadeDown {
+    .user-name {
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .btn-login {
+        background: white;
+        color: var(--primary-blue);
+        padding: 6px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 13px;
+        white-space: nowrap;
+        transition: 0.3s;
+    }
+
+    .btn-login:hover {
+        background: var(--accent-green);
+        color: white;
+    }
+
+    .dropdown-menu,
+    .notif-dropdown {
+        position: absolute;
+        top: 120%;
+        right: 0;
+        background: white;
+        width: 220px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 10000;
+        animation: slideDown 0.2s ease;
+    }
+
+    .dropdown-menu.show,
+    .notif-dropdown.show {
+        display: flex;
+    }
+
+    @keyframes slideDown {
         from {
             opacity: 0;
             transform: translateY(-10px);
@@ -300,168 +366,237 @@ $links = [
         }
     }
 
-    @media screen and (max-width: 900px) {
-        header {
-            grid-template-columns: 1fr;
-            gap: 15px;
-            padding: 15px;
-            text-align: center;
-        }
+    .dropdown-item {
+        padding: 12px 20px;
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.2s;
+    }
 
-        header>a {
-            order: 2;
-            justify-self: center;
-        }
+    .dropdown-item:hover {
+        background: #f4f7f6;
+        color: var(--primary-blue);
+    }
 
-        .brand-container {
-            order: 1;
-        }
+    .dropdown-item.logout {
+        color: #ff4757;
+        border-top: 1px solid #eee;
+    }
 
-        .search-bar {
-            order: 3;
-            width: 100%;
-            justify-self: center;
-        }
+    .dropdown-item.logout:hover {
+        background: #fff0f1;
+    }
 
-        .search-control {
-            width: 100%;
-        }
+    .notif-dropdown {
+        width: 300px;
+    }
 
-        .main-nav {
-            flex-direction: column;
-            gap: 10px;
-            padding: 15px;
-            height: auto;
-        }
+    .notif-header {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+        color: #333;
+    }
 
-        .main-nav-center {
-            flex-direction: column;
-            width: 100%;
-        }
+    .notif-item {
+        display: flex;
+        padding: 15px;
+        gap: 15px;
+        text-decoration: none;
+        border-bottom: 1px solid #f9f9f9;
+        transition: 0.2s;
+    }
 
-        .main-nav a.nav-link {
-            width: 100%;
-            justify-content: center;
-            margin: 5px 0;
-        }
+    .notif-item:hover {
+        background: #f9fbff;
+    }
 
-        .login-button {
-            margin-left: 0;
-            width: 100%;
-        }
+    .notif-icon {
+        width: 35px;
+        height: 35px;
+        background: #e8f5e9;
+        color: var(--accent-green);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .profile-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
+    .notif-details {
+        display: flex;
+        flex-direction: column;
+    }
 
-        .profile-dropdown {
-            position: relative;
-            top: 5px;
-            width: 100%;
-            text-align: center;
-            box-shadow: none;
-            border: 1px solid #eee;
-        }
+    .notif-text {
+        font-size: 13px;
+        color: #444;
+        line-height: 1.4;
+    }
 
-        .profile-dropdown a {
-            justify-content: center;
+    .notif-time {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+    }
+
+    @media screen and (max-width: 1200px) {
+        .nav-item {
+            padding: 8px 6px;
         }
     }
 </style>
 
-<div id="header-container">
-    <header>
-        <a href="<?php echo $links['home']; ?>"><img class="logo" src="images/Logo4.png" alt="Logo"></a>
-        <div class="brand-container">
-            <h1 class="brandName"> MEDICARE PLUS</h1>
-            <p>YOUR PARTNER FOR A LIFETIME OF HEALTH</p>
-        </div>
-        <div class="search-bar">
-            <form>
-                <div class="search-bar-box flex">
-                    <i class="fa-solid fa-magnifying-glass fa-1x"></i>
-                    <input type="search" class="search-control" placeholder="Search here">
-                </div>
-            </form>
-        </div>
-    </header>
+<header class="site-header">
+    <div class="header-wrapper">
 
-    <div id="main-nav-placeholder"></div>
+        <a href="Home.php" class="logo-section">
+            <img src="images/Logo4.png" alt="Logo" class="logo-img">
+            <div class="logo-text">MEDICARE<span>PLUS</span></div>
+        </a>
 
-    <nav class="main-nav" id="main-nav">
-        <div class="main-nav-center">
-            <a href="<?php echo $links['home']; ?>" class="nav-link <?php echo $active['home']; ?>"><i class="fa-solid fa-house"></i> HOME</a>
-            <a href="<?php echo $links['services']; ?>" class="nav-link <?php echo $active['services']; ?>"><i class="fa-solid fa-heart"></i> SERVICES</a>
+        <nav class="nav-menu">
+            <a href="Home.php" class="nav-item <?php echo $active['Home.php']; ?>"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+            <?php if (!$isDoctor): ?>
+                <a href="services.php" class="nav-item <?php echo $active['services.php']; ?>"><i class="fa-solid fa-heart-pulse"></i> <span>Services</span></a>
+            <?php endif; ?>
+            <?php if ($isLoggedIn): ?>
+                <a href="<?php echo $portal_url; ?>" class="nav-item portal-btn <?php echo $portal_is_active; ?>"><i class="fa-solid fa-laptop-medical"></i> <span>Portal</span></a>
+            <?php endif; ?>
+            <?php if (!$isDoctor): ?>
+                <a href="find_a_doctor.php" class="nav-item <?php echo $active['find_a_doctor.php']; ?>"><i class="fa-solid fa-user-doctor"></i> <span>Doctors</span></a>
+            <?php endif; ?>
+            <a href="blog.php" class="nav-item <?php echo $active['blog.php']; ?>"><i class="fa-solid fa-book-medical"></i> <span>Blog</span></a>
+            <?php if (!$isDoctor): ?>
+                <a href="location.php" class="nav-item <?php echo $active['location.php']; ?>"><i class="fa-solid fa-location-dot"></i> <span>Location</span></a>
+                <a href="Home.php#AboutUs" class="nav-item"><i class="fa-solid fa-address-card"></i> <span>About</span></a>
+            <?php endif; ?>
+            <a href="contact.php" class="nav-item <?php echo $active['contact.php']; ?>"><i class="fa-solid fa-envelope"></i> <span>Contact</span></a>
+        </nav>
+
+        <div class="right-actions">
+            <div class="search-container">
+                <form action="#" method="GET" class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search...">
+                </form>
+            </div>
 
             <?php if ($isLoggedIn): ?>
-                <a href="<?php echo $links['patient_portal']; ?>" class="nav-link portal-link <?php echo $active['patient_portal']; ?>">
-                    <i class="fa-solid fa-laptop-medical"></i> PATIENT PORTAL
+                <a href="messages.php" class="icon-btn" title="Messages">
+                    <i class="fa-regular fa-envelope"></i>
+                    <span class="badge" id="msg-header-count" style="display:none;"></span>
                 </a>
-            <?php endif; ?>
 
-            <a href="<?php echo $links['find_doctor']; ?>" class="nav-link <?php echo $active['find_doctor']; ?>"><i class="fa-solid fa-user-doctor"></i> FIND A DOCTOR</a>
-            <a href="<?php echo $links['blog']; ?>" class="nav-link <?php echo $active['blog']; ?>"><i class="fa-solid fa-blog"></i> HEALTH BLOG</a>
-            <a href="<?php echo $links['location']; ?>" class="nav-link <?php echo $active['location']; ?>"><i class="fa-solid fa-location-dot"></i> LOCATION</a>
-            <a href="<?php echo $links['about']; ?>" class="nav-link <?php echo $active['about']; ?>"><i class="fa-solid fa-address-card"></i> ABOUT US</a>
-            <a href="<?php echo $links['contact']; ?>" class="nav-link <?php echo $active['contact']; ?>"><i class="fa-solid fa-phone"></i> CONTACT</a>
+                <div style="position:relative;">
+                    <div class="icon-btn" onclick="toggleNotif(event)">
+                        <i class="fa-regular fa-bell"></i>
+                        <?php if ($notif_count > 0): ?><span class="badge"><?php echo $notif_count; ?></span><?php endif; ?>
+                    </div>
+                    <div class="notif-dropdown" id="notifDropdown">
+                        <div class="notif-header">
+                            <span>Notifications</span>
+                            <span style="font-size:11px; color:#2563eb; cursor:pointer;">Mark all read</span>
+                        </div>
+                        <a href="#" class="notif-item">
+                            <div class="notif-icon"><i class="fa-solid fa-check"></i></div>
+                            <div class="notif-details">
+                                <span class="notif-text">Your appointment has been confirmed.</span>
+                                <span class="notif-time">2 mins ago</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="user-profile-wrapper">
+                    <div class="user-profile" onclick="toggleUserMenu(event)">
+                        <div class="avatar-circle">
+                            <?php
+                            $h_pic = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+                            // Check DB for custom pic
+                            $h_id = $_SESSION['user_id'];
+                            $h_sql = $conn->query("SELECT profile_pic FROM users WHERE id='$h_id'");
+                            if ($h_row = $h_sql->fetch_assoc()) {
+                                if (!empty($h_row['profile_pic']) && file_exists("uploads/" . $h_row['profile_pic'])) {
+                                    $h_pic = "uploads/" . $h_row['profile_pic'];
+                                }
+                            }
+                            ?>
+                            <img src="<?php echo $h_pic; ?>" alt="User">
+                        </div>
+                        <span class="user-name">Hi, <?php echo htmlspecialchars($displayName); ?></span>
+                        <i class="fa-solid fa-chevron-down" style="font-size: 11px; opacity: 0.8; color: white;"></i>
+                    </div>
+
+                    <div class="dropdown-menu" id="userMenu">
+                        <div style="padding: 15px; border-bottom: 1px solid #eee; font-size: 12px; color: #888;">
+                            Signed in as <br> <strong style="color: #333; font-size: 14px;"><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></strong>
+                        </div>
+                        <a href="<?php echo $portal_url; ?>" class="dropdown-item"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
+                        <a href="edit_profile.php" class="dropdown-item"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
+
+                        <a href="logout.php" class="dropdown-item logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    </div>
+                </div>
+            <?php else: ?>
+                <a href="login.php" class="btn-login"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+            <?php endif; ?>
         </div>
 
-        <?php if ($isLoggedIn): ?>
-            <div class="profile-container">
-                <div class="profile-btn" onclick="toggleProfileMenu()">
-                    <div class="profile-icon-circle">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <span class="profile-text">Hi, <?php echo htmlspecialchars($user_name_display); ?> <i class="fa-solid fa-caret-down"></i></span>
-                </div>
-                <div id="profileDropdown" class="profile-dropdown">
-                    <a href="<?php echo $links['view_profile']; ?>"><i class="fa-regular fa-id-card"></i> View Profile</a>
-                    <a href="<?php echo $links['edit_profile']; ?>"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
-                    <a href="<?php echo $links['logout']; ?>" class="sign-out"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</a>
-                </div>
-            </div>
-        <?php else: ?>
-            <a href="<?php echo $links['login']; ?>" class="nav-link login-button <?php echo $active['login']; ?>">
-                <i class="fa-solid fa-user"></i> LOGIN / SIGNUP
-            </a>
-        <?php endif; ?>
-    </nav>
-</div>
+    </div>
+</header>
 
 <script>
-    function stickyNavOnScroll() {
-        const nav = document.getElementById('main-nav');
-        const placeholder = document.getElementById('main-nav-placeholder');
-        const headerContainer = document.getElementById('header-container');
-        const headerElement = headerContainer.querySelector('header');
-        if (!headerElement) return;
-        const stickyPoint = headerElement.offsetHeight;
-        if (window.scrollY >= stickyPoint) {
-            nav.classList.add('sticky');
-            placeholder.style.height = nav.offsetHeight + 'px';
-        } else {
-            nav.classList.remove('sticky');
-            placeholder.style.height = '0';
-        }
+    $(document).ready(function() {
+        updateHeaderBadge();
+        setInterval(updateHeaderBadge, 3000);
+    });
+
+    function updateHeaderBadge() {
+        <?php if ($isLoggedIn): ?>
+            $.ajax({
+                url: 'message_api.php',
+                type: 'POST',
+                data: {
+                    action: 'get_unread_count'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    const count = response.count;
+                    const badgeElement = $('#msg-header-count');
+                    if (count > 0) {
+                        badgeElement.text(count);
+                        badgeElement.show();
+                    } else {
+                        badgeElement.hide();
+                    }
+                },
+                error: function(xhr, status, error) {}
+            });
+        <?php endif; ?>
     }
 
-    function toggleProfileMenu() {
-        const dropdown = document.getElementById("profileDropdown");
-        if (dropdown) dropdown.classList.toggle("show");
+    function toggleUserMenu(e) {
+        e.stopPropagation();
+        document.getElementById('userMenu').classList.toggle('show');
+        document.getElementById('notifDropdown').classList.remove('show');
     }
-    window.onclick = function(event) {
-        if (!event.target.closest('.profile-container')) {
-            const dropdowns = document.getElementsByClassName("profile-dropdown");
-            for (let i = 0; i < dropdowns.length; i++) {
-                if (dropdowns[i].classList.contains('show')) {
-                    dropdowns[i].classList.remove('show');
-                }
-            }
+
+    function toggleNotif(e) {
+        e.stopPropagation();
+        document.getElementById('notifDropdown').classList.toggle('show');
+        document.getElementById('userMenu').classList.remove('show');
+    }
+
+    window.addEventListener('click', function(e) {
+        if (!e.target.closest('.user-profile-wrapper') && !e.target.closest('.icon-btn')) {
+            document.getElementById('userMenu').classList.remove('show');
+            document.getElementById('notifDropdown').classList.remove('show');
         }
-    }
-    window.addEventListener('scroll', stickyNavOnScroll);
-    window.addEventListener('load', stickyNavOnScroll);
+    });
 </script>

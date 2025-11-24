@@ -1,29 +1,26 @@
 <?php
-// --- 1. START SESSION ---
 ob_start();
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// --- 2. DATABASE ---
 if (file_exists('db_connect.php')) {
     include 'db_connect.php';
 } else {
     die("Error: db_connect.php not found.");
 }
 
-// --- 3. AUTH CHECK ---
 $is_logged_in = isset($_SESSION['user_id']);
 $current_user_id = $is_logged_in ? $_SESSION['user_id'] : 0;
 $current_user_name = $is_logged_in ? ($_SESSION['user_name'] ?? 'User') : 'Guest';
 
-// --- 4. GET DATA ---
 $doctor_slug = $_GET['slug'] ?? null;
 if (!$doctor_slug) {
     header('Location: find_a_doctor.php');
     exit;
 }
 
+// 1. Get Doctor Info from 'doctors' table
 $stmt = $conn->prepare("SELECT id, name, title, specialty, image_url, bio, qualifications, schedule FROM doctors WHERE slug = ?");
 $stmt->bind_param("s", $doctor_slug);
 $stmt->execute();
@@ -35,9 +32,21 @@ if (!$doctor) {
     exit;
 }
 
-$doctor_id = $doctor['id'];
+$doctor_name = $doctor['name'];
 
-// --- 5. REVIEWS ---
+// --- ✅ THE FIX: Get the correct USER ID for the Chat System ---
+// We search the 'users' table for a doctor with the same name
+$user_stmt = $conn->prepare("SELECT id FROM users WHERE full_name = ? AND role = 'doctor' LIMIT 1");
+$user_stmt->bind_param("s", $doctor_name);
+$user_stmt->execute();
+$user_result = $user_stmt->get_result()->fetch_assoc();
+$chat_uid = $user_result ? $user_result['id'] : 0; // Use this ID for the message link
+$user_stmt->close();
+// -----------------------------------------------------------
+
+$doctor_id = $doctor['id']; // This is for reviews (if stored by doctor_id)
+
+// Reviews
 $reviews_query = $conn->prepare("SELECT user_name, rating, review_text, review_date FROM reviews WHERE doctor_id = ? ORDER BY review_date DESC");
 $reviews_query->bind_param("i", $doctor_id);
 $reviews_query->execute();
@@ -51,7 +60,6 @@ $full_stars = floor($average_rating);
 $has_half_star = ($average_rating - $full_stars) >= 0.5;
 
 $pageTitle = $doctor['name'] . ' - Profile';
-$pageKey = 'find_doctor';
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +73,6 @@ $pageKey = 'find_doctor';
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* --- GLOBAL RESETS (Keep header safe) --- */
         * {
             box-sizing: border-box;
         }
@@ -77,7 +84,6 @@ $pageKey = 'find_doctor';
             line-height: 1.6;
         }
 
-        /* --- SCOPED PROFILE CSS --- */
         .doc-profile-wrapper {
             padding: 40px 0;
             font-family: 'Roboto', sans-serif;
@@ -97,7 +103,6 @@ $pageKey = 'find_doctor';
             border: 1px solid #e0e0e0;
         }
 
-        /* Sidebar */
         .doc-sidebar {
             text-align: center;
             padding-right: 30px;
@@ -144,7 +149,6 @@ $pageKey = 'find_doctor';
             margin-bottom: 25px;
         }
 
-        /* Buttons */
         .doc-btn {
             display: block;
             width: 100%;
@@ -181,7 +185,18 @@ $pageKey = 'find_doctor';
             color: #57c95a !important;
         }
 
-        /* Content */
+        .doc-btn-message {
+            background-color: #e3f2fd;
+            color: #0062cc !important;
+            border: 1px solid #0062cc;
+        }
+
+        .doc-btn-message:hover {
+            background-color: #0062cc;
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
         .doc-content h1 {
             font-size: 2.2em;
             color: #1e3a8a;
@@ -191,7 +206,6 @@ $pageKey = 'find_doctor';
             padding-bottom: 15px;
         }
 
-        /* Tabs */
         .doc-tabs {
             display: flex;
             border-bottom: 1px solid #ddd;
@@ -234,7 +248,6 @@ $pageKey = 'find_doctor';
             display: none;
         }
 
-        /* Reviews */
         .doc-review-item {
             border: 1px solid #eee;
             padding: 20px;
@@ -264,7 +277,6 @@ $pageKey = 'find_doctor';
             font-size: 0.9em;
         }
 
-        /* Review Form */
         .doc-form-box {
             background: #f9f9f9;
             padding: 25px;
@@ -307,7 +319,6 @@ $pageKey = 'find_doctor';
             margin-bottom: 15px;
         }
 
-        /* Mobile */
         @media (max-width: 900px) {
             .profile-grid {
                 grid-template-columns: 1fr;
@@ -332,46 +343,42 @@ $pageKey = 'find_doctor';
 
 <body>
 
-    <?php
-    if (file_exists('header.php')) {
-        include 'header.php';
-    }
-    ?>
+    <?php if (file_exists('header.php')) include 'header.php'; ?>
 
     <div class="doc-profile-wrapper">
         <div class="profile-grid">
 
             <div class="doc-sidebar">
-                <img src="<?php echo htmlspecialchars($doctor['image_url']); ?>"
-                    alt="<?php echo htmlspecialchars($doctor['name']); ?>"
-                    class="doc-img"
-                    onerror="this.src='images/placeholder_doctor.png'">
+                <img src="<?php echo htmlspecialchars($doctor['image_url']); ?>" alt="<?php echo htmlspecialchars($doctor['name']); ?>" class="doc-img" onerror="this.src='images/placeholder_doctor.png'">
 
                 <div class="doc-name"><?php echo htmlspecialchars($doctor['name']); ?></div>
                 <div class="doc-title"><?php echo htmlspecialchars($doctor['title']); ?></div>
                 <div class="doc-specialty"><?php echo htmlspecialchars($doctor['specialty']); ?></div>
 
                 <div class="doc-stars">
-                    <?php
-                    for ($i = 1; $i <= 5; $i++) {
-                        if ($i <= $full_stars) echo '<i class="fa-solid fa-star"></i>';
-                        elseif ($i == $full_stars + 1 && $has_half_star) echo '<i class="fa-solid fa-star-half-stroke"></i>';
-                        else echo '<i class="fa-regular fa-star"></i>';
-                    }
-                    ?>
+                    <?php for ($i = 1; $i <= 5; $i++) echo ($i <= $full_stars) ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>'; ?>
                     <br><span style="font-size:0.8em; color:#777;">(<?php echo number_format($average_rating, 1); ?> / 5.0)</span>
                 </div>
 
-                <a href="book_appointment.php?doctor_id=<?php echo $doctor_id; ?>" class="doc-btn doc-btn-primary">
+                <a href="book_appointment.php?doctor_id=<?php echo $chat_uid; ?>" class="doc-btn doc-btn-primary">
                     <i class="fa-regular fa-calendar-check"></i> Book Appointment
                 </a>
+
+                <?php if ($is_logged_in): ?>
+                    <a href="messages.php?uid=<?php echo $chat_uid; ?>" class="doc-btn doc-btn-message">
+                        <i class="fa-regular fa-comment-dots"></i> Message Doctor
+                    </a>
+                <?php else: ?>
+                    <a href="login.php" class="doc-btn doc-btn-message">
+                        <i class="fa-regular fa-comment-dots"></i> Login to Chat
+                    </a>
+                <?php endif; ?>
 
                 <button onclick="goToReviews()" class="doc-btn doc-btn-secondary">Write a Review</button>
             </div>
 
             <div class="doc-content">
                 <h1><?php echo htmlspecialchars($doctor['name']); ?></h1>
-
                 <div class="doc-tabs">
                     <button class="doc-tab-btn active" id="tab-btn-bio" onclick="switchTab('bio', this)">Biography</button>
                     <button class="doc-tab-btn" id="tab-btn-qualifications" onclick="switchTab('qualifications', this)">Qualifications</button>
@@ -380,38 +387,29 @@ $pageKey = 'find_doctor';
                 </div>
 
                 <div id="bio" class="tab-section">
-                    <h3 class="doc-section-header">About Dr. <?php echo explode(' ', $doctor['name'])[1] ?? 'Doctor'; ?></h3>
+                    <h3 class="doc-section-header">About</h3>
                     <div class="doc-text-block"><?php echo nl2br(htmlspecialchars($doctor['bio'])); ?></div>
                 </div>
-
                 <div id="qualifications" class="tab-section hidden">
-                    <h3 class="doc-section-header">Professional Qualifications</h3>
+                    <h3 class="doc-section-header">Qualifications</h3>
                     <div class="doc-text-block"><?php echo nl2br(htmlspecialchars($doctor['qualifications'])); ?></div>
                 </div>
-
                 <div id="schedule" class="tab-section hidden">
-                    <h3 class="doc-section-header">Clinic Hours</h3>
+                    <h3 class="doc-section-header">Hours</h3>
                     <div class="doc-text-block"><?php echo nl2br(htmlspecialchars($doctor['schedule'])); ?></div>
                 </div>
 
                 <div id="reviews" class="tab-section hidden">
-                    <h3 class="doc-section-header">Patient Reviews (<?php echo $total_ratings; ?>)</h3>
-
+                    <h3 class="doc-section-header">Reviews (<?php echo $total_ratings; ?>)</h3>
                     <?php if ($total_ratings > 0): ?>
                         <?php foreach ($reviews as $review): ?>
                             <div class="doc-review-item">
-                                <div class="doc-review-head">
-                                    <span class="doc-reviewer"><?php echo htmlspecialchars($review['user_name']); ?></span>
-                                    <div class="doc-star-display">
-                                        <?php for ($k = 0; $k < $review['rating']; $k++) echo '<i class="fa-solid fa-star"></i>'; ?>
-                                    </div>
-                                </div>
-                                <div class="doc-date"><?php echo date('M d, Y', strtotime($review['review_date'])); ?></div>
+                                <div class="doc-review-head"><span class="doc-reviewer"><?php echo htmlspecialchars($review['user_name']); ?></span></div>
                                 <p style="margin-top:10px; color:#555;"><?php echo nl2br(htmlspecialchars($review['review_text'])); ?></p>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        <p>No reviews yet. Be the first!</p>
+                        <p>No reviews yet.</p>
                     <?php endif; ?>
 
                     <div class="doc-form-box" id="write-review-section">
@@ -421,71 +419,44 @@ $pageKey = 'find_doctor';
                                 <input type="hidden" name="doctor_id" value="<?php echo $doctor_id; ?>">
                                 <input type="hidden" name="user_id" value="<?php echo $current_user_id; ?>">
                                 <input type="hidden" name="user_name" value="<?php echo htmlspecialchars($current_user_name); ?>">
-
-                                <div>
-                                    <label style="font-weight:bold; display:block;">Your Rating</label>
-                                    <div class="doc-rating-select">
-                                        <input type="radio" id="star5" name="rating" value="5" required><label for="star5"><i class="fa-solid fa-star"></i></label>
-                                        <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="fa-solid fa-star"></i></label>
-                                        <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="fa-solid fa-star"></i></label>
-                                        <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="fa-solid fa-star"></i></label>
-                                        <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="fa-solid fa-star"></i></label>
-                                    </div>
+                                <label style="font-weight:bold; display:block;">Rating</label>
+                                <div class="doc-rating-select">
+                                    <input type="radio" id="star5" name="rating" value="5" required><label for="star5"><i class="fa-solid fa-star"></i></label>
+                                    <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="fa-solid fa-star"></i></label>
+                                    <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="fa-solid fa-star"></i></label>
+                                    <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="fa-solid fa-star"></i></label>
+                                    <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="fa-solid fa-star"></i></label>
                                 </div>
-
-                                <label style="font-weight:bold;">Your Experience</label>
-                                <textarea name="review_text" placeholder="Share your feedback..." required></textarea>
-                                <button type="submit" class="doc-btn doc-btn-primary" style="width:auto; padding:10px 30px;">Submit Review</button>
+                                <label style="font-weight:bold;">Experience</label>
+                                <textarea name="review_text" required></textarea>
+                                <button type="submit" class="doc-btn doc-btn-primary" style="width:auto; padding:10px 30px;">Submit</button>
                             </form>
-                        <?php else: ?>
-                            <p style="text-align:center;">Please <a href="login.php" style="color:#1e3a8a; font-weight:bold;">Log In</a> to write a review.</p>
                         <?php endif; ?>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
     <script>
-        // Standard Tab Switcher
         function switchTab(tabId, btnElement) {
             const wrapper = document.querySelector('.doc-profile-wrapper');
-
-            // Hide all tab sections
             wrapper.querySelectorAll('.tab-section').forEach(el => el.classList.add('hidden'));
-
-            // Reset all tab buttons
             wrapper.querySelectorAll('.doc-tab-btn').forEach(el => el.classList.remove('active'));
-
-            // Show target tab and activate button
             wrapper.querySelector('#' + tabId).classList.remove('hidden');
             btnElement.classList.add('active');
         }
 
-        // Function to Open Reviews Tab and Scroll (Linked to Sidebar Button)
         function goToReviews() {
-            // 1. Find the Reviews Tab Button
             const reviewsBtn = document.getElementById('tab-btn-reviews');
-
-            // 2. Trigger the tab switch logic
-            if (reviewsBtn) {
-                switchTab('reviews', reviewsBtn);
-            }
-
-            // 3. Scroll smoothly to the form
-            const formSection = document.getElementById('write-review-section');
-            if (formSection) {
-                formSection.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
+            if (reviewsBtn) switchTab('reviews', reviewsBtn);
+            document.getElementById('write-review-section').scrollIntoView({
+                behavior: 'smooth'
+            });
         }
     </script>
 
-    <?php if (file_exists('footer.php')) {
-        include 'footer.php';
-    } ?>
+    <?php if (file_exists('footer.php')) include 'footer.php'; ?>
 </body>
 
 </html>

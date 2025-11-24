@@ -3,26 +3,24 @@ $pageTitle = 'Chat With Us';
 $pageKey = 'contact';
 
 // --- 1. SESSION & AUTHENTICATION ---
-// Start the session to access user data
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 // Initialize default variables
 $isUserLoggedIn = false;
-$userName = "Guest";
+$userName = "User"; // DEFAULT: "Hello, User" (as requested)
 
-// Check if the user is logged in via Session
+// Check if the user is logged in
 if (isset($_SESSION['user_id'])) {
     $isUserLoggedIn = true;
-    // Use the session name, or fallback to 'User' if missing
-    $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'User';
 
-    // Optional: If you store "First Name" specifically, extract it:
-    // $parts = explode(' ', $userName);
-    // $userName = $parts[0]; 
-} else {
-    $userName = 'Anonymous';
+    // CRITICAL FIX: Use 'username' (matches your login.php), not 'user_name'
+    if (isset($_SESSION['username'])) {
+        // Get just the first name for a friendly chat greeting
+        $parts = explode(' ', $_SESSION['username']);
+        $userName = $parts[0];
+    }
 }
 ?>
 
@@ -217,7 +215,6 @@ if (isset($_SESSION['user_id'])) {
 <body>
 
     <?php
-    // Ensure header exists before including
     if (file_exists('header.php')) {
         include 'header.php';
     }
@@ -232,7 +229,8 @@ if (isset($_SESSION['user_id'])) {
         <div class="chat-options-grid">
 
             <div class="chat-embed-area" id="live-chat-area">
-                <h3 id="chat-greeting">Hello!</h3>
+
+                <h3 id="chat-greeting" style="color: #1e3a8a;">Hello, <?php echo htmlspecialchars($userName); ?>!</h3>
 
                 <p style="text-align: center; color: var(--text-light); max-width: 80%;">
                     Start a general conversation with hospital staff. <br>
@@ -287,26 +285,9 @@ if (isset($_SESSION['user_id'])) {
     } ?>
 
     <script>
-        // 1. PASS PHP DATA TO JS
-        const isUserLoggedIn = <?php echo $isUserLoggedIn ? 'true' : 'false'; ?>;
-        const userName = "<?php echo htmlspecialchars($userName); ?>";
-
         document.addEventListener('DOMContentLoaded', function() {
-            const chatGreeting = document.getElementById('chat-greeting');
 
-            // 2. UPDATE UI BASED ON STATE
-            if (chatGreeting) {
-                if (isUserLoggedIn && userName !== 'Anonymous') {
-                    // Logic: If user is logged in, personalize the greeting
-                    chatGreeting.innerHTML = `Hello, ${userName}!`;
-                    chatGreeting.style.color = "#1e3a8a";
-                } else {
-                    // Logic: If guest, show generic greeting
-                    chatGreeting.innerHTML = `Hello, Guest!`;
-                }
-            }
-
-            // Optional: Button click handler
+            // Button click handler
             const startBtn = document.getElementById('start-chat-btn');
             if (startBtn) {
                 startBtn.addEventListener('click', function(e) {
@@ -316,7 +297,7 @@ if (isset($_SESSION['user_id'])) {
                         alert("Please type a message first.");
                     } else {
                         alert("Connecting you to an agent... (Demo)");
-                        // Here you would redirect to the actual chat system or open a websocket connection
+                        // Here you would redirect to the actual chat system
                     }
                 });
             }

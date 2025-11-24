@@ -1,6 +1,7 @@
 <?php
+session_start(); // CRITICAL: Must be the very first line
 $pageTitle = 'Home';
-$pageKey = 'home'; // This is the key! It tells header.php and footer.php to load the external files.
+$pageKey = 'home';
 ?>
 
 <!DOCTYPE html>
@@ -17,63 +18,133 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
     <style>
-        /* This style block ensures the new FAQ button is correctly placed. 
-           The Chat button now relies only on its class in HomeStyles.css. 
-           We assume HomeStyles.css positions .chat-button at bottom: 50px. */
-        #faq-widget {
-            /* General floating button appearance */
-            position: fixed;
-            right: 20px;
-            z-index: 1001;
+        /* =========================================
+           1. TOP SLIDESHOW ARROWS (Main Banner)
+           ========================================= */
+        .prev,
+        .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
             color: white;
-            width: 50px;
-            height: 50px;
+            font-weight: bold;
+            font-size: 24px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+            background-color: rgba(0, 0, 0, 0.3);
+            /* Dark see-through background */
+            text-decoration: none;
+            z-index: 10;
+        }
+
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .prev:hover,
+        .next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* =========================================
+           2. SERVICES & DOCTORS CAROUSEL ARROWS
+           (Circular buttons with shadows)
+           ========================================= */
+
+        /* Ensure the container acts as a reference point for the buttons */
+        .service-carousel-container {
+            position: relative;
+        }
+
+        .service-prev,
+        .service-next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            /* Centers perfectly vertically */
+            width: 45px;
+            height: 45px;
+            color: #333;
+            /* Dark arrow color */
+            background-color: white;
+            /* White Circle */
+            font-weight: bold;
+            font-size: 20px;
             border-radius: 50%;
+            /* Makes it a circle */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            /* Adds a nice shadow */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            user-select: none;
             text-decoration: none;
-            transition: background-color 0.3s;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
 
-            /* Positioning above the chat button (assuming chat button is at ~50px bottom) */
-            bottom: 120px;
+        /* Position Left Button */
+        .service-prev {
+            left: -20px;
+            /* Sits slightly outside the content to the left */
+        }
+
+        /* Position Right Button */
+        .service-next {
+            right: -20px;
+            /* Sits slightly outside the content to the right */
+        }
+
+        /* Hover effect for Services/Doctors buttons */
+        .service-prev:hover,
+        .service-next:hover {
             background-color: #57c95a;
-            /* Primary Green */
+            /* Green on hover */
+            color: white;
+        }
+
+        /* Mobile adjustment: Bring arrows inside if screen is small */
+        @media only screen and (max-width: 768px) {
+            .service-prev {
+                left: 0;
+            }
+
+            .service-next {
+                right: 0;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <?php
-    include 'header.php';
-    ?>
+    <?php include 'header.php'; ?>
 
     <div class="slideshow-container">
 
         <div class="mySlides fade">
-            <div class="numbertext">1 / 4</div>
-            <img src="images/Slideshow1.png" alt="Your partner for a lifetime of health">
+            <img src="images/Slideshow1.png" alt="Your partner for a lifetime of health" style="width:100%">
             <div class="text">YOUR PARTNER FOR A LIFETIME OF HEALTH</div>
         </div>
 
         <div class="mySlides fade">
-            <div class="numbertext">2 / 4</div>
-            <img src="images/Slideshow2.png" alt="Visit us on our website">
+            <img src="images/Slideshow2.png" alt="Visit us on our website" style="width:100%">
             <div class="text">VISIT US ON WWW.MEDICAREPLUS.LK</div>
         </div>
 
         <div class="mySlides fade">
-            <div class="numbertext">3 / 4</div>
-            <img src="images/Slideshow3.png" alt="Follow us on social media">
+            <img src="images/Slideshow3.png" alt="Follow us on social media" style="width:100%">
             <div class="text">FOLLOW US ON SOCIAL MEDIA</div>
         </div>
 
         <div class="mySlides fade">
-            <div class="numbertext">4 / 4</div>
-            <img src="images/Slideshow4.png" alt="Medicare Plus, your partner for health">
+            <img src="images/Slideshow4.png" alt="Medicare Plus, your partner for health" style="width:100%">
             <div class="text">YOUR PARTNER FOR A LIFETIME OF HEALTH</div>
         </div>
 
@@ -261,6 +332,7 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
                     </div>
                 </div>
             </div>
+
             <a class="service-prev" onclick="plusDoctorSlides(-1)">❮</a>
             <a class="service-next" onclick="plusDoctorSlides(1)">❯</a>
         </div>
@@ -396,18 +468,7 @@ $pageKey = 'home'; // This is the key! It tells header.php and footer.php to loa
         </div>
     </div>
 
-    <a href="faq.php" id="faq-widget" class="chat-button" title="Frequently Asked Questions">
-        <i class="fa-solid fa-circle-question"></i>
-    </a>
-
-    <a href="chat_with_us.php" id="chat-widget" class="chat-button" title="Chat with us" target="_blank" rel="noopener noreferrer">
-        <i class="fa-solid fa-comment-dots"></i>
-    </a>
-
-
-    <?php
-    include 'footer.php';
-    ?>
+    <?php include 'footer.php'; ?>
 
     <script src="first.js"></script>
 

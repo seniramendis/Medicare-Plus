@@ -1,10 +1,12 @@
 <style>
-    /* --- FOOTER STYLES --- */
+    /* --- STANDARD FOOTER STYLES --- */
     .site-footer {
         background-color: #181818;
         color: #ccc;
         padding: 60px 40px 20px 40px;
         line-height: 1.7;
+        font-family: Arial, sans-serif;
+        /* Ensure basic font consistency */
     }
 
     .footer-container {
@@ -24,7 +26,7 @@
         width: 130px;
         height: auto;
         margin-bottom: 15px;
-        filter: brightness(0) invert(1) contrast(0.8);
+
     }
 
     .footer-column h3 {
@@ -160,14 +162,14 @@
         </div>
 
         <div class="footer-column quick-links">
-            <h3 style="margin-left: 100px;">QUICK LINKS</h3>
+            <h3 style="margin-left: 0;">QUICK LINKS</h3>
             <ul class="footer-links">
-                <li><a href="<?php echo $links['services']; ?>">Our Services</a></li>
-                <li><a href="<?php echo $links['find_doctor']; ?>">Find a Doctor</a></li>
-                <li><a href="<?php echo $links['blog']; ?>">Health Blog & Tips</a></li>
-                <li><a href="<?php echo $links['location']; ?>">Location</a></li>
-                <li><a href="<?php echo $links['about']; ?>">About Us</a></li>
-                <li><a href="<?php echo $links['contact']; ?>">Contact</a></li>
+                <li><a href="<?php echo isset($links['services']) ? $links['services'] : 'services.php'; ?>">Our Services</a></li>
+                <li><a href="<?php echo isset($links['find_doctor']) ? $links['find_doctor'] : 'find_a_doctor.php'; ?>">Find a Doctor</a></li>
+                <li><a href="<?php echo isset($links['blog']) ? $links['blog'] : 'blog.php'; ?>">Health Blog & Tips</a></li>
+                <li><a href="<?php echo isset($links['location']) ? $links['location'] : 'location.php'; ?>">Location</a></li>
+                <li><a href="<?php echo isset($links['about']) ? $links['about'] : '#AboutUs'; ?>">About Us</a></li>
+                <li><a href="<?php echo isset($links['contact']) ? $links['contact'] : 'contact.php'; ?>">Contact</a></li>
             </ul>
         </div>
 
@@ -202,6 +204,79 @@
         <p>© 2025 Medicare Plus. All rights reserved.</p>
     </div>
 </footer>
+
+<style>
+    /* These styles use !important to override any conflicting styles 
+       from other pages (like services.php) and use hardcoded colors 
+       so they don't disappear if CSS variables are missing.
+    */
+
+    .chat-button {
+        position: fixed !important;
+        right: 25px !important;
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 50% !important;
+
+        /* Hardcoded Colors (White Text) */
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-size: 24px !important;
+        text-decoration: none !important;
+        z-index: 9999 !important;
+        /* Keep on top of everything */
+        transition: transform 0.3s ease !important;
+    }
+
+    /* Chat Button (Bottom) - Medicare Green */
+    #chat-widget {
+        bottom: 25px !important;
+        background-color: #57c95a !important;
+    }
+
+    /* FAQ Button (Top) - Blue (to distinguish from chat) */
+    #faq-widget {
+        bottom: 100px !important;
+        background-color: #0056b3 !important;
+    }
+
+    /* Hover Effects */
+    .chat-button:hover {
+        transform: scale(1.1) !important;
+        filter: brightness(1.1);
+        /* Makes it slightly brighter on hover */
+    }
+
+    /* Mobile Adjustments */
+    @media screen and (max-width: 480px) {
+        .chat-button {
+            width: 50px !important;
+            height: 50px !important;
+            right: 15px !important;
+            font-size: 20px !important;
+        }
+
+        #chat-widget {
+            bottom: 15px !important;
+        }
+
+        #faq-widget {
+            bottom: 80px !important;
+        }
+    }
+</style>
+
+<a href="faq.php" id="faq-widget" class="chat-button" title="Frequently Asked Questions">
+    <i class="fa-solid fa-circle-question"></i>
+</a>
+
+<a href="chat_with_us.php" id="chat-widget" class="chat-button" title="Chat with us" target="_blank">
+    <i class="fa-solid fa-comment-dots"></i>
+</a>
 
 <?php if (isset($pageKey) && $pageKey == 'home'): ?>
     <script src="first.js" type="text/javascript"></script>
