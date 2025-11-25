@@ -12,8 +12,10 @@ if (!isset($conn)) {
 
 // --- GLOBAL SECURITY CHECK ---
 // This ensures that if a user is deleted from the DB, they are logged out from ANY page they visit.
-if (isset($_SESSION['user_id'])) {
-    $sec_id = $_SESSION['user_id'];
+if (isset($_SESSION['user_id']) || isset($_SESSION['admin_id'])) {
+    $sec_id = $_SESSION['user_id'] ?? $_SESSION['admin_id'];
+    $sec_role = $_SESSION['role'] ?? 'guest';
+
     // Fast query to check existence
     $sec_check = $conn->query("SELECT id FROM users WHERE id = '$sec_id'");
 
@@ -24,7 +26,7 @@ if (isset($_SESSION['user_id'])) {
 
         // Force redirect using JavaScript (Safe to use inside included files)
         echo "<script>
-            alert('Your account no longer exists.');
+            alert('Your account no longer exists or your session expired.');
             window.location.href = 'login.php';
         </script>";
         exit();
@@ -32,21 +34,34 @@ if (isset($_SESSION['user_id'])) {
 }
 // -----------------------------
 
-// 1. GET USER INFO
-$isLoggedIn = isset($_SESSION['user_id']);
-$role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
+// 1. GET USER INFO - UPDATED FOR SESSION ISOLATION
+$isAdminLoggedIn = (isset($_SESSION['admin_id']) && ($_SESSION['role'] === 'admin'));
+$isGenericUserLoggedIn = (isset($_SESSION['user_id']) && ($_SESSION['role'] === 'patient' || $_SESSION['role'] === 'doctor'));
+
+// $isLoggedIn is true if *any* recognized user type is logged in (used for portal links, dropdown visibility, etc.)
+$isLoggedIn = $isGenericUserLoggedIn || $isAdminLoggedIn;
+
+$role = $_SESSION['role'] ?? '';
 $isDoctor = ($role === 'doctor');
 
 $displayName = 'Guest';
-if ($isLoggedIn && isset($_SESSION['username'])) {
-    $parts = explode(' ', $_SESSION['username']);
+$session_username = $_SESSION['username'] ?? ''; // Uses the username set by the login script (admin or generic)
+
+// Set displayName for the public header: Only show the name if it's a generic user (Patient/Doctor)
+if ($isGenericUserLoggedIn) {
+    $parts = explode(' ', $session_username);
     $displayName = $parts[0];
 }
 
 // 2. PORTAL LOGIC
-$portal_url = 'dashboard_patient.php';
-if ($role === 'doctor') $portal_url = 'dashboard_doctor.php';
-elseif ($role === 'admin') $portal_url = 'dashboard_admin.php';
+$portal_url = '#';
+if ($role === 'doctor' && isset($_SESSION['user_id'])) {
+    $portal_url = 'dashboard_doctor.php';
+} elseif ($role === 'patient' && isset($_SESSION['user_id'])) {
+    $portal_url = 'dashboard_patient.php';
+} elseif ($role === 'admin' && isset($_SESSION['admin_id'])) {
+    $portal_url = 'dashboard_admin.php'; // Admin uses their isolated key check
+}
 
 // 3. ACTIVE TAB LOGIC
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -64,8 +79,13 @@ $active = [
     'messages.php' => '',
     'edit_profile.php' => ''
 ];
+
+// Check if any dashboard is active to highlight the 'Portal' link
+$portal_pages = ['dashboard_patient.php', 'dashboard_doctor.php', 'dashboard_admin.php'];
+$portal_is_active = (in_array($current_page, $portal_pages)) ? 'active-link' : '';
+
 if (array_key_exists($current_page, $active)) $active[$current_page] = 'active-link';
-$portal_is_active = ($active['dashboard_patient.php'] || $active['dashboard_doctor.php'] || $active['dashboard_admin.php']) ? 'active-link' : '';
+
 
 $notif_count = 3;
 ?>
@@ -465,9 +485,11 @@ $notif_count = 3;
             <?php if (!$isDoctor): ?>
                 <a href="services.php" class="nav-item <?php echo $active['services.php']; ?>"><i class="fa-solid fa-heart-pulse"></i> <span>Services</span></a>
             <?php endif; ?>
+
             <?php if ($isLoggedIn): ?>
                 <a href="<?php echo $portal_url; ?>" class="nav-item portal-btn <?php echo $portal_is_active; ?>"><i class="fa-solid fa-laptop-medical"></i> <span>Portal</span></a>
             <?php endif; ?>
+
             <?php if (!$isDoctor): ?>
                 <a href="find_a_doctor.php" class="nav-item <?php echo $active['find_a_doctor.php']; ?>"><i class="fa-solid fa-user-doctor"></i> <span>Doctors</span></a>
             <?php endif; ?>
@@ -487,7 +509,7 @@ $notif_count = 3;
                 </form>
             </div>
 
-            <?php if ($isLoggedIn): ?>
+            <?php if ($isGenericUserLoggedIn): ?>
                 <a href="messages.php" class="icon-btn" title="Messages">
                     <i class="fa-regular fa-envelope"></i>
                     <span class="badge" id="msg-header-count" style="display:none;"></span>
@@ -535,7 +557,7 @@ $notif_count = 3;
 
                     <div class="dropdown-menu" id="userMenu">
                         <div style="padding: 15px; border-bottom: 1px solid #eee; font-size: 12px; color: #888;">
-                            Signed in as <br> <strong style="color: #333; font-size: 14px;"><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></strong>
+                            Signed in as <br> <strong style="color: #333; font-size: 14px;"><?php echo htmlspecialchars($session_username); ?></strong>
                         </div>
                         <a href="<?php echo $portal_url; ?>" class="dropdown-item"><i class="fa-solid fa-table-columns"></i> Dashboard</a>
                         <a href="edit_profile.php" class="dropdown-item"><i class="fa-solid fa-user-pen"></i> Edit Profile</a>
@@ -558,7 +580,7 @@ $notif_count = 3;
     });
 
     function updateHeaderBadge() {
-        <?php if ($isLoggedIn): ?>
+        <?php if ($isGenericUserLoggedIn): ?> // Only run AJAX for generic users
             $.ajax({
                 url: 'message_api.php',
                 type: 'POST',
@@ -595,8 +617,10 @@ $notif_count = 3;
 
     window.addEventListener('click', function(e) {
         if (!e.target.closest('.user-profile-wrapper') && !e.target.closest('.icon-btn')) {
-            document.getElementById('userMenu').classList.remove('show');
-            document.getElementById('notifDropdown').classList.remove('show');
+            const userMenu = document.getElementById('userMenu');
+            const notifDropdown = document.getElementById('notifDropdown');
+            if (userMenu) userMenu.classList.remove('show');
+            if (notifDropdown) notifDropdown.classList.remove('show');
         }
     });
 </script>

@@ -3,26 +3,40 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 include 'db_connect.php';
+
+// Security Check
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: login.php");
     exit();
 }
+
 $patient_name = $_SESSION['username'];
 $u_res = mysqli_query($conn, "SELECT id FROM users WHERE full_name = '$patient_name'");
 $patient_id = (mysqli_num_rows($u_res) > 0) ? mysqli_fetch_assoc($u_res)['id'] : 0;
 
-// Appointments
-$result = mysqli_query($conn, "SELECT appointments.*, users.full_name AS doctor_name, users.id AS doc_user_id FROM appointments JOIN users ON appointments.doctor_id = users.id WHERE patient_name = '$patient_name' ORDER BY appointments.id DESC");
+// 1. FETCH APPOINTMENTS
+$result = mysqli_query($conn, "SELECT appointments.*, users.full_name AS doctor_name, users.id AS doc_user_id FROM appointments JOIN users ON appointments.doctor_id = users.id WHERE patient_name = '$patient_name' ORDER BY appointments.appointment_time ASC");
 
-// --- LOGIC UPDATE HERE ---
-// History: We now JOIN with 'invoices' to get the service name
-$hist_query = "SELECT p.*, i.service_name 
-               FROM payments p 
-               JOIN invoices i ON p.invoice_id = i.id 
-               WHERE p.patient_id = '$patient_id' 
-               ORDER BY p.paid_at DESC LIMIT 5";
+// 2. FETCH TRANSACTIONS
+$hist_query = "SELECT * FROM payments 
+               WHERE patient_id = '$patient_id' 
+               ORDER BY paid_at DESC LIMIT 5";
 $hist_res = mysqli_query($conn, $hist_query);
+
+// 3. FETCH MEDICAL RECORDS (FIXED)
+// We check if table exists using mysqli_query to prevent crashing
+$table_check = mysqli_query($conn, "SHOW TABLES LIKE 'patient_reports'");
+$rep_res = false; // Default to false
+
+if (mysqli_num_rows($table_check) > 0) {
+    // Table exists, now fetch data
+    $rep_query = "SELECT * FROM patient_reports 
+                  WHERE patient_id = '$patient_id' 
+                  ORDER BY report_date DESC LIMIT 6";
+    $rep_res = mysqli_query($conn, $rep_query);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,6 +61,7 @@ $hist_res = mysqli_query($conn, $hist_query);
             min-height: 60vh;
         }
 
+        /* Banner */
         .welcome-banner {
             background: linear-gradient(135deg, #0062cc, #0096ff);
             color: white;
@@ -66,56 +81,14 @@ $hist_res = mysqli_query($conn, $hist_query);
             border-radius: 30px;
             font-weight: 600;
             text-decoration: none;
+            transition: 0.2s;
         }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            border: 1px solid #eee;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .status-Scheduled {
+        .banner-btn:hover {
             background: #e3f2fd;
-            color: #0062cc;
         }
 
-        .status-Completed {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .btn-chat {
-            display: block;
-            width: 100%;
-            text-align: center;
-            margin-top: 15px;
-            padding: 10px 0;
-            background-color: #f0f7ff;
-            color: #0062cc;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
+        /* Finance Section */
         .finance-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -128,13 +101,6 @@ $hist_res = mysqli_query($conn, $hist_query);
             border-radius: 16px;
             padding: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .total-due {
-            font-size: 32px;
-            font-weight: 700;
-            color: #dc3545;
-            margin: 10px 0;
         }
 
         .pay-table {
@@ -156,14 +122,174 @@ $hist_res = mysqli_query($conn, $hist_query);
             border-bottom: 1px solid #f9f9f9;
         }
 
+        /* Outstanding Due Styles */
+        .total-due {
+            font-size: 32px;
+            font-weight: 700;
+            color: #dc3545;
+            margin: 10px 0;
+        }
+
         .btn-pay {
             background: #dc3545;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* --- Elegant Card Styles --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .appt-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .appt-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Status Colors (Left Border) */
+        .appt-card.st-Completed {
+            border-left: 5px solid #22c55e;
+        }
+
+        .appt-card.st-Confirmed {
+            border-left: 5px solid #0062cc;
+        }
+
+        .appt-card.st-Scheduled {
+            border-left: 5px solid #f59e0b;
+        }
+
+        /* Medical Report Colors */
+        .appt-card.st-Prescription {
+            border-left: 5px solid #6f42c1;
+        }
+
+        /* Purple */
+        .appt-card.st-Lab {
+            border-left: 5px solid #e83e8c;
+        }
+
+        /* Pink */
+
+        .appt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .date-badge {
+            background: #f8f9fa;
+            color: #555;
             font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .st-text-Completed {
+            color: #22c55e;
+        }
+
+        .st-text-Confirmed {
+            color: #0062cc;
+        }
+
+        .st-text-Scheduled {
+            color: #f59e0b;
+        }
+
+        .st-text-Prescription {
+            color: #6f42c1;
+        }
+
+        .st-text-Lab {
+            color: #e83e8c;
+        }
+
+        .doc-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .doc-info p {
+            margin: 0;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .reason-tag {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .card-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        .btn-msg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px;
+            background: #f0f7ff;
+            color: #0062cc;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+            box-sizing: border-box;
+        }
+
+        .btn-msg:hover {
+            background: #0062cc;
+            color: white;
         }
     </style>
 </head>
@@ -184,6 +310,7 @@ $hist_res = mysqli_query($conn, $hist_query);
             <div class="finance-card" style="border-left: 5px solid #dc3545;" id="live-bills-container">
                 <p style="color:#666;">Checking bills...</p>
             </div>
+
             <div class="finance-card" style="border-left: 5px solid #28a745;">
                 <h4 style="margin:0; color:#555;">Recent Transactions</h4>
                 <table class="pay-table">
@@ -197,14 +324,14 @@ $hist_res = mysqli_query($conn, $hist_query);
                         <?php while ($hist = mysqli_fetch_assoc($hist_res)): ?>
                             <tr>
                                 <td><?php echo date('M d', strtotime($hist['paid_at'])); ?></td>
-                                <td><?php echo htmlspecialchars($hist['service_name']); ?></td>
-                                <td><?php echo htmlspecialchars($hist['method']); ?></td>
-                                <td style="color:#28a745; font-weight:600;">LKR <?php echo $hist['amount']; ?></td>
+                                <td><?php echo htmlspecialchars($hist['description']); ?></td>
+                                <td><?php echo isset($hist['payment_method']) ? htmlspecialchars($hist['payment_method']) : 'Online'; ?></td>
+                                <td style="color:#28a745; font-weight:600;">LKR <?php echo number_format($hist['amount'], 2); ?></td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" style="text-align:center; padding:15px; color:#999;">No payments yet.</td>
+                            <td colspan="4" style="text-align:center; padding:15px; color:#999;">No payments made yet.</td>
                         </tr>
                     <?php endif; ?>
                 </table>
@@ -217,19 +344,95 @@ $hist_res = mysqli_query($conn, $hist_query);
             if (mysqli_num_rows($result) > 0) {
                 while ($row = mysqli_fetch_assoc($result)) {
                     $status = $row['status'];
-                    $icon = ($status == 'Completed') ? 'fa-check-circle' : 'fa-calendar-alt';
-                    $iconColor = ($status == 'Completed') ? '#dcfce7' : '#e3f2fd';
-                    $iconText = ($status == 'Completed') ? '#16a34a' : '#0062cc';
-                    echo "<div class='card'>
-                        <div class='card-header'><div style='width:45px; height:45px; border-radius:12px; background:$iconColor; color:$iconText; display:flex; align-items:center; justify-content:center; font-size:20px;'><i class='fas $icon'></i></div><span class='status-badge status-$status'>$status</span></div>
-                        <div><h4 style='margin:0; font-size:16px; color:#333;'>{$row['doctor_name']}</h4><p style='color:#666; font-size:13px; margin:5px 0;'>{$row['appointment_time']}</p><p style='color:#888; font-size:13px;'>{$row['reason']}</p><a href='messages.php?uid={$row['doc_user_id']}' class='btn-chat'><i class='far fa-comment-dots'></i> Message Doctor</a></div>
+                    $status_class = "st-" . $status;
+
+                    // Date Logic: Smart fallback
+                    $raw_date = $row['appointment_time'];
+                    $timestamp = strtotime($raw_date);
+
+                    if ($timestamp && date('Y', $timestamp) != '1970' && strpos($raw_date, '0000') === false) {
+                        $nice_date = date('M d, Y', $timestamp);
+                        $nice_time = date('h:i A', $timestamp);
+                        $time_html = "<p><i class='far fa-clock' style='color:#bbb; margin-right:5px;'></i> $nice_time</p>";
+                    } else {
+                        // FORCE RAW TEXT if PHP fails to format
+                        $nice_date = !empty($raw_date) ? $raw_date : "Date Pending";
+                        $time_html = "";
+                    }
+
+                    echo "
+                    <div class='appt-card $status_class'>
+                        <div class='appt-header'>
+                            <div class='date-badge'><i class='far fa-calendar-alt'></i> $nice_date</div>
+                            <div class='status-label st-text-$status'>$status</div>
+                        </div>
+
+                        <div class='doc-info'>
+                            <h4>{$row['doctor_name']}</h4>
+                            $time_html
+                            <div class='reason-tag'>{$row['reason']}</div>
+                        </div>
+
+                        <div class='card-footer'>
+                            <a href='messages.php?uid={$row['doc_user_id']}' class='btn-msg'>
+                                <i class='far fa-comment-dots'></i> Message Doctor
+                            </a>
+                        </div>
                     </div>";
                 }
             } else {
-                echo "<p>No appointments found.</p>";
+                echo "<p style='color:#888; text-align:center; grid-column:1/-1;'>No appointments found.</p>";
             }
             ?>
         </div>
+
+        <h3 style="color:#333; margin-top:40px; margin-bottom:20px;">Recent Prescriptions & Reports</h3>
+        <div class="dashboard-grid">
+            <?php
+            if ($rep_res && mysqli_num_rows($rep_res) > 0) {
+                while ($rep = mysqli_fetch_assoc($rep_res)) {
+                    $type = $rep['type']; // 'Prescription' or 'Lab Report'
+                    $is_lab = ($type == 'Lab Report');
+
+                    // Styling Logic
+                    $border_class = $is_lab ? "st-Lab" : "st-Prescription";
+                    $text_class = $is_lab ? "st-text-Lab" : "st-text-Prescription";
+                    $bg_color = $is_lab ? "#fce4ec" : "#f3e5f5"; // Pink vs Purple bg
+                    $main_color = $is_lab ? "#e83e8c" : "#6f42c1"; // Pink vs Purple text
+                    $icon = $is_lab ? "fa-flask" : "fa-file-prescription";
+                    $btn_text = $is_lab ? "View Report" : "Download PDF";
+                    $btn_icon = $is_lab ? "fa-eye" : "fa-download";
+
+                    $r_date = date('M d, Y', strtotime($rep['report_date']));
+
+                    echo "
+                    <div class='appt-card $border_class'>
+                        <div class='appt-header'>
+                            <div class='date-badge'><i class='fas $icon'></i> $r_date</div>
+                            <div class='status-label $text_class'>" . strtoupper($type) . "</div>
+                        </div>
+
+                        <div class='doc-info'>
+                            <h4>{$rep['doctor_name']}</h4>
+                            <p style='color:#666; font-size:13px; margin-bottom:5px;'>{$rep['title']}</p>
+                            <div class='reason-tag' style='background:$bg_color; color:$main_color; border:none;'>
+                                {$rep['description']}
+                            </div>
+                        </div>
+
+                        <div class='card-footer'>
+                            <button class='btn-msg' style='background:$bg_color; color:$main_color;'>
+                                <i class='fas $btn_icon'></i> $btn_text
+                            </button>
+                        </div>
+                    </div>";
+                }
+            } else {
+                echo "<p style='color:#888; text-align:center; grid-column:1/-1; padding:20px; background:white; border-radius:12px;'>No medical records found (or table not created yet).</p>";
+            }
+            ?>
+        </div>
+
     </div>
     <?php include 'footer.php'; ?>
 
@@ -240,7 +443,6 @@ $hist_res = mysqli_query($conn, $hist_query);
 
             // Refresh every 2 seconds
             setInterval(function() {
-                // Math.random() forces browser to ignore cache
                 $("#live-bills-container").load("load_bills.php?v=" + Math.random());
             }, 2000);
         });

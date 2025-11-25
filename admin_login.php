@@ -6,15 +6,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE email = '$email' AND role = 'admin'";
+    $sql = "SELECT id, full_name, email, password FROM users WHERE email = '$email' AND role = 'admin'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
-            $_SESSION['user_id'] = $row['id'];
-            $_SESSION['role'] = 'admin';
-            $_SESSION['username'] = $row['username'];
+
+            // *** CRITICAL CHANGE: Use Admin-specific session keys for isolation ***
+            $_SESSION['admin_id'] = $row['id'];
+            $_SESSION['role'] = 'admin'; // Keep the role for dashboard security
+            $_SESSION['username'] = $row['full_name']; // Use full_name for better display
+
+            // Clear any existing generic user session to prevent conflicts on the public site
+            unset($_SESSION['user_id']);
+
             header("Location: dashboard_admin.php");
             exit();
         } else {

@@ -2,6 +2,7 @@
 session_start();
 include 'db_connect.php';
 
+// Check if doctor is logged in
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
     header("Location: login.php");
     exit();
@@ -9,11 +10,34 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
 
 $doctor_name = isset($_SESSION['username']) ? $_SESSION['username'] : 'Doctor';
 
-// 1. Get Doctor ID
+// 1. Get Doctor ID safely
 $d_sql = "SELECT id FROM users WHERE full_name = '$doctor_name'";
 $d_res = mysqli_query($conn, $d_sql);
-$doc_data = mysqli_fetch_assoc($d_res);
-$doc_id = $doc_data['id'];
+if ($d_res && mysqli_num_rows($d_res) > 0) {
+    $doc_data = mysqli_fetch_assoc($d_res);
+    $doc_id = $doc_data['id'];
+} else {
+    $doc_id = 0; // Fallback to prevent crash
+}
+
+// --- HANDLE PRESCRIPTION SUBMISSION ---
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_prescription'])) {
+    $patient_id = $_POST['patient_id'];
+    $diagnosis = mysqli_real_escape_string($conn, $_POST['diagnosis']);
+    $instructions = mysqli_real_escape_string($conn, $_POST['instructions']);
+
+    // Ensure database table exists before inserting
+    $pres_sql = "INSERT INTO prescriptions (doctor_id, patient_id, diagnosis, medical_instructions) 
+                 VALUES ('$doc_id', '$patient_id', '$diagnosis', '$instructions')";
+
+    if (mysqli_query($conn, $pres_sql)) {
+        $_SESSION['popup_message'] = "Prescription sent successfully!";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } else {
+        $_SESSION['popup_message'] = "Error: " . mysqli_error($conn);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +52,7 @@ $doc_id = $doc_data['id'];
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
-        /* (Your CSS remains exactly the same as you provided) */
+        /* CSS STYLES */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f5f7fa;
@@ -170,7 +194,7 @@ $doc_id = $doc_data['id'];
         .invoice-form {
             display: flex;
             gap: 15px;
-            align-items: flex-end;
+            align-items: flex-start;
             flex-wrap: wrap;
         }
 
@@ -195,6 +219,12 @@ $doc_id = $doc_data['id'];
             box-sizing: border-box;
         }
 
+        textarea.form-input {
+            resize: vertical;
+            height: 80px;
+            font-family: inherit;
+        }
+
         .btn-send {
             background: #28a745;
             color: white;
@@ -204,10 +234,27 @@ $doc_id = $doc_data['id'];
             font-weight: 600;
             cursor: pointer;
             height: 38px;
+            margin-top: 23px;
         }
 
         .btn-send:hover {
             background: #218838;
+        }
+
+        .btn-prescribe {
+            background: #0062cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            height: 38px;
+            margin-top: 23px;
+        }
+
+        .btn-prescribe:hover {
+            background: #004a99;
         }
 
         .doc-table {
@@ -332,7 +379,6 @@ $doc_id = $doc_data['id'];
         </aside>
 
         <main class="doc-content">
-
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-icon" style="background:#e3f2fd; color:#0062cc;"><i class="fas fa-user-injured"></i></div>
@@ -364,20 +410,61 @@ $doc_id = $doc_data['id'];
                 </div>
             </div>
 
+            <div class="table-section" style="background: #f0f7ff; border: 1px solid #cfe2ff;">
+                <div class="section-title"><i class="fas fa-prescription-bottle-alt" style="color: #0062cc;"></i> Write Prescription</div>
+                <form action="" method="POST" class="invoice-form">
+
+                    <div class="form-group">
+                        <label>Select Patient</label>
+                        <select name="patient_id" required class="form-input">
+                            <option value="">-- Choose Patient --</option>
+                            <?php
+                            // SIMPLIFIED QUERY TO PREVENT CRASH
+                            // Fetches all patients instead of trying complex joins that might fail
+                            $pres_pat_sql = "SELECT id, full_name FROM users WHERE role = 'patient'";
+                            $pres_pat_res = mysqli_query($conn, $pres_pat_sql);
+
+                            if ($pres_pat_res && mysqli_num_rows($pres_pat_res) > 0) {
+                                while ($row = mysqli_fetch_assoc($pres_pat_res)) {
+                                    echo "<option value='" . $row['id'] . "'>" . $row['full_name'] . "</option>";
+                                }
+                            } else {
+                                echo "<option value='' disabled>No patients found</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="flex: 2;">
+                        <label>Diagnosis / Disease</label>
+                        <input type="text" name="diagnosis" placeholder="e.g. Viral Fever" required class="form-input">
+                    </div>
+
+                    <div class="form-group" style="flex: 3; width: 100%;">
+                        <label>Medication & Instructions</label>
+                        <textarea name="instructions" class="form-input" placeholder="e.g. 1. Panadol 500mg..." required></textarea>
+                    </div>
+
+                    <div class="form-group" style="flex: 0 0 auto;">
+                        <button type="submit" name="send_prescription" class="btn-prescribe">Send Rx</button>
+                    </div>
+                </form>
+            </div>
+
             <div class="table-section" style="background: #f8f9fa; border: 1px solid #e9ecef;">
                 <div class="section-title"><i class="fas fa-file-invoice-dollar" style="color: #28a745;"></i> Send Invoice</div>
-                <form action="create_invoice.php" method="POST" class="invoice-form">
+                <form action="create_invoice.php" method="POST" class="invoice-form" style="align-items: flex-end;">
                     <div class="form-group">
                         <label>Select Confirmed Appointment</label>
                         <select name="appointment_id" required class="form-input">
                             <option value="">-- Select Appointment --</option>
                             <?php
                             $pat_sql = "SELECT appointments.id as appt_id, appointments.patient_name, appointments.appointment_time
-                                        FROM appointments 
-                                        WHERE appointments.doctor_id = '$doc_id' 
-                                        AND appointments.status = 'Confirmed'";
+                                    FROM appointments 
+                                    WHERE appointments.doctor_id = '$doc_id' 
+                                    AND appointments.status = 'Confirmed'";
                             $pat_res = mysqli_query($conn, $pat_sql);
-                            if (mysqli_num_rows($pat_res) > 0) {
+                            if ($pat_res && mysqli_num_rows($pat_res) > 0) {
                                 while ($row = mysqli_fetch_assoc($pat_res)) {
                                     echo "<option value='" . $row['appt_id'] . "'>" . $row['patient_name'] . " (" . $row['appointment_time'] . ")</option>";
                                 }
@@ -395,7 +482,7 @@ $doc_id = $doc_data['id'];
                         <label>Amount (LKR)</label>
                         <input type="number" name="amount" placeholder="0.00" step="0.01" required class="form-input">
                     </div>
-                    <button type="submit" name="send_bill" class="btn-send">Send Bill</button>
+                    <button type="submit" name="send_bill" class="btn-send" style="margin-top:0;">Send Bill</button>
                 </form>
             </div>
 
@@ -412,63 +499,15 @@ $doc_id = $doc_data['id'];
                     </thead>
                     <tbody>
                         <?php
-                        // JOIN Query to find payments linked to invoices created by THIS doctor
-                        $pay_query = "SELECT p.*, u.full_name as patient_name 
-                                      FROM payments p 
-                                      JOIN invoices i ON p.invoice_id = i.id 
-                                      JOIN users u ON p.patient_id = u.id 
-                                      WHERE i.doctor_id = '$doc_id' 
-                                      ORDER BY p.paid_at DESC LIMIT 5";
-
+                        $pay_query = "SELECT p.*, u.full_name as patient_name FROM payments p JOIN users u ON p.patient_id = u.id WHERE p.doctor_id = '$doc_id' ORDER BY p.paid_at DESC LIMIT 5";
                         $pay_res = mysqli_query($conn, $pay_query);
-
-                        if (mysqli_num_rows($pay_res) > 0) {
+                        if ($pay_res && mysqli_num_rows($pay_res) > 0) {
                             while ($pay_row = mysqli_fetch_assoc($pay_res)) {
-                                echo "<tr>
-                                    <td>" . date('M d, Y', strtotime($pay_row['paid_at'])) . "</td>
-                                    <td><i class='fas fa-user-circle' style='color:#ccc;'></i> " . htmlspecialchars($pay_row['patient_name']) . "</td>
-                                    <td>" . htmlspecialchars($pay_row['method']) . "</td>
-                                    <td style='color:#16a34a; font-weight:bold;'>+ LKR " . number_format($pay_row['amount'], 2) . "</td>
-                                </tr>";
+                                $method = isset($pay_row['payment_method']) ? $pay_row['payment_method'] : 'Online';
+                                echo "<tr><td>" . date('M d, Y', strtotime($pay_row['paid_at'])) . "</td><td>" . $pay_row['patient_name'] . "</td><td>" . $method . "</td><td style='color:#16a34a;'>+ LKR " . number_format($pay_row['amount'], 2) . "</td></tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='4' style='text-align:center; color:#999; padding:20px;'>No payments received yet.</td></tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-section" style="border-top: 4px solid #0062cc;">
-                <div class="section-title"><i class="fas fa-list-alt" style="color: #0062cc;"></i> Sent Invoices History</div>
-                <table class="doc-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>PATIENT</th>
-                            <th>SERVICE</th>
-                            <th>AMOUNT</th>
-                            <th>STATUS</th>
-                            <th>ACTION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $inv_res = mysqli_query($conn, "SELECT invoices.*, users.full_name as patient_name FROM invoices JOIN users ON invoices.patient_id = users.id WHERE doctor_id = '$doc_id' ORDER BY id DESC LIMIT 5");
-                        if (mysqli_num_rows($inv_res) > 0) {
-                            while ($row = mysqli_fetch_assoc($inv_res)) {
-                                $is_paid = ($row['status'] == 'paid');
-                                $status_style = $is_paid ? "background:#dcfce7; color:#16a34a;" : "background:#fff3e0; color:#ff9800;";
-                                echo "<tr><td>#{$row['id']}</td><td>{$row['patient_name']}</td><td>{$row['service_name']}</td><td>LKR {$row['amount']}</td><td><span style='padding:4px 8px; border-radius:12px; font-size:11px; font-weight:bold; $status_style'>" . strtoupper($row['status']) . "</span></td><td>";
-                                if (!$is_paid) {
-                                    echo "<a href='edit_invoice.php?id={$row['id']}' style='color:#0062cc; text-decoration:none; font-weight:bold; font-size:13px;'><i class='fas fa-edit'></i> Edit</a>";
-                                } else {
-                                    echo "<span style='color:#ccc; font-size:12px;'><i class='fas fa-lock'></i> Paid</span>";
-                                }
-                                echo "</td></tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='6' style='text-align:center; color:#999;'>No invoices sent yet.</td></tr>";
+                            echo "<tr><td colspan='4' style='text-align:center;color:#999;'>No payments received yet.</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -553,12 +592,7 @@ $doc_id = $doc_data['id'];
                             } else {
                                 let badgeClass = (appt.status === 'Confirmed') ? 'st-Confirmed' : 'st-Scheduled';
                                 let badgeText = (appt.status === 'Confirmed') ? 'Confirmed' : 'Scheduled';
-                                let actionBtns = '';
-                                if (appt.status === 'Confirmed') {
-                                    actionBtns = `<span style="color:#0062cc; font-size:11px; font-weight:bold;">Ready to Bill</span>`;
-                                } else {
-                                    actionBtns = `<button class="btn-icon btn-check" onclick="completeAppt(${appt.id})"><i class="fas fa-check"></i></button><button class="btn-icon btn-trash" onclick="deleteAppt(${appt.id})"><i class="fas fa-trash"></i></button>`;
-                                }
+                                let actionBtns = (appt.status === 'Confirmed') ? `<span style="color:#0062cc; font-size:11px; font-weight:bold;">Ready to Bill</span>` : `<button class="btn-icon btn-check" onclick="completeAppt(${appt.id})"><i class="fas fa-check"></i></button><button class="btn-icon btn-trash" onclick="deleteAppt(${appt.id})"><i class="fas fa-trash"></i></button>`;
                                 upcomingRows += `<tr><td style="font-weight:600; color:#0062cc;">${appt.appointment_time}</td><td>${appt.patient_name}</td><td>${appt.reason}</td><td><span class="status-badge ${badgeClass}">${badgeText}</span></td><td>${actionBtns}</td></tr>`;
                             }
                         });

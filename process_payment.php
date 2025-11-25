@@ -2,54 +2,50 @@
 session_start();
 include 'db_connect.php';
 
-// Ensure the request came from the payment form
-if (isset($_POST['pay_now']) && isset($_SESSION['username'])) {
+if (isset($_POST['pay_now']) && isset($_SESSION['user_id'])) {
+    $patient_id = $_SESSION['user_id'];
+    $invoice_id = mysqli_real_escape_string($conn, $_POST['invoice_id']);
+    $amount = mysqli_real_escape_string($conn, $_POST['amount']);
 
-    $patient_name = $_SESSION['username'];
-    $invoice_id = $_POST['invoice_id'];
-    $amount = $_POST['amount'];
+    // 1. GET DOCTOR ID & SERVICE INFO
+    $doctor_id = 0;
+    $service_name = "Medical Consultation";
 
-    // 1. Get Patient ID
-    $u_query = "SELECT id FROM users WHERE full_name = '$patient_name'";
-    $u_result = mysqli_query($conn, $u_query);
+    // FIX: Changed 'a.service' to 'a.reason' because your table uses 'reason'
+    $info_query = "SELECT a.doctor_id, a.reason 
+                   FROM invoices i 
+                   JOIN appointments a ON i.appointment_id = a.id 
+                   WHERE i.id = '$invoice_id'";
 
-    if (mysqli_num_rows($u_result) > 0) {
-        $u_row = mysqli_fetch_assoc($u_result);
-        $patient_id = $u_row['id'];
-    } else {
-        echo "<script>alert('Error: User not found.'); window.location.href='dashboard_patient.php';</script>";
-        exit();
+    $info_result = mysqli_query($conn, $info_query);
+    if ($info_row = mysqli_fetch_assoc($info_result)) {
+        $doctor_id = $info_row['doctor_id'];
+
+        // FIX: Use 'reason' to populate the service name
+        $service_name = $info_row['reason'];
     }
 
-    // 2. Mark Invoice as PAID
-    // This is CRITICAL: The doctor dashboard looks for invoices belonging to them.
-    $update_inv = "UPDATE invoices SET status = 'paid' WHERE id = '$invoice_id'";
-    mysqli_query($conn, $update_inv);
+    // 2. UPDATE Invoices
+    mysqli_query($conn, "UPDATE invoices SET status = 'paid' WHERE id = '$invoice_id'");
 
-    // 3. Record Transaction in Payments Table
-    // We link the payment to the Invoice ID. 
-    // The Doctor Dashboard will use the Invoice ID to figure out who gets the money.
-    $insert_hist = "INSERT INTO payments (invoice_id, patient_id, amount, method, paid_at) 
-                    VALUES ('$invoice_id', '$patient_id', '$amount', 'Online Card', NOW())";
+    // 3. UPDATE Appointments
+    $check_sql = "SELECT appointment_id FROM invoices WHERE id = '$invoice_id'";
+    $check_res = mysqli_query($conn, $check_sql);
+    if ($row = mysqli_fetch_assoc($check_res)) {
+        $appt_id = $row['appointment_id'];
+        mysqli_query($conn, "UPDATE appointments SET status = 'Completed' WHERE id = '$appt_id'");
+    }
 
-    if (mysqli_query($conn, $insert_hist)) {
+    // 4. INSERT Payment Record
+    $payment_date = date('Y-m-d H:i:s');
 
-        // 4. Auto-Complete the Linked Appointment
-        $check_sql = "SELECT appointment_id FROM invoices WHERE id = '$invoice_id'";
-        $check_res = mysqli_query($conn, $check_sql);
-        $row = mysqli_fetch_assoc($check_res);
+    // Make sure your payments table has these exact columns.
+    // If 'description' or 'invoice_id' causes an error, remove them from this query.
+    $insert_payment = "INSERT INTO payments (invoice_id, patient_id, doctor_id, amount, payment_method, status, paid_at, description) 
+                       VALUES ('$invoice_id', '$patient_id', '$doctor_id', '$amount', 'Credit Card', 'paid', '$payment_date', '$service_name')";
 
-        if ($row && !empty($row['appointment_id'])) {
-            $appt_id = $row['appointment_id'];
-            $complete_sql = "UPDATE appointments SET status = 'Completed' WHERE id = '$appt_id'";
-            mysqli_query($conn, $complete_sql);
-        }
-
-        // 5. Success Message
-        echo "<script>
-                alert('Payment Successful! The transaction is now visible on your dashboard.'); 
-                window.location.href='dashboard_patient.php';
-              </script>";
+    if (mysqli_query($conn, $insert_payment)) {
+        echo "<script>alert('Payment Successful!'); window.location.href='dashboard_patient.php';</script>";
     } else {
         echo "Error: " . mysqli_error($conn);
     }
