@@ -232,7 +232,7 @@ $pageKey = 'services'; // Keeps "Services" nav item active
                     <h4>Dr. Ashan Abeyewardene</h4>
                     <p class="doctor-title">Head of Joint Replacement</p>
                     <p>Dr. Ashan is a leading surgeon in minimally invasive hip and knee replacement surgery.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -242,7 +242,7 @@ $pageKey = 'services'; // Keeps "Services" nav item active
                     <h4>Dr. Narendra Pinto</h4>
                     <p class="doctor-title">Sports Medicine Specialist</p>
                     <p>Dr. Narendra Pinto focuses on sports-related injuries, specializing in arthroscopic repair.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -252,7 +252,7 @@ $pageKey = 'services'; // Keeps "Services" nav item active
                     <h4>Dr. V. Swarnakumaar</h4>
                     <p class="doctor-title">Pediatric Orthopedic Surgeon</p>
                     <p>Dr. V. Swarnakumaar is dedicated to treating musculoskeletal problems in children.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
         </div>

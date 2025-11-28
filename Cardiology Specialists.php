@@ -227,7 +227,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                     <h4>Dr. Gotabhaya Ranasinghe</h4>
                     <p class="doctor-title">Senior Consultant Cardiologist</p>
                     <p>Dr. Gotabhaya specializes in interventional cardiology and complex coronary procedures.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -237,7 +237,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                     <h4>Dr. S.A. Perera</h4>
                     <p class="doctor-title">Consultant Cardiologist</p>
                     <p>Specializes in heart rhythm disorders and electrophysiology.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -247,7 +247,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                     <h4>Dr. Chandra Silva</h4>
                     <p class="doctor-title">Consultant Cardiologist</p>
                     <p>Expert in preventive cardiology and managing heart failure.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 

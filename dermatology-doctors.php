@@ -229,7 +229,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                     <h4>Dr. Nayana Perera</h4>
                     <p class="doctor-title">Head of Cosmetic Dermatology</p>
                     <p>Dr. Nayana Perera specializes in advanced cosmetic procedures, including laser treatments and injectables.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -239,7 +239,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                     <h4>Dr. Saman Weerakoon</h4>
                     <p class="doctor-title">Consultant Dermatologist</p>
                     <p>Focuses on medical dermatology, including psoriasis, eczema, and skin cancer screenings.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -249,7 +249,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                     <h4>Dr. Priya Kumari</h4>
                     <p class="doctor-title">Dermatologist</p>
                     <p>Specializes in pediatric dermatology and common skin, hair, and nail conditions.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 

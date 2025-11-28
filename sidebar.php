@@ -1,17 +1,20 @@
+<?php
+// Auto-detect active page
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
+
 <style>
-    /* Sidebar CSS - Centralized here */
     .sidebar {
         width: 260px;
         background-color: #1e293b;
         color: white;
         position: fixed;
         height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 100;
         display: flex;
         flex-direction: column;
-        z-index: 100;
-        top: 0;
-        /* Ensure it sticks to top */
-        left: 0;
     }
 
     .brand {
@@ -27,8 +30,6 @@
     .brand span {
         color: #ef4444;
     }
-
-    /* Red accent */
 
     .menu {
         padding: 20px 0;
@@ -53,7 +54,6 @@
         background: #334155;
         color: white;
         border-left: 4px solid #ef4444;
-        /* The Active Red Border */
     }
 
     .menu a i {
@@ -85,26 +85,21 @@
         <a href="dashboard_admin.php" class="<?php echo ($current_page == 'dashboard_admin.php') ? 'active' : ''; ?>">
             <i class="fas fa-chart-pie"></i> Dashboard
         </a>
-
         <a href="manage_doctors.php" class="<?php echo ($current_page == 'manage_doctors.php') ? 'active' : ''; ?>">
             <i class="fas fa-user-md"></i> Doctors
         </a>
-
         <a href="manage_patients.php" class="<?php echo ($current_page == 'manage_patients.php') ? 'active' : ''; ?>">
             <i class="fas fa-users"></i> Patients
         </a>
-
-        <a href="appointments.php" class="<?php echo ($current_page == 'view_appointments.php') ? 'active' : ''; ?>">
+        <a href="appointments.php" class="<?php echo ($current_page == 'appointments.php') ? 'active' : ''; ?>">
             <i class="fas fa-calendar-alt"></i> Appointments
         </a>
-
-        <a href="admin-inbox.php" class="<?php echo ($current_page == 'messages.php') ? 'active' : ''; ?>">
-            <i class="fas fa-envelope"></i> Inbox
+        <a href="admin_chat.php" class="<?php echo ($current_page == 'admin_chat.php') ? 'active' : ''; ?>">
+            <i class="fas fa-comments"></i> Inbox
         </a>
-        <a href="admin_financials.php" class="<?php echo ($current_page == 'payments.php') ? 'active' : ''; ?>">
+        <a href="admin_financials.php" class="<?php echo ($current_page == 'admin_financials.php') ? 'active' : ''; ?>">
             <i class="fas fa-file-invoice-dollar"></i> Payments
         </a>
-
         <div class="logout-link">
             <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>

@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
 
+    // Check for Admin Role explicitly
     $sql = "SELECT id, full_name, email, password FROM users WHERE email = '$email' AND role = 'admin'";
     $result = $conn->query($sql);
 
@@ -13,13 +14,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
 
-            // *** CRITICAL CHANGE: Use Admin-specific session keys for isolation ***
-            $_SESSION['admin_id'] = $row['id'];
-            $_SESSION['role'] = 'admin'; // Keep the role for dashboard security
-            $_SESSION['username'] = $row['full_name']; // Use full_name for better display
+            // --- TOTAL SEPARATION LOGIC START ---
 
-            // Clear any existing generic user session to prevent conflicts on the public site
-            unset($_SESSION['user_id']);
+            // 1. Set the Admin Credentials
+            $_SESSION['admin_id'] = $row['id'];
+            $_SESSION['role'] = 'admin';
+            $_SESSION['username'] = $row['full_name'];
+
+            // 2. FORCE LOGOUT ANY REGULAR USER
+            // If I was logged in as "John Doe (Patient)", I am now logged out of that.
+            // On the public website, I will appear as a Guest.
+            if (isset($_SESSION['user_id'])) {
+                unset($_SESSION['user_id']);
+            }
+
+            // --- TOTAL SEPARATION LOGIC END ---
 
             header("Location: dashboard_admin.php");
             exit();

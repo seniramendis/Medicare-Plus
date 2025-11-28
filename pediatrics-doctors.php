@@ -229,7 +229,7 @@ $pageKey = 'services'; // Keeps "Services" nav item active
                     <h4>Prof. Shaman Rajindrajith</h4>
                     <p class="doctor-title">Consultant Pediatrician</p>
                     <p>Prof. Shaman Rajindrajith is a trusted expert in general pediatrics and child development.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -239,7 +239,7 @@ $pageKey = 'services'; // Keeps "Services" nav item active
                     <h4>Prof. Pujitha Wickramasinghe</h4>
                     <p class="doctor-title">Pediatric Neurologist</p>
                     <p>Prof. Pujitha specializes in neurological disorders in children.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
 
@@ -249,7 +249,7 @@ $pageKey = 'services'; // Keeps "Services" nav item active
                     <h4>Dr. Duminda Samarasinghe</h4>
                     <p class="doctor-title">Head of Neonatology</p>
                     <p>Dr. Duminda leads our Neonatal Intensive Care Unit (NICU) with expertise in newborn care.</p>
-                    <a href="#" class="button">Book Appointment</a>
+                    <a href="book_appointment.php" class="button">Book Appointment</a>
                 </div>
             </div>
         </div>

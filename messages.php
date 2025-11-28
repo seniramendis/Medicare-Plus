@@ -1,4 +1,5 @@
 <?php
+// messages.php
 session_start();
 include 'db_connect.php';
 
@@ -17,13 +18,12 @@ $my_id = $_SESSION['user_id'];
     <meta charset="UTF-8">
     <title>Messages | Medicare Plus</title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
-        /* --- RESET --- */
+        /* [KEEP YOUR EXISTING CSS] */
         * {
             box-sizing: border-box;
             outline: none;
@@ -39,7 +39,6 @@ $my_id = $_SESSION['user_id'];
             padding-top: 0 !important;
         }
 
-        /* --- CONTAINER --- */
         .app-window {
             width: 95%;
             max-width: 1600px;
@@ -53,7 +52,6 @@ $my_id = $_SESSION['user_id'];
             border: 1px solid #d1d5db;
         }
 
-        /* --- SIDEBAR --- */
         .sidebar {
             width: 350px;
             border-right: 1px solid #e5e7eb;
@@ -73,7 +71,6 @@ $my_id = $_SESSION['user_id'];
             color: #111827;
         }
 
-        /* SEARCH */
         .search-container {
             position: relative;
         }
@@ -96,7 +93,6 @@ $my_id = $_SESSION['user_id'];
             color: #6b7280;
         }
 
-        /* CONTACTS */
         .contact-list {
             flex: 1;
             overflow-y: auto;
@@ -115,6 +111,7 @@ $my_id = $_SESSION['user_id'];
             cursor: pointer;
             border: 1px solid transparent;
             background: #ffffff;
+            position: relative;
         }
 
         .contact-card:hover {
@@ -139,6 +136,10 @@ $my_id = $_SESSION['user_id'];
             flex-shrink: 0;
         }
 
+        .avatar.admin-avatar {
+            background: #1e3a8a;
+        }
+
         .info {
             flex: 1;
             overflow: hidden;
@@ -156,7 +157,20 @@ $my_id = $_SESSION['user_id'];
             color: #4b5563 !important;
         }
 
-        /* --- CHAT AREA --- */
+        .badge-count {
+            background: #ef4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .badge-count.show {
+            display: inline-block;
+        }
+
         .chat-area {
             flex: 1;
             background: #f9fafb;
@@ -188,34 +202,17 @@ $my_id = $_SESSION['user_id'];
             gap: 15px;
         }
 
-        .msg {
+        /* Unified Message Styles (Handles both chat_engine and internal) */
+        .msg,
+        .message-wrapper {
             display: flex;
             width: 100%;
             align-items: flex-end;
+            margin-bottom: 10px;
         }
 
-        .msg.sent {
-            justify-content: flex-end;
-        }
-
-        /* DELETE BUTTON STYLES */
-        .delete-btn {
-            opacity: 0;
-            /* Hidden by default */
-            color: #ef4444;
-            cursor: pointer;
-            margin: 0 10px;
-            font-size: 14px;
-            transition: opacity 0.2s;
-            padding: 5px;
-        }
-
-        /* Show delete button when hovering over the message row */
-        .msg:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .bubble {
+        .bubble,
+        .message-bubble {
             max-width: 70%;
             padding: 12px 18px;
             border-radius: 12px;
@@ -224,20 +221,63 @@ $my_id = $_SESSION['user_id'];
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        .bubble.sent {
+        /* My Messages (Right) */
+        .msg.sent,
+        .user-msg {
+            justify-content: flex-end;
+        }
+
+        .bubble.sent,
+        .user-msg .message-bubble {
             background: #3b82f6;
             color: white;
             border-radius: 12px 12px 2px 12px;
         }
 
-        .bubble.received {
+        /* Their Messages (Left) */
+        .msg.received,
+        .admin-msg {
+            justify-content: flex-start;
+        }
+
+        .bubble.received,
+        .admin-msg .message-bubble {
             background: white;
             color: #111827;
             border: 1px solid #e5e7eb;
             border-radius: 12px 12px 12px 2px;
         }
 
-        /* INPUT */
+        .msg-time {
+            font-size: 11px;
+            opacity: 0.7;
+            text-align: right;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .chat-img {
+            max-width: 200px;
+            border-radius: 8px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            opacity: 0;
+            color: #ef4444;
+            cursor: pointer;
+            margin: 0 12px;
+            font-size: 14px;
+            transition: opacity 0.2s;
+            padding: 5px;
+        }
+
+        .msg:hover .delete-btn,
+        .message-wrapper:hover .delete-btn {
+            opacity: 1;
+        }
+
         .input-area {
             padding: 20px;
             background: white;
@@ -311,7 +351,6 @@ $my_id = $_SESSION['user_id'];
 </head>
 
 <body>
-
     <?php include 'header.php'; ?>
 
     <div class="app-window">
@@ -324,7 +363,14 @@ $my_id = $_SESSION['user_id'];
                 </div>
             </div>
             <ul class="contact-list" id="contactsList">
-                <li style="padding:20px; text-align:center; color:#6b7280;">Loading...</li>
+                <li class="contact-card" id="contact-admin" onclick="openChat('admin', 'Admin Support')">
+                    <div class="avatar admin-avatar"><i class="fas fa-headset"></i></div>
+                    <div class="info">
+                        <div class="name">Admin Support</div>
+                        <div class="role">Hospital Administration</div>
+                    </div>
+                    <span class="badge-count" id="admin-badge">0</span>
+                </li>
             </ul>
         </aside>
 
@@ -332,7 +378,6 @@ $my_id = $_SESSION['user_id'];
             <div id="noChat" class="empty">
                 <h3>Select a conversation</h3>
             </div>
-
             <div id="activeChat" style="display:none; flex-direction:column; height:100%;">
                 <div class="chat-header">
                     <div class="avatar" id="headerAvatar">?</div>
@@ -340,22 +385,13 @@ $my_id = $_SESSION['user_id'];
                         <h3 id="headerName">User</h3>
                     </div>
                 </div>
-
                 <div class="messages" id="messagesBox"></div>
-
                 <div class="input-area">
                     <form class="input-form" onsubmit="sendMessage(event)">
                         <input type="file" id="fileInput" hidden onchange="handleFileSelect()">
-
-                        <button type="button" class="btn-attach" onclick="$('#fileInput').click()" title="Add File">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-
+                        <button type="button" class="btn-attach" onclick="$('#fileInput').click()" title="Add File"><i class="fas fa-paperclip"></i></button>
                         <input type="text" id="msgInput" class="input-text" placeholder="Type a message..." autocomplete="off">
-
-                        <button type="submit" class="btn-send">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <button type="submit" class="btn-send"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
             </div>
@@ -365,14 +401,26 @@ $my_id = $_SESSION['user_id'];
     <script>
         let currentChatId = null;
         let isSearching = false;
+        let isHoveringMessages = false; // HOVER FIX
 
         $(document).ready(function() {
             loadContacts();
+            updateAdminBadge();
+
+            // Hover Logic for Messages Area
+            $('#messagesBox').hover(
+                function() {
+                    isHoveringMessages = true;
+                },
+                function() {
+                    isHoveringMessages = false;
+                }
+            );
 
             $('#contactSearch').on('input', function() {
                 var value = $(this).val().toLowerCase();
                 isSearching = (value.length > 0);
-                $("#contactsList li").filter(function() {
+                $("#contactsList li:not(#contact-admin)").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
@@ -380,10 +428,25 @@ $my_id = $_SESSION['user_id'];
             setInterval(() => {
                 if (!isSearching) loadContacts();
             }, 5000);
+            setInterval(updateAdminBadge, 4000);
+
+            // Modified Interval: Only load if NOT hovering
             setInterval(() => {
-                if (currentChatId) loadMessages(currentChatId, false);
+                if (currentChatId && !isHoveringMessages) {
+                    loadMessages(currentChatId, false);
+                }
             }, 3000);
         });
+
+        function updateAdminBadge() {
+            if (currentChatId === 'admin') return;
+            $.post('chat_engine.php', {
+                action: 'get_unread_count'
+            }, function(count) {
+                if (parseInt(count) > 0) $('#admin-badge').text(count).addClass('show');
+                else $('#admin-badge').removeClass('show');
+            });
+        }
 
         function handleFileSelect() {
             const file = $('#fileInput')[0].files[0];
@@ -392,7 +455,6 @@ $my_id = $_SESSION['user_id'];
 
         function loadContacts() {
             if ($('#contactSearch').is(':focus') || isSearching) return;
-
             $.post('message_api.php', {
                 action: 'get_contacts'
             }, function(data) {
@@ -400,45 +462,60 @@ $my_id = $_SESSION['user_id'];
                 try {
                     if (typeof data === 'string') data = JSON.parse(data);
                 } catch (e) {}
-
+                $('#contactsList li').not('#contact-admin').remove();
                 let html = '';
-                if (!data.length) {
-                    $('#contactsList').html('<li style="padding:15px; text-align:center; color:#6b7280;">No contacts</li>');
-                    return;
+                if (data.length) {
+                    data.forEach(u => {
+                        if (u.role === 'Admin') return;
+                        let active = (currentChatId == u.id) ? 'active' : '';
+                        let initial = u.full_name ? u.full_name.charAt(0).toUpperCase() : '?';
+                        let badgeClass = u.unread_count > 0 ? 'show' : '';
+                        html += `<li class="contact-card ${active}" id="contact-${u.id}" onclick="openChat(${u.id}, '${u.full_name}')">
+                                    <div class="avatar">${initial}</div>
+                                    <div class="info"><div class="name">${u.full_name}</div><div class="role">${u.role}</div></div>
+                                    <span class="badge-count ${badgeClass}">${u.unread_count}</span>
+                                </li>`;
+                    });
+                    $('#contactsList').append(html);
                 }
-
-                data.forEach(u => {
-                    let active = (currentChatId == u.id) ? 'active' : '';
-                    let initial = u.full_name ? u.full_name.charAt(0).toUpperCase() : '?';
-                    let badge = u.unread_count > 0 ? `<span style="background:#ef4444; color:white; padding:2px 8px; border-radius:10px; font-size:11px;">${u.unread_count}</span>` : '';
-
-                    html += `
-                    <li class="contact-card ${active}" id="contact-${u.id}" onclick="openChat(${u.id}, '${u.full_name}')">
-                        <div class="avatar">${initial}</div>
-                        <div class="info">
-                            <div class="name">${u.full_name}</div>
-                            <div class="role">${u.role}</div>
-                        </div>
-                        ${badge}
-                    </li>`;
-                });
-                $('#contactsList').html(html);
             }, 'json');
         }
 
         function openChat(id, name) {
             currentChatId = id;
             $('.contact-card').removeClass('active');
-            $(`#contact-${id}`).addClass('active');
-
+            if (id === 'admin') {
+                $('#contact-admin').addClass('active');
+                $('#headerAvatar').html('<i class="fas fa-headset"></i>').css('background', '#1e3a8a');
+                $('#admin-badge').removeClass('show');
+            } else {
+                $(`#contact-${id}`).addClass('active');
+                $('#headerAvatar').text(name.charAt(0).toUpperCase()).css('background', '#3b82f6');
+            }
             $('#noChat').hide();
             $('#activeChat').css('display', 'flex');
             $('#headerName').text(name);
-            $('#headerAvatar').text(name.charAt(0).toUpperCase());
             loadMessages(id, true);
         }
 
         function loadMessages(id, scroll) {
+            let box = document.getElementById('messagesBox');
+            let isBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 150;
+
+            // === ADMIN CHAT (via chat_engine.php) ===
+            if (id === 'admin') {
+                $.post('chat_engine.php', {
+                    action: 'fetch_chat_user'
+                }, function(data) {
+                    if ($('#messagesBox').html() !== data) {
+                        $('#messagesBox').html(data);
+                        if (scroll || isBottom) box.scrollTop = box.scrollHeight;
+                    }
+                });
+                return;
+            }
+
+            // === INTERNAL CHAT (via message_api.php) ===
             $.post('message_api.php', {
                 action: 'get_messages',
                 other_id: id
@@ -447,7 +524,6 @@ $my_id = $_SESSION['user_id'];
                 try {
                     if (typeof data === 'string') data = JSON.parse(data);
                 } catch (e) {}
-
                 if (!data || !data.length) html = '<div style="text-align:center; margin-top:50px; color:#9ca3af;">No messages.</div>';
                 else {
                     data.forEach(msg => {
@@ -455,25 +531,18 @@ $my_id = $_SESSION['user_id'];
                         let cls = isMe ? 'sent' : 'received';
                         let content = msg.message;
                         if (msg.attachment) content = `<b>[Attachment]</b><br><a href="uploads/${msg.attachment}" target="_blank" style="color:inherit;">View File</a><br>${content}`;
-
-                        // Add Delete Icon for My Messages
-                        let deleteIcon = '';
-                        if (isMe) {
-                            deleteIcon = `<i class="fas fa-trash delete-btn" onclick="deleteMsg(${msg.id})" title="Delete Message"></i>`;
-                        }
-
-                        html += `
-                        <div class="msg ${cls}">
-                            ${deleteIcon}
-                            <div class="bubble ${cls}">
-                                ${content}
-                                <div style="font-size:11px; opacity:0.8; text-align:right; margin-top:5px;">${msg.timestamp.split(' ')[1].substr(0,5)}</div>
-                            </div>
-                        </div>`;
+                        let deleteIcon = isMe ? `<i class="fas fa-trash delete-btn" onclick="deleteMsg(${msg.id}, 'internal')" title="Delete"></i>` : '';
+                        html += `<div class="msg ${cls}">
+                                    ${deleteIcon}
+                                    <div class="bubble ${cls}">
+                                        ${content}
+                                        <span class="msg-time">${msg.timestamp ? msg.timestamp.split(' ')[1].substr(0,5) : ''}</span>
+                                    </div>
+                                </div>`;
                     });
                 }
                 $('#messagesBox').html(html);
-                if (scroll) document.getElementById("messagesBox").scrollTop = 99999;
+                if (scroll || isBottom) box.scrollTop = box.scrollHeight;
             }, 'json');
         }
 
@@ -483,17 +552,35 @@ $my_id = $_SESSION['user_id'];
             let file = $('#fileInput')[0].files[0];
             if (!txt.trim() && !file && txt.indexOf('File:') === -1) return;
 
-            if (txt.indexOf('File:') !== -1) txt = '';
+            if (currentChatId === 'admin') {
+                if (txt.indexOf('File:') !== -1) txt = '';
+                let fd = new FormData();
+                fd.append('action', 'send_msg_user');
+                fd.append('message', txt);
+                if (file) fd.append('attachment', file);
+                $('#msgInput').val('');
+                $('#fileInput').val('');
+                $.ajax({
+                    url: 'chat_engine.php',
+                    type: 'POST',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        loadMessages('admin', true);
+                    }
+                });
+                return;
+            }
 
+            if (txt.indexOf('File:') !== -1) txt = '';
             let fd = new FormData();
             fd.append('action', 'send');
             fd.append('receiver_id', currentChatId);
             fd.append('message', txt);
             if (file) fd.append('attachment', file);
-
             $('#msgInput').val('');
             $('#fileInput').val('');
-
             $.ajax({
                 url: 'message_api.php',
                 type: 'POST',
@@ -506,15 +593,23 @@ $my_id = $_SESSION['user_id'];
             });
         }
 
-        function deleteMsg(id) {
-            if (confirm("Are you sure you want to delete this message?")) {
-                $.post('message_api.php', {
-                    action: 'delete_message',
-                    msg_id: id
-                }, function(response) {
+        function deleteMsg(id, type) {
+            if (confirm("Are you sure?")) {
+                let url = (type === 'internal') ? 'message_api.php' : 'chat_engine.php';
+                let action = (type === 'internal') ? 'delete_message' : 'delete_msg_user';
+                let idKey = (type === 'internal') ? 'msg_id' : 'message_id';
+                $.post(url, {
+                    action: action,
+                    [idKey]: id
+                }, function() {
                     loadMessages(currentChatId, false);
                 });
             }
+        }
+
+        // This links to the onclick event generated by chat_engine.php
+        function deleteMyMessage(id) {
+            deleteMsg(id, 'admin');
         }
     </script>
 </body>

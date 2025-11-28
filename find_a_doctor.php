@@ -1,13 +1,19 @@
 <?php
-// --- LINE 1: START SESSION SAFELY (THE BOSS) ---
+// find_a_doctor.php
 ob_start();
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-// ---------------------------------------------
+
+// 1. Connect to Database
+if (file_exists('db_connect.php')) {
+    include 'db_connect.php';
+} else {
+    // Fallback if file not found (prevents crash)
+    die("Database connection file missing.");
+}
 
 $pageTitle = 'Find a Doctor';
-$pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the header
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +22,7 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($pageTitle) ? $pageTitle . ' - Medicare Plus' : 'Find a Doctor - Medicare Plus'; ?></title>
+    <title><?php echo $pageTitle; ?> - Medicare Plus</title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 
@@ -36,7 +42,8 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
         /* --- 2. PAGE-SPECIFIC STYLES --- */
         .page-container {
             width: 85%;
-            max-width: 900px;
+            max-width: 1200px;
+            /* Increased width for better grid */
             margin: 40px auto;
             padding: 30px 40px;
             background-color: #ffffff;
@@ -125,7 +132,8 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
         /* Doctor List */
         .doctor-list {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            /* Responsive Grid */
             gap: 25px;
         }
 
@@ -164,14 +172,14 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
         }
 
         .doctor-card h4 {
-            font-size: 1.6em;
+            font-size: 1.4em;
             color: #1e3a8a;
             margin-top: 0;
             margin-bottom: 5px;
         }
 
         .doctor-title {
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: bold;
             color: #555;
             margin-top: 0;
@@ -179,9 +187,11 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
         }
 
         .doctor-specialty {
-            font-size: 1em;
+            font-size: 0.9em;
             font-weight: 500;
-            color: #555;
+            color: #57c95a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             margin-top: 0;
             margin-bottom: 12px;
         }
@@ -203,12 +213,18 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
         }
 
         .doctor-description {
-            font-size: 0.95em;
+            font-size: 0.9em;
             color: #666;
             line-height: 1.5;
             flex-grow: 1;
             margin-bottom: 15px;
             margin-top: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            /* Limit text to 3 lines */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .doctor-info a.button {
@@ -218,6 +234,8 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
         #noResultsMessage {
             text-align: center;
             color: #777;
+            width: 100%;
+            grid-column: 1 / -1;
         }
 
         /* --- 3. PAGE-SPECIFIC RESPONSIVE STYLES --- */
@@ -236,17 +254,12 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
 
 <body>
 
-    <?php
-    // Include Header Safely
-    if (file_exists('header.php')) {
-        include 'header.php';
-    }
-    ?>
+    <?php if (file_exists('header.php')) include 'header.php'; ?>
 
     <main class="page-container">
         <div class="service-detail">
             <h2>Find a Doctor</h2>
-            <p>Search for our specialists by name or filter by department to find the right doctor for your needs. Our world-class team is here to provide you with expert care.</p>
+            <p>Search for our specialists by name or filter by department to find the right doctor for your needs.</p>
 
             <div style="width:100%; height:auto; margin-bottom: 30px; text-align:center;">
                 <img src="images/doctors-banner.jpg" alt="Medical Specialists" style="max-width:100%; border-radius:10px;" onerror="this.style.display='none'">
@@ -270,280 +283,77 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
         </div>
 
         <div class="doctor-list" id="allDoctorsList">
+            <?php
+            // --- DYNAMIC DOCTOR FETCHING START ---
 
-            <div class="doctor-card" data-name="Dr. Gotabhaya Ranasinghe" data-specialty="Cardiology" data-slug="gotabhaya-ranasinghe">
-                <img src="images/Dr. Gotabhaya Ranasinghe.webp" alt="Dr. Gotabhaya Ranasinghe" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Gotabhaya Ranasinghe</h4>
-                    <p class="doctor-title">Senior Consultant Cardiologist</p>
-                    <p class="doctor-specialty">Cardiology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.5 (120)</span>
+            // Query to get doctors AND calculate their average rating/count from reviews table
+            $sql = "SELECT d.*, 
+                           (SELECT AVG(rating) FROM reviews r WHERE r.doctor_id = d.id) as avg_rating,
+                           (SELECT COUNT(*) FROM reviews r WHERE r.doctor_id = d.id) as review_count
+                    FROM doctors d";
+
+            $result = mysqli_query($conn, $sql);
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    // Prepare Data
+                    $name = htmlspecialchars($row['name']);
+                    $specialty = htmlspecialchars($row['specialty']);
+                    $title = htmlspecialchars($row['title']);
+                    $slug = htmlspecialchars($row['slug']);
+
+                    // Bio Preview (First 100 chars)
+                    $bio = strip_tags($row['bio']);
+                    if (strlen($bio) > 100) $bio = substr($bio, 0, 100) . '...';
+
+                    // Image with CACHE BUSTER (?v=time)
+                    $img = !empty($row['image_url']) ? htmlspecialchars($row['image_url']) : 'images/placeholder_doctor.png';
+                    $img .= '?v=' . time();
+
+                    // Ratings Logic
+                    $rating = $row['avg_rating'] ? round($row['avg_rating'], 1) : 0;
+                    $count = $row['review_count'];
+                    $full_stars = floor($rating);
+                    $has_half = ($rating - $full_stars) >= 0.5;
+            ?>
+
+                    <div class="doctor-card" data-name="<?php echo $name; ?>" data-specialty="<?php echo $specialty; ?>">
+                        <img src="<?php echo $img; ?>" alt="<?php echo $name; ?>" onerror="this.src='images/placeholder_doctor.png'">
+                        <div class="doctor-info">
+                            <h4><?php echo $name; ?></h4>
+                            <p class="doctor-title"><?php echo $title; ?></p>
+                            <p class="doctor-specialty"><?php echo $specialty; ?></p>
+
+                            <div class="doctor-rating">
+                                <?php
+                                for ($i = 1; $i <= 5; $i++) {
+                                    if ($i <= $full_stars) {
+                                        echo '<i class="fa-solid fa-star"></i>';
+                                    } elseif ($i == $full_stars + 1 && $has_half) {
+                                        echo '<i class="fa-solid fa-star-half-stroke"></i>';
+                                    } else {
+                                        echo '<i class="fa-regular fa-star"></i>';
+                                    }
+                                }
+                                ?>
+                                <span><?php echo $rating > 0 ? "$rating ($count)" : "No reviews yet"; ?></span>
+                            </div>
+
+                            <p class="doctor-description"><?php echo $bio; ?></p>
+                            <a href="doctor-profile.php?slug=<?php echo $slug; ?>" class="button">View Profile</a>
+                        </div>
                     </div>
-                    <p class="doctor-description">Specializes in interventional cardiology and complex coronary procedures.</p>
-                    <a href="doctor-profile.php?slug=gotabhaya-ranasinghe" class="button">View Profile</a>
-                </div>
-            </div>
 
-            <div class="doctor-card" data-name="Dr. S.A. Perera" data-specialty="Cardiology" data-slug="s-a-perera">
-                <img src="https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. S.A. Perera" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. S.A. Perera</h4>
-                    <p class="doctor-title">Consultant Cardiologist</p>
-                    <p class="doctor-specialty">Cardiology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <span>5.0 (98)</span>
-                    </div>
-                    <p class="doctor-description">Specializes in heart rhythm disorders and electrophysiology.</p>
-                    <a href="doctor-profile.php?slug=s-a-perera" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Chandra Silva" data-specialty="Cardiology" data-slug="chandra-silva">
-                <img src="images/placeholder_doctor.png" alt="Dr. Chandra Silva">
-                <div class="doctor-info">
-                    <h4>Dr. Chandra Silva</h4>
-                    <p class="doctor-title">Consultant Cardiologist</p>
-                    <p class="doctor-specialty">Cardiology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.7 (110)</span>
-                    </div>
-                    <p class="doctor-description">Expert in preventive cardiology and managing heart failure.</p>
-                    <a href="doctor-profile.php?slug=chandra-silva" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Nayana Perera" data-specialty="Dermatology" data-slug="nayana-perera">
-                <img src="images/Nayana Perera.jpeg" alt="Dr. Nayana Perera" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Nayana Perera</h4>
-                    <p class="doctor-title">Head of Cosmetic Dermatology</p>
-                    <p class="doctor-specialty">Dermatology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <span>5.0 (250)</span>
-                    </div>
-                    <p class="doctor-description">Specializes in advanced cosmetic procedures, including laser treatments and injectables.</p>
-                    <a href="doctor-profile.php?slug=nayana-perera" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Saman Weerakoon" data-specialty="Dermatology" data-slug="saman-weerakoon">
-                <img src="images/placeholder_doctor_male.png" alt="Dr. Saman Weerakoon">
-                <div class="doctor-info">
-                    <h4>Dr. Saman Weerakoon</h4>
-                    <p class="doctor-title">Consultant Dermatologist</p>
-                    <p class="doctor-specialty">Dermatology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.5 (95)</span>
-                    </div>
-                    <p class="doctor-description">Focuses on medical dermatology, including psoriasis, eczema, and skin cancer screenings.</p>
-                    <a href="doctor-profile.php?slug=saman-weerakoon" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Priya Kumari" data-specialty="Dermatology" data-slug="priya-kumari">
-                <img src="https://images.pexels.com/photos/5407054/pexels-photo-5407054.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Priya Kumari" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Priya Kumari</h4>
-                    <p class="doctor-title">Dermatologist</p>
-                    <p class="doctor-specialty">Dermatology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.8 (188)</span>
-                    </div>
-                    <p class="doctor-description">Provides treatment for all skin, hair, and nail conditions.</p>
-                    <a href="doctor-profile.php?slug=priya-kumari" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Ashan Abeyewardene" data-specialty="Orthopedics" data-slug="ashan-abeyewardene">
-                <img src="images/Ashan Abeyewardene.jpeg" alt="Dr. Ashan Abeyewardene" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Ashan Abeyewardene</h4>
-                    <p class="doctor-title">Head of Joint Replacement</p>
-                    <p class="doctor-specialty">Orthopedics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.5 (105)</span>
-                    </div>
-                    <p class="doctor-description">A leading surgeon in minimally invasive hip and knee replacement surgery.</p>
-                    <a href="doctor-profile.php?slug=ashan-abeyewardene" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Narendra Pinto" data-specialty="Orthopedics" data-slug="narendra-pinto">
-                <img src="images/Narendra Pinto.jpg" alt="Dr. Narendra Pinto" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Narendra Pinto</h4>
-                    <p class="doctor-title">Sports Medicine Specialist</p>
-                    <p class="doctor-specialty">Orthopedics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <span>5.0 (150)</span>
-                    </div>
-                    <p class="doctor-description">Focuses on sports-related injuries, specializing in arthroscopic repair.</p>
-                    <a href="doctor-profile.php?slug=narendra-pinto" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. V. Swarnakumaar" data-specialty="Orthopedics" data-slug="v-swarnakumaar">
-                <img src="images/Velayutham Swarnakumaar.jpeg" alt="Dr. V. Swarnakumaar" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. V. Swarnakumaar</h4>
-                    <p class="doctor-title">Pediatric Orthopedic Surgeon</p>
-                    <p class="doctor-specialty">Orthopedics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.7 (80)</span>
-                    </div>
-                    <p class="doctor-description">Dedicated to treating musculoskeletal problems in children.</p>
-                    <a href="doctor-profile.php?slug=v-swarnakumaar" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Prof. Shaman Rajindrajith" data-specialty="Pediatrics" data-slug="shaman-rajindrajith">
-                <img src="images/dr-shaman.png" alt="Prof. Shaman Rajindrajith" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Prof. Shaman Rajindrajith</h4>
-                    <p class="doctor-title">Consultant Pediatrician</p>
-                    <p class="doctor-specialty">Pediatrics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.5 (180)</span>
-                    </div>
-                    <p class="doctor-description">A trusted expert in general pediatrics and child development.</p>
-                    <a href="doctor-profile.php?slug=shaman-rajindrajith" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Prof. Pujitha Wickramasinghe" data-specialty="Pediatrics" data-slug="pujitha-wickramasinghe">
-                <img src="images/Prof-Pujitha-Wickramasinghe.jpg" alt="Prof. Pujitha Wickramasinghe" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Prof. Pujitha Wickramasinghe</h4>
-                    <p class="doctor-title">Pediatric Neurologist</p>
-                    <p class="doctor-specialty">Pediatrics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                        <span>4.9 (75)</span>
-                    </div>
-                    <p class="doctor-description">Specializes in neurological disorders in children.</p>
-                    <a href="doctor-profile.php?slug=pujitha-wickramasinghe" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Duminda Samarasinghe" data-specialty="Pediatrics" data-slug="duminda-samarasinghe">
-                <img src="images/Dr. Duminda Samarasinghe.jpeg" alt="Dr. Duminda Samarasinghe" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Duminda Samarasinghe</h4>
-                    <p class="doctor-title">Head of Neonatology</p>
-                    <p class="doctor-specialty">Pediatrics</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.8 (115)</span>
-                    </div>
-                    <p class="doctor-description">Leads our Neonatal Intensive Care Unit (NICU) with expertise in newborn care.</p>
-                    <a href="doctor-profile.php?slug=duminda-samarasinghe" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Elena Fernando" data-specialty="General Practitioner" data-slug="elena-fernando">
-                <img src="images/Elena Fernando.jpeg" alt="Dr. Elena Fernando" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Elena Fernando</h4>
-                    <p class="doctor-title">Senior General Practitioner</p>
-                    <p class="doctor-specialty">General Practitioner</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.6 (220)</span>
-                    </div>
-                    <p class="doctor-description">Special interest in managing chronic conditions like diabetes and hypertension.</p>
-                    <a href="doctor-profile.php?slug=elena-fernando" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Kevin Perera" data-specialty="General Practitioner" data-slug="kevin-perera">
-                <img src="images/Kevin Perera.jpg" alt="Dr. Kevin Perera" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Kevin Perera</h4>
-                    <p class="doctor-title">General Practitioner</p>
-                    <p class="doctor-specialty">General Practitioner</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
-                        <span>4.4 (150)</span>
-                    </div>
-                    <p class="doctor-description">Focuses on preventative health and wellness, promoting healthy lifestyles.</p>
-                    <a href="doctor-profile.php?slug=kevin-perera" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Maria Silva" data-specialty="General Practitioner" data-slug="maria-silva">
-                <img src="images/Maria Silva.jpeg" alt="Dr. Maria Silva" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Maria Silva</h4>
-                    <p class="doctor-title">General Practitioner & Family Medicine</p>
-                    <p class="doctor-specialty">General Practitioner</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.7 (190)</span>
-                    </div>
-                    <p class="doctor-description">Provides care for the entire family, with a focus on pediatric and women's health.</p>
-                    <a href="doctor-profile.php?slug=maria-silva" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Mohan Raj" data-specialty="Neurology" data-slug="mohan-raj">
-                <img src="https://images.pexels.com/photos/5794038/pexels-photo-5794038.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Mohan Raj" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Mohan Raj</h4>
-                    <p class="doctor-title">Consultant Neurologist</p>
-                    <p class="doctor-specialty">Neurology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.6 (112)</span>
-                    </div>
-                    <p class="doctor-description">Expert in treating stroke, epilepsy, and headache disorders.</p>
-                    <a href="doctor-profile.php?slug=mohan-raj" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Fatima Hassan" data-specialty="Gynaecology" data-slug="fatima-hassan">
-                <img src="https://images.pexels.com/photos/5327921/pexels-photo-5327921.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Fatima Hassan" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Fatima Hassan</h4>
-                    <p class="doctor-title">Consultant Gynaecologist</p>
-                    <p class="doctor-specialty">Gynaecology</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
-                        <span>4.8 (195)</span>
-                    </div>
-                    <p class="doctor-description">Compassionate care in women's health, from adolescence to menopause.</p>
-                    <a href="doctor-profile.php?slug=fatima-hassan" class="button">View Profile</a>
-                </div>
-            </div>
-
-            <div class="doctor-card" data-name="Dr. Ajith Jayawardena" data-specialty="ENT" data-slug="ajith-jayawardena">
-                <img src="https://images.pexels.com/photos/5407206/pexels-photo-5407206.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Dr. Ajith Jayawardena" onerror="this.src='images/placeholder_doctor.png'">
-                <div class="doctor-info">
-                    <h4>Dr. Ajith Jayawardena</h4>
-                    <p class="doctor-title">Consultant ENT Surgeon</p>
-                    <p class="doctor-specialty">ENT</p>
-                    <div class="doctor-rating">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
-                        <span>4.3 (64)</span>
-                    </div>
-                    <p class="doctor-description">Manages all types of ear, nose, and throat conditions in adults and children.</p>
-                    <a href="doctor-profile.php?slug=ajith-jayawardena" class="button">View Profile</a>
-                </div>
-            </div>
-
+            <?php
+                }
+            } else {
+                echo '<p style="text-align:center; width:100%; grid-column:1/-1;">No doctors available at the moment.</p>';
+            }
+            // --- DYNAMIC FETCHING END ---
+            ?>
         </div>
 
-        <div id="noResultsMessage" style="display: none; text-align: center;">
+        <div id="noResultsMessage" style="display: none;">
             <h3>No doctors found matching your criteria.</h3>
         </div>
 
@@ -586,17 +396,10 @@ $pageKey = 'find_doctor'; // This turns the "Find a Doctor" tab GREEN in the hea
 
             if (nameInput) nameInput.addEventListener('keyup', filterDoctors);
             if (specialtySelect) specialtySelect.addEventListener('change', filterDoctors);
-
-            // Initialize filter on load
-            filterDoctors();
         });
     </script>
 
-    <?php
-    if (file_exists('footer.php')) {
-        include 'footer.php';
-    }
-    ?>
+    <?php if (file_exists('footer.php')) include 'footer.php'; ?>
 </body>
 
 </html>

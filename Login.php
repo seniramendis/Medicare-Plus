@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connect.php'; // <--- Fixed: Now matches your filename
+include 'db_connect.php';
 
 $error = "";
 
@@ -31,10 +31,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             elseif ($login_type == 'patient' && $user['role'] == 'doctor') {
                 $error = "You are a Doctor. Please switch to the Doctor Login tab.";
             } else {
-                // SUCCESS: Set Session Variables
+
+                // --- SEPARATION LOGIC START ---
+                // Set the User Session
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['full_name'];
                 $_SESSION['role'] = $user['role'];
+
+                // CRITICAL: If an Admin was logged in, KILL the Admin session.
+                // This ensures total separation. You cannot be Admin + Patient.
+                if (isset($_SESSION['admin_id'])) {
+                    unset($_SESSION['admin_id']);
+                }
+                // --- SEPARATION LOGIC END ---
 
                 // 6. REDIRECT TO DASHBOARDS
                 if ($user['role'] == 'doctor') {

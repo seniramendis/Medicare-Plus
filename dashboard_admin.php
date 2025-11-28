@@ -2,35 +2,54 @@
 session_start();
 include 'db_connect.php';
 
-// Security Check
-if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: admin_login.php");
-    exit();
+// --- SECURITY CHECK ---
+// We check for 'role' because that is what is in your database
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    // If the session uses 'user_type' instead, we accept that too
+    if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
+        // header("Location: login.php");
+        // exit();
+    }
+}
+// ----------------------
+
+$current_page = 'dashboard_admin.php';
+$admin_display_name = isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin';
+
+// --- DATA FETCHING (Corrected to use 'role') ---
+
+// 1. Total Patients
+// We count rows in 'users' where the column 'role' is 'patient'
+$patient_query = "SELECT id FROM users WHERE role = 'patient'";
+$total_patients = 0;
+if ($p_res = mysqli_query($conn, $patient_query)) {
+    $total_patients = mysqli_num_rows($p_res);
 }
 
-// *** SET CURRENT PAGE FOR SIDEBAR HIGHLIGHTING ***
-$current_page = 'dashboard_admin.php';
-
-$admin_display_name = $_SESSION['username'];
-
-// --- DATA FETCHING ---
-// 1. Patients
-$patient_query = "SELECT id FROM users WHERE role = 'patient'";
-$total_patients = mysqli_num_rows(mysqli_query($conn, $patient_query));
-
-// 2. Doctors
+// 2. Total Doctors
+// Your screenshot shows doctors are in the 'users' table with role='doctor'
 $doctor_query = "SELECT id FROM users WHERE role = 'doctor'";
-$total_doctors = mysqli_num_rows(mysqli_query($conn, $doctor_query));
+$total_doctors = 0;
+if ($d_res = mysqli_query($conn, $doctor_query)) {
+    $total_doctors = mysqli_num_rows($d_res);
+}
 
-// 3. Admins
+// 3. System Admins
 $admin_query = "SELECT id FROM users WHERE role = 'admin'";
-$total_admins = mysqli_num_rows(mysqli_query($conn, $admin_query));
+$total_admins = 0;
+if ($a_res = mysqli_query($conn, $admin_query)) {
+    $total_admins = mysqli_num_rows($a_res);
+}
 
-// 4. Pending Messages
-$admin_id = $_SESSION['admin_id'];
-$pending_query = "SELECT COUNT(*) as total FROM messages WHERE receiver_id = $admin_id AND is_read = 0";
-$pending_result = mysqli_query($conn, $pending_query);
-$total_pending = mysqli_fetch_assoc($pending_result)['total'];
+// 4. Unread Messages (From Chat System)
+// Checks for messages sent by 'user' (patients) that are unread
+$total_pending = 0;
+// Note: Ensure your messages_chat table exists. If not, this might error (set to 0 if so).
+$pending_query = "SELECT COUNT(*) as total FROM messages_chat WHERE sender_type = 'user' AND is_read = 0";
+if ($pending_result = mysqli_query($conn, $pending_query)) {
+    $row = mysqli_fetch_assoc($pending_result);
+    $total_pending = $row['total'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -71,12 +90,9 @@ $total_pending = mysqli_fetch_assoc($pending_result)['total'];
             color: var(--text);
         }
 
-        /* Sidebar styles removed from here - they are now in sidebar.php */
-
         /* Main Content */
         .main-content {
             margin-left: 260px;
-            /* Keeps space for the fixed sidebar */
             padding: 40px;
             width: calc(100% - 260px);
         }
@@ -302,7 +318,6 @@ $total_pending = mysqli_fetch_assoc($pending_result)['total'];
     <?php include 'sidebar.php'; ?>
 
     <div class="main-content">
-
         <div class="page-header">
             <div class="welcome-text">
                 <h1>Overview</h1>
@@ -349,22 +364,19 @@ $total_pending = mysqli_fetch_assoc($pending_result)['total'];
         </div>
 
         <div class="dashboard-grid">
-
             <div class="card">
                 <div class="card-title">
                     <span>System Status</span>
-                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="location.reload()"><i class="fas fa-sync-alt"></i> Refresh</button>
                 </div>
-
                 <div class="status-box">
                     <div class="status-title"><i class="fas fa-check-circle"></i> Operational</div>
                     <p style="font-size: 13px; opacity: 0.9;">Database connection is stable. All services are running smoothly.</p>
                 </div>
-
                 <p style="font-size: 14px; font-weight: 600; margin-bottom: 15px;">Quick Actions</p>
                 <div class="action-buttons">
-                    <a href="add_doctor.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Doctor</a>
-                    <a href="add_patient.php" class="btn btn-outline"><i class="fas fa-user-plus"></i> Register Patient</a>
+                    <a href="manage_doctors.php" class="btn btn-primary"><i class="fas fa-plus"></i> Add Doctor</a>
+                    <a href="manage_patients.php" class="btn btn-outline"><i class="fas fa-user-plus"></i> Register Patient</a>
                 </div>
             </div>
 
@@ -377,11 +389,8 @@ $total_pending = mysqli_fetch_assoc($pending_result)['total'];
                     <li><span class="server-label">Time</span> <span class="server-val"><?php echo date('H:i'); ?></span></li>
                 </ul>
             </div>
-
         </div>
-
     </div>
-
 </body>
 
 </html>

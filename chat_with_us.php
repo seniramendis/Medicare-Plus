@@ -1,26 +1,16 @@
 <?php
 $pageTitle = 'Chat With Us';
-$pageKey = 'contact';
-
-// --- 1. SESSION & AUTHENTICATION ---
+include 'db_connect.php';
+// Session start is usually in header, but ensuring it here just in case
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Initialize default variables
-$isUserLoggedIn = false;
-$userName = "User"; // DEFAULT: "Hello, User" (as requested)
-
-// Check if the user is logged in
-if (isset($_SESSION['user_id'])) {
-    $isUserLoggedIn = true;
-
-    // CRITICAL FIX: Use 'username' (matches your login.php), not 'user_name'
-    if (isset($_SESSION['username'])) {
-        // Get just the first name for a friendly chat greeting
-        $parts = explode(' ', $_SESSION['username']);
-        $userName = $parts[0];
-    }
+// Username Logic
+$userName = "Guest";
+if (isset($_SESSION['user_id']) && isset($_SESSION['username'])) {
+    $parts = explode(' ', $_SESSION['username']);
+    $userName = $parts[0];
 }
 ?>
 
@@ -30,278 +20,209 @@ if (isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($pageTitle) ? $pageTitle . ' - Medicare Plus' : 'Chat With Us - Medicare Plus'; ?></title>
+    <title>Chat With Us - Medicare Plus</title>
     <link rel="icon" href="images/Favicon.png" type="image/png">
-
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
-
     <style>
-        /* --- CSS VARIABLES --- */
+        /* --- KEEPING YOUR EXISTING CSS VARIABLES --- */
         :root {
             --primary-blue: #1e3a8a;
-            --primary-blue-light: #2563eb;
             --primary-green: #57c95a;
-            --primary-green-dark: #45a049;
-            --text-dark: #333;
-            --text-light: #666;
-            --text-white: #ffffff;
-            --border-light: #e9e9e9;
             --bg-light: #f4f7f6;
             --bg-white: #ffffff;
-            --shadow-md: 0 5px 15px rgba(12, 12, 12, 0.08);
         }
 
-        /* --- GLOBAL STYLES --- */
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: sans-serif;
             background-color: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-weight: 600;
-            margin-top: 0;
         }
 
         .page-container {
             width: 85%;
             max-width: 900px;
             margin: 40px auto;
-            padding: 30px 40px;
-            background-color: var(--bg-white);
+            padding: 30px;
+            background: var(--bg-white);
             border-radius: 12px;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
-        /* --- CHAT PAGE STYLES --- */
         .chat-intro-section {
             text-align: center;
             margin-bottom: 30px;
         }
 
         .chat-intro-section h2 {
-            font-size: 2.2em;
             color: var(--primary-blue);
-            margin-top: 0;
-            padding-bottom: 10px;
             border-bottom: 3px solid var(--primary-green);
             display: inline-block;
+            padding-bottom: 10px;
         }
 
-        .chat-options-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 40px;
-            text-align: left;
-        }
-
+        /* --- NEW CHAT UI --- */
         .chat-embed-area {
-            min-height: 400px;
-            background-color: var(--bg-light);
-            border: 1px solid var(--border-light);
+            height: 500px;
+            border: 1px solid #ddd;
             border-radius: 10px;
-            padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            overflow: hidden;
+            background: #fff;
         }
 
-        /* Contact List */
-        .contact-details h3 {
-            color: var(--primary-blue);
-            margin-bottom: 15px;
-        }
-
-        .footer-contact {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-contact li {
-            font-size: 1rem;
-            color: var(--text-dark);
-            margin-bottom: 10px;
+        .chat-messages-window {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9f9f9;
             display: flex;
-            align-items: flex-start;
-        }
-
-        .footer-contact i {
-            color: var(--primary-green);
-            margin-right: 15px;
-            width: 20px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .footer-contact a {
-            color: var(--text-dark) !important;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .footer-contact a:hover {
-            color: var(--primary-green-dark) !important;
-        }
-
-        /* Buttons */
-        .start-chat-button {
-            display: inline-flex;
-            align-items: center;
+            flex-direction: column;
             gap: 10px;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            background-color: var(--primary-blue);
-            color: var(--text-white);
-            border-radius: 30px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            justify-content: center;
         }
 
-        .start-chat-button:hover {
-            background-color: var(--primary-blue-light);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        .chat-input-area {
+            padding: 15px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
         }
 
-        .button-large {
-            display: inline-block;
-            background-color: var(--primary-green);
-            color: var(--text-white);
-            padding: 10px 24px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            text-align: center;
+        .chat-input-field {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            outline: none;
         }
 
-        .button-large:hover {
-            background-color: var(--primary-green-dark);
+        .send-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
-        /* Chat Input */
-        #chat-message-preview {
-            width: 90%;
-            max-width: 90%;
-            padding: 10px;
-            border: 1px solid var(--border-light);
-            border-radius: 6px;
-            resize: vertical;
-            margin-bottom: 20px;
-            box-sizing: border-box;
-            font-family: inherit;
-            font-size: 0.95rem;
+        .send-btn:hover {
+            background: #162c6b;
         }
 
-        /* Responsive */
-        @media screen and (max-width: 900px) {
-            .chat-options-grid {
-                grid-template-columns: 1fr;
-            }
+        /* MESSAGE BUBBLES */
+        .message {
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .user-msg {
+            background: var(--primary-blue);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .admin-msg {
+            background: #e0e0e0;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
         }
     </style>
 </head>
 
 <body>
 
-    <?php
-    if (file_exists('header.php')) {
-        include 'header.php';
-    }
-    ?>
+    <?php if (file_exists('header.php')) include 'header.php'; ?>
 
     <main class="page-container">
         <section class="chat-intro-section">
-            <h2><i class="fa-solid fa-comment-dots"></i> Chat Support</h2>
-            <p style="font-size: 1.1em; color: var(--text-light);">Connect instantly with our support team for quick answers to your questions about appointments, services, or hospital information.</p>
+            <h2><i class="fa-solid fa-comment-dots"></i> Live Support</h2>
+            <p>Hello, <?php echo htmlspecialchars($userName); ?>! Our team is online.</p>
         </section>
 
-        <div class="chat-options-grid">
-
-            <div class="chat-embed-area" id="live-chat-area">
-
-                <h3 id="chat-greeting" style="color: #1e3a8a;">Hello, <?php echo htmlspecialchars($userName); ?>!</h3>
-
-                <p style="text-align: center; color: var(--text-light); max-width: 80%;">
-                    Start a general conversation with hospital staff. <br>
-                    <small><em>*Do not share sensitive personal or medical details here.*</em></small>
+        <div class="chat-embed-area">
+            <!-- Messages load here -->
+            <div class="chat-messages-window" id="message-display">
+                <p style="text-align:center; color:#999; margin-top:50px;">
+                    <i class="fas fa-spinner fa-spin"></i> Connecting to chat server...
                 </p>
-
-                <label for="chat-message-preview" style="align-self: flex-start; margin-top: 15px; margin-left: 5%; font-weight: 600; color: var(--text-dark);">
-                    How can we help you today?
-                </label>
-
-                <textarea
-                    id="chat-message-preview"
-                    placeholder="E.g., What are your visiting hours? How do I book an appointment?"
-                    rows="4"></textarea>
-
-                <a href="#" class="start-chat-button" id="start-chat-btn">
-                    <i class="fa-solid fa-paper-plane"></i> Start Live Chat
-                </a>
             </div>
 
-            <div class="side-options">
-                <div class="contact-details">
-                    <h3>Other Ways to Connect</h3>
-                    <ul class="footer-contact">
-                        <li>
-                            <i class="fa-solid fa-phone"></i>
-                            <span class="list-content">Call Us: <a href="tel:+94112345678"> +94 11 234 5678</a></span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-clock"></i>
-                            <span class="list-content">Hours: 8:00 AM - 5:00 PM (Mon - Fri)</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-envelope"></i>
-                            <span class="list-content">Email: <a href="mailto:info@medicareplus.lk">info@medicareplus.lk</a></span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="faq-link" style="text-align: center; padding-top: 30px; margin-top: 30px; border-top: 1px solid var(--border-light);">
-                    <h3>Need Quick Answers?</h3>
-                    <p>Check our detailed Frequently Asked Questions section before starting a chat.</p>
-                    <a href="faq.php" class="button-large">View FAQ</a>
-                </div>
+            <!-- Input Area -->
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" class="chat-input-field" placeholder="Type your message..." onkeypress="handleEnter(event)">
+                <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
-
         </div>
     </main>
 
-    <?php if (file_exists('footer.php')) {
-        include 'footer.php';
-    } ?>
+    <?php if (file_exists('footer.php')) include 'footer.php'; ?>
 
+    <!-- AJAX LOGIC -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // Button click handler
-            const startBtn = document.getElementById('start-chat-btn');
-            if (startBtn) {
-                startBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const msg = document.getElementById('chat-message-preview').value;
-                    if (msg.trim() === "") {
-                        alert("Please type a message first.");
-                    } else {
-                        alert("Connecting you to an agent... (Demo)");
-                        // Here you would redirect to the actual chat system
-                    }
-                });
-            }
+        // 1. Load messages on start
+        $(document).ready(function() {
+            loadMessages();
+            // Scroll to bottom after short delay
+            setTimeout(scrollToBottom, 500);
         });
+
+        // 2. Fetch Messages Function
+        function loadMessages() {
+            $.post('chat_engine.php', {
+                action: 'fetch_chat_user'
+            }, function(data) {
+                // Only scroll if we are near bottom or it's first load
+                const display = document.getElementById('message-display');
+                const isNearBottom = display.scrollHeight - display.scrollTop - display.clientHeight < 100;
+
+                $('#message-display').html(data);
+
+                if (data.trim() === "") {
+                    $('#message-display').html('<p style="text-align:center; color:#bbb; margin-top:40px;">No messages yet. Say hello!</p>');
+                } else if (isNearBottom) {
+                    scrollToBottom();
+                }
+            });
+        }
+
+        // 3. Send Message Function
+        function sendMessage() {
+            const msg = $('#chat-input').val();
+            if (msg.trim() === '') return;
+
+            // Optimistic UI: Add message immediately before server confirms (optional, but makes it feel faster)
+            // For now, we wait for reload to keep it simple.
+
+            $.post('chat_engine.php', {
+                action: 'send_msg_user',
+                message: msg
+            }, function(response) {
+                $('#chat-input').val('');
+                loadMessages();
+                setTimeout(scrollToBottom, 200);
+            });
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function scrollToBottom() {
+            const d = document.getElementById('message-display');
+            d.scrollTop = d.scrollHeight;
+        }
+
+        // 4. Auto Refresh every 3 seconds
+        setInterval(loadMessages, 3000);
     </script>
 </body>
 

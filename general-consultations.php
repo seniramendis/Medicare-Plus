@@ -262,7 +262,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                         <h4>Dr. Elena Fernando</h4>
                         <p class="doctor-title">Senior General Practitioner</p>
                         <p>With over 25 years in family medicine, Dr. Fernando has a special interest in managing chronic conditions like diabetes and hypertension. She is known for her thorough and caring approach.</p>
-                        <a href="#" class="button">Book Appointment</a>
+                        <a href="book_appointment.php" class="button">Book Appointment</a>
                     </div>
                 </div>
 
@@ -272,7 +272,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                         <h4>Dr. Kevin Perera</h4>
                         <p class="doctor-title">General Practitioner</p>
                         <p>Dr. Perera focuses on preventative health and wellness. He is passionate about helping patients achieve their health goals through lifestyle modifications and routine check-ups.</p>
-                        <a href="#" class="button">Book Appointment</a>
+                        <a href="book_appointment.php" class="button">Book Appointment</a>
                     </div>
                 </div>
 
@@ -282,7 +282,7 @@ $pageKey = 'services'; // FIX: Renamed to '$pageKey' so the Services tab turns G
                         <h4>Dr. Maria Silva</h4>
                         <p class="doctor-title">General Practitioner & Family Medicine</p>
                         <p>Dr. Silva provides care for the entire family, from infants to seniors. She has a special focus on pediatric primary care and women's health.</p>
-                        <a href="#" class="button">Book Appointment</a>
+                        <a href="book_appointment.php" class="button">Book Appointment</a>
                     </div>
                 </div>
 
