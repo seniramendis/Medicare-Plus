@@ -2,6 +2,12 @@
 session_start();
 include 'db_connect.php';
 
+// --- TIMEZONE FIX ---
+// This forces the server to use Sri Lanka time. 
+// Without this, 1:57 AM is calculated as "Yesterday" (UTC).
+date_default_timezone_set('Asia/Colombo');
+// --------------------
+
 if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin_login.php");
     exit();
@@ -13,7 +19,9 @@ $current_page = 'admin_financials.php';
 $query_total = mysqli_query($conn, "SELECT SUM(amount) as total FROM payments WHERE status = 'paid'");
 $total_revenue = mysqli_fetch_assoc($query_total)['total'] ?? 0;
 
+// Now that timezone is set, this date will correctly match '2025-12-02'
 $today = date('Y-m-d');
+
 $query_today = mysqli_query($conn, "SELECT SUM(amount) as total FROM payments WHERE status = 'paid' AND DATE(payment_date) = '$today'");
 $today_revenue = mysqli_fetch_assoc($query_today)['total'] ?? 0;
 
@@ -21,7 +29,6 @@ $query_count = mysqli_query($conn, "SELECT COUNT(*) as count FROM payments WHERE
 $successful_count = mysqli_fetch_assoc($query_count)['count'] ?? 0;
 
 // --- TRANSACTION LOG ---
-// Fetches the 'cause' directly from the payments table
 $trans_query = "SELECT p.*, 
                 pat.full_name AS patient_name, 
                 doc.full_name AS doctor_name 
@@ -71,6 +78,12 @@ $trans_result = mysqli_query($conn, $trans_query);
             margin-left: 260px;
             padding: 40px;
             width: calc(100% - 260px);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .page-header h1 {
@@ -229,19 +242,13 @@ $trans_result = mysqli_query($conn, $trans_query);
                             ?>
                             <tr>
                                 <td style="font-family:monospace; color:#64748b;">#<?php echo str_pad($txn_id, 6, '0', STR_PAD_LEFT); ?></td>
-
                                 <td><strong><?php echo htmlspecialchars($row['patient_name'] ?? 'Unknown'); ?></strong></td>
-
                                 <td style="color:#475569;"><?php echo htmlspecialchars($row['doctor_name'] ?? 'Unknown'); ?></td>
-
                                 <td style="color:#2563eb; font-weight:500;">
                                     <?php echo htmlspecialchars($row['cause'] ?? '-'); ?>
                                 </td>
-
                                 <td><?php echo $txn_date; ?></td>
-
                                 <td style="font-weight:700;">LKR <?php echo number_format($row['amount'], 2); ?></td>
-
                                 <td><span class="badge-paid">Paid</span></td>
                             </tr>
                         <?php endwhile; ?>

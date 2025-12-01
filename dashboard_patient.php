@@ -4,6 +4,11 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include 'db_connect.php';
 
+// --- TIMEZONE FIX ---
+// Forces the page to display dates/times in Sri Lanka time
+date_default_timezone_set('Asia/Colombo');
+// --------------------
+
 // Security Check
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'patient') {
     header("Location: login.php");
@@ -14,27 +19,23 @@ $patient_name = $_SESSION['username'];
 $u_res = mysqli_query($conn, "SELECT id FROM users WHERE full_name = '$patient_name'");
 $patient_id = (mysqli_num_rows($u_res) > 0) ? mysqli_fetch_assoc($u_res)['id'] : 0;
 
-// 1. FETCH APPOINTMENTS
+
 $result = mysqli_query($conn, "SELECT appointments.*, users.full_name AS doctor_name, users.id AS doc_user_id FROM appointments JOIN users ON appointments.doctor_id = users.id WHERE patient_name = '$patient_name' ORDER BY appointments.appointment_time ASC");
 
-// 2. FETCH TRANSACTIONS
+
 $hist_query = "SELECT * FROM payments 
                WHERE patient_id = '$patient_id' 
                ORDER BY paid_at DESC LIMIT 5";
 $hist_res = mysqli_query($conn, $hist_query);
 
-// 3. FETCH MEDICAL RECORDS (FIXED)
-// We check if table exists using mysqli_query to prevent crashing
-$table_check = mysqli_query($conn, "SHOW TABLES LIKE 'patient_reports'");
-$rep_res = false; // Default to false
+// --- FETCH PRESCRIPTIONS ---
+$pres_query = "SELECT p.*, u.full_name as doctor_name 
+               FROM prescriptions p 
+               JOIN users u ON p.doctor_id = u.id 
+               WHERE p.patient_id = '$patient_id' 
+               ORDER BY p.created_at DESC LIMIT 6";
+$pres_res = mysqli_query($conn, $pres_query);
 
-if (mysqli_num_rows($table_check) > 0) {
-    // Table exists, now fetch data
-    $rep_query = "SELECT * FROM patient_reports 
-                  WHERE patient_id = '$patient_id' 
-                  ORDER BY report_date DESC LIMIT 6";
-    $rep_res = mysqli_query($conn, $rep_query);
-}
 ?>
 
 <!DOCTYPE html>
@@ -61,7 +62,6 @@ if (mysqli_num_rows($table_check) > 0) {
             min-height: 60vh;
         }
 
-        /* Banner */
         .welcome-banner {
             background: linear-gradient(135deg, #0062cc, #0096ff);
             color: white;
@@ -88,7 +88,6 @@ if (mysqli_num_rows($table_check) > 0) {
             background: #e3f2fd;
         }
 
-        /* Finance Section */
         .finance-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -122,7 +121,6 @@ if (mysqli_num_rows($table_check) > 0) {
             border-bottom: 1px solid #f9f9f9;
         }
 
-        /* Outstanding Due Styles */
         .total-due {
             font-size: 32px;
             font-weight: 700;
@@ -141,7 +139,6 @@ if (mysqli_num_rows($table_check) > 0) {
             font-weight: 600;
         }
 
-        /* --- Elegant Card Styles --- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -168,7 +165,6 @@ if (mysqli_num_rows($table_check) > 0) {
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
-        /* Status Colors (Left Border) */
         .appt-card.st-Completed {
             border-left: 5px solid #22c55e;
         }
@@ -181,17 +177,9 @@ if (mysqli_num_rows($table_check) > 0) {
             border-left: 5px solid #f59e0b;
         }
 
-        /* Medical Report Colors */
         .appt-card.st-Prescription {
             border-left: 5px solid #6f42c1;
         }
-
-        /* Purple */
-        .appt-card.st-Lab {
-            border-left: 5px solid #e83e8c;
-        }
-
-        /* Pink */
 
         .appt-header {
             display: flex;
@@ -233,10 +221,6 @@ if (mysqli_num_rows($table_check) > 0) {
 
         .st-text-Prescription {
             color: #6f42c1;
-        }
-
-        .st-text-Lab {
-            color: #e83e8c;
         }
 
         .doc-info h4 {
@@ -346,7 +330,6 @@ if (mysqli_num_rows($table_check) > 0) {
                     $status = $row['status'];
                     $status_class = "st-" . $status;
 
-                    // Date Logic: Smart fallback
                     $raw_date = $row['appointment_time'];
                     $timestamp = strtotime($raw_date);
 
@@ -355,7 +338,6 @@ if (mysqli_num_rows($table_check) > 0) {
                         $nice_time = date('h:i A', $timestamp);
                         $time_html = "<p><i class='far fa-clock' style='color:#bbb; margin-right:5px;'></i> $nice_time</p>";
                     } else {
-                        // FORCE RAW TEXT if PHP fails to format
                         $nice_date = !empty($raw_date) ? $raw_date : "Date Pending";
                         $time_html = "";
                     }
@@ -386,49 +368,44 @@ if (mysqli_num_rows($table_check) > 0) {
             ?>
         </div>
 
-        <h3 style="color:#333; margin-top:40px; margin-bottom:20px;">Recent Prescriptions & Reports</h3>
+        <h3 style="color:#333; margin-top:40px; margin-bottom:20px;">Medical Prescriptions</h3>
         <div class="dashboard-grid">
             <?php
-            if ($rep_res && mysqli_num_rows($rep_res) > 0) {
-                while ($rep = mysqli_fetch_assoc($rep_res)) {
-                    $type = $rep['type']; // 'Prescription' or 'Lab Report'
-                    $is_lab = ($type == 'Lab Report');
+            // CHECKING IF PRESCRIPTIONS EXIST
+            if ($pres_res && mysqli_num_rows($pres_res) > 0) {
+                while ($pres = mysqli_fetch_assoc($pres_res)) {
 
-                    // Styling Logic
-                    $border_class = $is_lab ? "st-Lab" : "st-Prescription";
-                    $text_class = $is_lab ? "st-text-Lab" : "st-text-Prescription";
-                    $bg_color = $is_lab ? "#fce4ec" : "#f3e5f5"; // Pink vs Purple bg
-                    $main_color = $is_lab ? "#e83e8c" : "#6f42c1"; // Pink vs Purple text
-                    $icon = $is_lab ? "fa-flask" : "fa-file-prescription";
-                    $btn_text = $is_lab ? "View Report" : "Download PDF";
-                    $btn_icon = $is_lab ? "fa-eye" : "fa-download";
+                    // Styling for Prescriptions
+                    $border_class = "st-Prescription";
+                    $text_class = "st-text-Prescription";
+                    $bg_color = "#f3e5f5"; // Purple bg
+                    $main_color = "#6f42c1"; // Purple text
 
-                    $r_date = date('M d, Y', strtotime($rep['report_date']));
+                    $r_date = date('M d, Y', strtotime($pres['created_at']));
 
                     echo "
                     <div class='appt-card $border_class'>
                         <div class='appt-header'>
-                            <div class='date-badge'><i class='fas $icon'></i> $r_date</div>
-                            <div class='status-label $text_class'>" . strtoupper($type) . "</div>
+                            <div class='date-badge'><i class='fas fa-file-prescription'></i> $r_date</div>
+                            <div class='status-label $text_class'>RX PRESCRIPTION</div>
                         </div>
 
                         <div class='doc-info'>
-                            <h4>{$rep['doctor_name']}</h4>
-                            <p style='color:#666; font-size:13px; margin-bottom:5px;'>{$rep['title']}</p>
-                            <div class='reason-tag' style='background:$bg_color; color:$main_color; border:none;'>
-                                {$rep['description']}
-                            </div>
+                            <h4>Dr. {$pres['doctor_name']}</h4>
+                            <p style='color:#333; font-weight:600; font-size:14px; margin-bottom:5px;'>Diagnosis: {$pres['diagnosis']}</p>
+                            <div class='reason-tag' style='background:$bg_color; color:$main_color; border:none; display:block; white-space:pre-wrap; max-height:60px; overflow:hidden;'>{$pres['dosage_instructions']}</div>
                         </div>
 
                         <div class='card-footer'>
-                            <button class='btn-msg' style='background:$bg_color; color:$main_color;'>
-                                <i class='fas $btn_icon'></i> $btn_text
+                            <button class='btn-msg' style='background:$bg_color; color:$main_color; cursor:pointer;' 
+                                    onclick=\"window.open('print_prescription.php?id={$pres['id']}', '_blank')\">
+                                <i class='fas fa-print'></i> Print Prescription
                             </button>
                         </div>
                     </div>";
                 }
             } else {
-                echo "<p style='color:#888; text-align:center; grid-column:1/-1; padding:20px; background:white; border-radius:12px;'>No medical records found (or table not created yet).</p>";
+                echo "<p style='color:#888; text-align:center; grid-column:1/-1; padding:20px; background:white; border-radius:12px;'>No prescriptions found yet.</p>";
             }
             ?>
         </div>

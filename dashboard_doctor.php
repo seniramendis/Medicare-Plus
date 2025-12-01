@@ -17,7 +17,7 @@ if ($d_res && mysqli_num_rows($d_res) > 0) {
     $doc_data = mysqli_fetch_assoc($d_res);
     $doc_id = $doc_data['id'];
 } else {
-    $doc_id = 0; // Fallback to prevent crash
+    $doc_id = 0;
 }
 
 // --- HANDLE PRESCRIPTION SUBMISSION ---
@@ -26,9 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_prescription'])) 
     $diagnosis = mysqli_real_escape_string($conn, $_POST['diagnosis']);
     $instructions = mysqli_real_escape_string($conn, $_POST['instructions']);
 
-    // Ensure database table exists before inserting
-    $pres_sql = "INSERT INTO prescriptions (doctor_id, patient_id, diagnosis, medical_instructions) 
-                 VALUES ('$doc_id', '$patient_id', '$diagnosis', '$instructions')";
+    // FIXED SQL: Matches your database columns
+    // We utilize 'dosage_instructions' for the instructions.
+    // We set 'medicine_list' to 'General Rx' since your form only has one text area.
+    $pres_sql = "INSERT INTO prescriptions (doctor_id, patient_id, diagnosis, medicine_list, dosage_instructions) 
+                 VALUES ('$doc_id', '$patient_id', '$diagnosis', 'General Rx', '$instructions')";
 
     if (mysqli_query($conn, $pres_sql)) {
         $_SESSION['popup_message'] = "Prescription sent successfully!";
@@ -419,8 +421,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_prescription'])) 
                         <select name="patient_id" required class="form-input">
                             <option value="">-- Choose Patient --</option>
                             <?php
-                            // SIMPLIFIED QUERY TO PREVENT CRASH
-                            // Fetches all patients instead of trying complex joins that might fail
                             $pres_pat_sql = "SELECT id, full_name FROM users WHERE role = 'patient'";
                             $pres_pat_res = mysqli_query($conn, $pres_pat_sql);
 

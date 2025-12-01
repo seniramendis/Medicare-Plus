@@ -20,6 +20,7 @@ $service_name = isset($_POST['service_name']) ? $_POST['service_name'] : 'Medica
 <head>
     <meta charset="UTF-8">
     <title>Secure Checkout | Medicare Plus</title>
+    <link rel="icon" href="images/Favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
 

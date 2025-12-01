@@ -20,11 +20,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $time = $_POST['time'];
     $reason = mysqli_real_escape_string($conn, $_POST['message']);
 
-    // Format the time string exactly how it's stored in DB
+
     $full_time_string = $date . ' (' . $time . ')';
 
-    // --- 🛑 STEP 1: CHECK FOR CONFLICTS ---
-    // We check if THIS doctor already has an appointment at THIS time
+
     $check_sql = "SELECT * FROM appointments 
                   WHERE doctor_id = '$doctor_id' 
                   AND appointment_time = '$full_time_string'";
@@ -32,13 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $check_result = mysqli_query($conn, $check_sql);
 
     if (mysqli_num_rows($check_result) > 0) {
-        // CONFLICT FOUND! Doctor is busy.
+
         $msg = "<div style='background:#fee2e2; color:#c62828; padding:15px; border-radius:5px; margin-bottom:20px; border: 1px solid #fca5a5;'>
                     <i class='fas fa-exclamation-circle'></i> 
                     <strong>Slot Unavailable:</strong> This doctor is already booked for $time on $date. Please choose a different time.
                 </div>";
     } else {
-        // --- ✅ STEP 2: NO CONFLICT, PROCEED TO BOOK ---
+
         $sql = "INSERT INTO appointments (doctor_id, patient_name, appointment_time, reason, status) 
                 VALUES ('$doctor_id', '$patient_name', '$full_time_string', '$reason', 'Scheduled')";
 

@@ -2,49 +2,39 @@
 session_start();
 include 'db_connect.php';
 
-// --- SECURITY CHECK ---
-// We check for 'role' because that is what is in your database
+// --- SECURITY FIX APPLIED HERE ---
+// If the session role is NOT set, OR if the role is NOT 'admin'
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    // If the session uses 'user_type' instead, we accept that too
-    if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'admin') {
-        // header("Location: login.php");
-        // exit();
-    }
+    // Redirect strictly to the admin login page
+    header("Location: admin_login.php");
+    exit(); // Stop loading the dashboard
 }
-// ----------------------
+// ---------------------------------
 
 $current_page = 'dashboard_admin.php';
 $admin_display_name = isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin';
 
-// --- DATA FETCHING (Corrected to use 'role') ---
-
-// 1. Total Patients
-// We count rows in 'users' where the column 'role' is 'patient'
 $patient_query = "SELECT id FROM users WHERE role = 'patient'";
 $total_patients = 0;
 if ($p_res = mysqli_query($conn, $patient_query)) {
     $total_patients = mysqli_num_rows($p_res);
 }
 
-// 2. Total Doctors
-// Your screenshot shows doctors are in the 'users' table with role='doctor'
 $doctor_query = "SELECT id FROM users WHERE role = 'doctor'";
 $total_doctors = 0;
 if ($d_res = mysqli_query($conn, $doctor_query)) {
     $total_doctors = mysqli_num_rows($d_res);
 }
 
-// 3. System Admins
+// System Admins
 $admin_query = "SELECT id FROM users WHERE role = 'admin'";
 $total_admins = 0;
 if ($a_res = mysqli_query($conn, $admin_query)) {
     $total_admins = mysqli_num_rows($a_res);
 }
 
-// 4. Unread Messages (From Chat System)
-// Checks for messages sent by 'user' (patients) that are unread
+// Unread Messages (From Chat System)
 $total_pending = 0;
-// Note: Ensure your messages_chat table exists. If not, this might error (set to 0 if so).
 $pending_query = "SELECT COUNT(*) as total FROM messages_chat WHERE sender_type = 'user' AND is_read = 0";
 if ($pending_result = mysqli_query($conn, $pending_query)) {
     $row = mysqli_fetch_assoc($pending_result);
@@ -63,7 +53,6 @@ if ($pending_result = mysqli_query($conn, $pending_query)) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/9e166a3863.js" crossorigin="anonymous"></script>
     <style>
-        /* CSS Variables */
         :root {
             --primary: #2563eb;
             --primary-dark: #1e40af;
@@ -90,14 +79,12 @@ if ($pending_result = mysqli_query($conn, $pending_query)) {
             color: var(--text);
         }
 
-        /* Main Content */
         .main-content {
             margin-left: 260px;
             padding: 40px;
             width: calc(100% - 260px);
         }
 
-        /* Header */
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -141,7 +128,6 @@ if ($pending_result = mysqli_query($conn, $pending_query)) {
             font-size: 14px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -210,7 +196,6 @@ if ($pending_result = mysqli_query($conn, $pending_query)) {
             color: #f97316;
         }
 
-        /* Dashboard Grid */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;

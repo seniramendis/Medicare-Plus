@@ -21,19 +21,19 @@ if ($check->num_rows == 0) {
     exit();
 }
 
-// --- 2. FETCH DATA ---
+
 $sql = "SELECT * FROM users WHERE id = $my_id";
 $result = $conn->query($sql);
 $user = $result->fetch_assoc();
 $role = isset($user['role']) ? strtolower($user['role']) : 'patient';
 
-// Alert Variables
+
 $show_alert = false;
 $alert_title = "";
 $alert_text = "";
 $alert_icon = "";
 
-// --- 3. HANDLE SAVE ---
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $title      = mysqli_real_escape_string($conn, $_POST['title'] ?? '');

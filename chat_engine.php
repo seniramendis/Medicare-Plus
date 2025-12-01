@@ -1,5 +1,5 @@
 <?php
-// chat_engine.php
+
 session_start();
 include 'db_connect.php';
 
@@ -22,7 +22,6 @@ function decrypt_msg($encrypted_msg, $iv_encoded)
     return openssl_decrypt(base64_decode($encrypted_msg), CIPHER_METHOD, $key, 0, $iv);
 }
 
-// --- USER IDENTIFICATION ---
 $user_identifier = "";
 $user_name = "Guest";
 $user_type = "guest";
@@ -54,7 +53,7 @@ if (isset($_SESSION['doctor_id']) || (isset($_SESSION['user_type']) && $_SESSION
 
 $action = $_POST['action'] ?? '';
 
-// --- ACTIONS ---
+
 
 if ($action == 'get_unread_count') {
     $stmt = $conn->prepare("SELECT id FROM conversations WHERE user_identifier = ?");
@@ -128,7 +127,6 @@ if ($action == 'send_msg_user' || $action == 'send_msg_admin') {
 }
 
 if ($action == 'delete_message') {
-    // Admin Deleting
     $stmt = $conn->prepare("DELETE FROM messages_chat WHERE id = ?");
     $stmt->bind_param("i", $_POST['message_id']);
     $stmt->execute();

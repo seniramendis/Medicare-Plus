@@ -1,21 +1,20 @@
 <?php
-// header.php
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 0. CONNECT TO DB
+
 if (!isset($conn)) {
     include 'db_connect.php';
 }
 
-// --- SEPARATION LOGIC ---
-// We ONLY check for Patients or Doctors (user_id).
+
 $isUserLoggedIn = (isset($_SESSION['user_id']) && ($_SESSION['role'] === 'patient' || $_SESSION['role'] === 'doctor'));
 
 
-// --- DATA PREP (Only for Patients/Doctors) ---
+
 $displayName = 'Guest';
 $notif_count = 0;
 
@@ -23,12 +22,9 @@ if ($isUserLoggedIn) {
     $session_username = $_SESSION['username'] ?? '';
     $parts = explode(' ', $session_username);
     $displayName = $parts[0];
-
-    // Example notification logic
-    // $notif_count = ... 
 }
 
-// Active Tab Logic
+
 $current_page = basename($_SERVER['PHP_SELF']);
 $active = [
     'Home.php' => '',
@@ -45,7 +41,6 @@ if (array_key_exists($current_page, $active)) $active[$current_page] = 'active-l
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
-    /* CSS Variables */
     :root {
         --primary-blue: #1e3a8a;
         --primary-light: #2563eb;
